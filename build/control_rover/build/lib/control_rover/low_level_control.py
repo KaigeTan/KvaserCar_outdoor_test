@@ -15,6 +15,7 @@ class LowLevelCtrl(Node):
             Float32, '/ref_spd', self.ref_spd_callback, 5)  # TODO: check the topic name, frequency, and type
         # Publishers
         self.publisher_throttle = self.create_publisher(Float32, '/rover/throttle', 50)
+        self.publisher_steering = self.create_publisher(Float32, '/rover/steering', 50)
 
         # add a timer to continuously publish throttle control data
         self.timer = self.create_timer(1.0 / 50.0, self.timer_callback)
@@ -58,6 +59,8 @@ class LowLevelCtrl(Node):
         """Publish motor commands at a fixed rate of 50Hz"""
         throttle_val = 0.0 if self.aeb_triggered else self.throttle
         self.publisher_throttle.publish(Float32(data=throttle_val))
+        self.publisher_steering.publish(Float32(data=0.0))
+        
 
 def main(args=None):
     rclpy.init(args=args)

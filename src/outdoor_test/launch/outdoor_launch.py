@@ -62,7 +62,7 @@ def generate_launch_description():
             package='tf2_ros',
             executable='static_transform_publisher',
             name='tf_map_to_baselink',
-            arguments=['0', '0', '0', '0', '0', '0', 'map', 'base_link'],
+            arguments=['11.98', '0', '0', '0', '0', '3.14', 'map', 'base_link'],
             output='screen'
     )
 
@@ -80,7 +80,6 @@ def generate_launch_description():
 
     # Combine everything in a single LaunchDescription
     return LaunchDescription([
-        tactical_node,
         imu_launch,
         imu_filter,
         wheel_odom,
@@ -89,5 +88,6 @@ def generate_launch_description():
         ctrl_rover,
         bluecar_tf,
         camera_tf,
+        tactical_node,
         launch_complete_message
     ])

@@ -69,11 +69,11 @@ class TacticalNode(Node):
                                      target_critical_region=target_cr)
 
     def list_aeb_callback(self, msg):
-        self.get_logger().info('AEB message is: "%s"' % msg.data)
+        # self.get_logger().info('AEB message is: "%s"' % msg.data)
         self.q_aeb.put(msg.data)
 
     def list_odom_callback(self, msg):
-        self.get_logger().info('ODOM message is: "%s"' % msg.data)
+        #self.get_logger().info('ODOM message is: "%s"' % msg.data)
         #TODO create EgoPose and queue it
         #parameters.EGO_LENGTH
         # Extract central point of the vehicle
@@ -119,10 +119,10 @@ class TacticalNode(Node):
         try:
             aeb = self.q_aeb.get_nowait()
         except queue.Empty:
-            self.get_logger().warn("AEB IS NONE", throttle_duration_sec=1.0)
+            #self.get_logger().warn("AEB IS NONE", throttle_duration_sec=1.0)
             aeb = None
         if aeb is not None:
-            self.get_logger().info("AEB IS {0}".format(aeb), throttle_duration_sec=1.0)
+            #self.get_logger().info("AEB IS {0}".format(aeb), throttle_duration_sec=1.0)
             if aeb is True:
                 self.get_logger().warn("AEB IS TRUE", throttle_duration_sec=1.0)
                 return "AEB", True

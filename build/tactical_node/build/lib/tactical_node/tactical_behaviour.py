@@ -52,6 +52,7 @@ class TacticalBehavior:
         self.data_log = {"decision_time": list(),
                          "aoi": list(),
                          "ego_tactical_speed": list(),
+                         "ego_front_d": list(),
                          "ego_pos": list(),
                          "ego_pred_go_pos": list(),
                          "ego_d_to_cr": list(),
@@ -72,17 +73,36 @@ class TacticalBehavior:
         return parameters.ADV_MAX_ACC
 
     def decision(self, msg, ego_pose: EgoPose) -> TacticalAction:
+        """
+
+
+        :param msg:
+        :param ego_pose:
+        :return:
+        """
+        self.ego_action = TacticalAction.BREAKING
+        if ego_pose is None:
+            return self.ego_action
+
+        self.ego_action = TacticalAction.CONTINUE
+        ego_front_p = shapely.Point((ego_pose.front_x, ego_pose.front_y))
+        shapely.prepare(ego_front_p)
+        ego_vel = ego_pose.vel_fw
+        ego_acc = ego_pose.acc_fw        
+        
         self.msg = msg
-        if self.msg is None or ego_pose is None:
-            return TacticalAction.CONTINUE
+        self.ego_d_front, self.ego_d_to_cr, self.ego_ttcr = self.ego_prediction.get_dist_and_time_to_cr(ego_vel, ego_front_p)
+        if self.msg is None:
+            return self.ego_action
 
         self.decision_time = get_time()
         self.aoi = self.decision_time - self.msg.time_stamp
+        self.aoi = self.aoi * 0.001 #transform from milli!
         target_length = self.msg.length if self.msg.length is not None else parameters.ADV_LENGTH
         target_front = shapely.Point(self.msg.front[0], self.msg.front[1])
         shapely.prepare(target_front)
         self.target_acc = self._get_target_acc(self.aoi, self.msg.velocity)
-        target_pos, self.target_ttcr = self.target_prediction.estimate_time_to_cr(
+        self.target_pred_pos, self.target_ttcr = self.target_prediction.estimate_time_to_cr(
             self.aoi,
             target_front,
             target_length,
@@ -91,14 +111,7 @@ class TacticalBehavior:
 
         self.ego_action = TacticalAction.CONTINUE
 
-
-        ego_front_p = shapely.Point((ego_pose.front_x, ego_pose.front_y))
-        shapely.prepare(ego_front_p)
-
-        ego_vel = ego_pose.vel_fw
-        ego_acc = ego_pose.acc_fw
-
-        if target_pos == CriticalRegion.Position.BEFORE_CR:
+        if self.target_pred_pos == CriticalRegion.Position.BEFORE_CR:
 
             pred_go_ttcr, pred_break_ttcr = self.ego_prediction.get_predicted_positions(ego_vel,
                                                                                         ego_acc,
@@ -119,10 +132,10 @@ class TacticalBehavior:
                 elif pred_go_leave_ttcr == CriticalRegion.Position.BEFORE_CR:
                     self.ego_action = TacticalAction.CONTINUE
 
-        elif target_pos == CriticalRegion.Position.AFTER_CR:
+        elif self.target_pred_pos == CriticalRegion.Position.AFTER_CR:
             self.ego_action = TacticalAction.CONTINUE
 
-        elif target_pos == CriticalRegion.Position.INSIDE_CR:
+        elif self.target_pred_pos == CriticalRegion.Position.INSIDE_CR:
             _, _, self.ego_pos = self.ego_prediction.get_current_pos(ego_front_p)
             if self.ego_pos == CriticalRegion.Position.AFTER_CR:
                 self.ego_action = TacticalAction.CONTINUE
@@ -138,6 +151,8 @@ class TacticalBehavior:
 
         self.ego_d_front, self.ego_d_to_cr, self.ego_ttcr = self.ego_prediction.get_dist_and_time_to_cr(ego_vel, ego_front_p)
 
+        self.target_d_to_cr = self.target_prediction.dist_to_cr
+
         return self.ego_action
 
     def action_to_speed(self, action: TacticalAction):
@@ -151,6 +166,7 @@ class TacticalBehavior:
     def log(self):
         self.data_log["decision_time"].append(self.decision_time)
         self.data_log["ego_tactical_speed"].append(self.ego_tactical_speed)
+        self.data_log["ego_front_d"].append(self.ego_d_front)
         self.data_log["ego_pos"].append(self.ego_pos)
         self.data_log["ego_pred_go_pos"].append(self.ego_pred_go_pos)
         self.data_log["ego_d_to_cr"].append(self.ego_d_to_cr)
