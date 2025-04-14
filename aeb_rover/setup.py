@@ -22,6 +22,7 @@ setup(
         'console_scripts': [
             'aeb_node_open = aeb_rover.aeb_rover_node:main',  # open loop joystick control with AEB 
             'aeb_node_closed = aeb_rover.PIctrl:main',  # closed loop control by PI with AEB
+            'aeb_outdoor = aeb_rover.aeb_outdoor:main',  # outdoor test with AEB node
         ],
     },
 )
