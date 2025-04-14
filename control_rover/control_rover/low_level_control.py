@@ -16,6 +16,10 @@ class LowLevelCtrl(Node):
         # Publishers
         self.publisher_throttle = self.create_publisher(Float32, '/rover/throttle', 50)
 
+        # add a timer to continuously publish throttle control data
+        self.timer = self.create_timer(1.0 / 50.0, self.timer_callback)
+
+
         # State 
         self.aeb_triggered = Bool(data=False)
         self.ref_spd = 0.0
@@ -49,6 +53,11 @@ class LowLevelCtrl(Node):
         else:
             return (ref_spd + 0.62)/0.04 # this is calibrated from the data in the shared onedrive folder, linear fit for stable speed v.s. throttle input
 
+
+    def timer_callback(self):
+        """Publish motor commands at a fixed rate of 50Hz"""
+        throttle_val = 0.0 if self.aeb_triggered else self.throttle
+        self.publisher_throttle.publish(Float32(data=throttle_val))
 
 def main(args=None):
     rclpy.init(args=args)
