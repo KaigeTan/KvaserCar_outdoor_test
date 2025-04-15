@@ -5,7 +5,7 @@ class CommInterfaceBase:
         pass
 
     class Message:
-        def __init__(self, time_stamp, front, back, vel, length=None):
+        def __init__(self, id, time_stamp, front, back, vel, length=None):
             """
 
             :param time_stamp:
@@ -13,6 +13,7 @@ class CommInterfaceBase:
             :param back:
             :param vel:
             """
+            self.id = id
             self.time_stamp: int = time_stamp
             self.front: Tuple[float, float] = front
             self.back: Tuple[float, float] = back

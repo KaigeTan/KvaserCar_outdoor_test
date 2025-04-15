@@ -2,7 +2,7 @@ import queue
 import rclpy
 from rclpy.node import Node
 
-from std_msgs.msg import String
+from std_msgs.msg import Float32
 
 import critical_region
 from test.comm_test import CommInterfaceTest
@@ -11,13 +11,16 @@ from tactical_behaviour import TacticalBehavior
 import parameters
 from ego_pose import EgoPose
 
-ROS_TOPIC_AEB = ""
+# TODO put the correct topics name
+ROS_TOPIC_AEB = "/aeb_triggered"
 ROS_TOPIC_ODOM = ""
-ROS_TOPIC_REF_VEL = ""
+ROS_TOPIC_REF_VEL = "/ref_spd"
 
+# TODO set proper times for callbacks
 ROS_AEB_TIMER = 10
 ROS_ODOM_TIMER = 10
 
+# TODO set proper time for main timer
 ROS_TACTICAL_LOGIC_TIMER = 10
 
 class TacticalNode(Node):
@@ -43,6 +46,7 @@ class TacticalNode(Node):
 
         self.logic_timer = self.create_timer(ROS_TACTICAL_LOGIC_TIMER, self.logic_callback)
 
+        # TODO put the correct format
         self.pub_vel = self.create_publisher(Float, ROS_TOPIC_REF_VEL, 2)
 
         critical_region_poly = critical_region.create_cr_polygon([parameters.CR_POINT_1,
@@ -73,6 +77,7 @@ class TacticalNode(Node):
     def list_odom_callback(self, msg):
         self.get_logger().info('ODOM message is: "%s"' % msg.data)
         #TODO create EgoPose and queue it
+        #parameters.EGO_LENGTH
         ego_pose = EgoPose(msg.data.x, msg.data.y, 0, 0, 0,0)
         self.q_pose.put(ego_pose)
 
@@ -103,7 +108,7 @@ class TacticalNode(Node):
         except queue.Empty:
             aeb = None
         if aeb is not None:
-            if aeb == "True":
+            if aeb is True:
                 return "AEB", True
 
         if self.behaviour.ego_d_front > len(self.behaviour.ego_prediction.cr.path) - 3:
@@ -112,7 +117,7 @@ class TacticalNode(Node):
         return None, False
 
     def pub_ref_speed(self, vel):
-        msg = Float()
+        msg = Float32()
         msg.data = vel
         self.pub_vel.publish(vel)
 

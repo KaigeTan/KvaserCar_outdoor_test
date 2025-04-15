@@ -1,5 +1,4 @@
 import math
-
 import parameters
 
 
@@ -17,7 +16,6 @@ class EgoPose:
         self.rear_y:float = rear_y
         self.vel_x:float = vel_x
         self.vel_y:float = vel_y
-        #TODO use proper forward vector to get forward velocity
-        self.vel_fw:float = math.sqrt(vel_x ** 2 + vel_y ** 2)
+        self.vel_fw:float = vel_x
         # TODO use proper forward vector to get forward acceleration
         self.acc_fw:float = parameters.EGO_MAX_ACC
