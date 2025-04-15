@@ -22,8 +22,8 @@ class CommInterfaceBase:
     def get_latest_message(self) -> Optional[Message]:
         pass
 
-    def connect(self):
+    def start(self):
         pass
 
-    def disconnect(self):
+    def stop(self):
         pass

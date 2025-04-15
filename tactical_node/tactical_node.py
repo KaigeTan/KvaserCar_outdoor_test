@@ -60,7 +60,7 @@ class TacticalNode(Node):
 
         # communication interface
         self.comm = CommInterfaceTest()
-        self.comm.connect()
+        self.comm.start()
 
         self.behaviour = TacticalBehavior(ego_reference_speed=parameters.EGO_REFERENCE_SPEED,
                                      ego_critical_region=ego_cr,
@@ -117,7 +117,7 @@ class TacticalNode(Node):
         self.pub_vel.publish(vel)
 
     def destroy_node(self):
-        self.comm.disconnect()
+        self.comm.stop()
 
 
 def main(args=None):

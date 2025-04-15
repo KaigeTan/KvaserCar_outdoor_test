@@ -38,7 +38,7 @@ if __name__ == '__main__':
 
   # communication interface
   comm = CommInterfaceTest()
-  comm.connect()
+  comm.start()
 
   behaviour = TacticalBehavior(ego_reference_speed=parameters.EGO_REFERENCE_SPEED,
                                ego_critical_region=ego_cr,
@@ -64,4 +64,4 @@ if __name__ == '__main__':
 
 
   print(behaviour.data_log)
-  comm.disconnect()
+  comm.stop()
