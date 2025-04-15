@@ -1,8 +1,10 @@
 import queue
 import rclpy
 from rclpy.node import Node
-
-from std_msgs.msg import Float32
+from std_msgs.msg import Float32, Bool
+from nav_msgs.msg import Odometry
+from tf_transformations import euler_from_quaternion
+import math
 
 import critical_region
 from test.comm_test import CommInterfaceTest
@@ -11,9 +13,10 @@ from tactical_behaviour import TacticalBehavior
 import parameters
 from ego_pose import EgoPose
 
-# TODO put the correct topics name
+
+# topics name
 ROS_TOPIC_AEB = "/aeb_triggered"
-ROS_TOPIC_ODOM = ""
+ROS_TOPIC_ODOM = "/odometry/filtered"
 ROS_TOPIC_REF_VEL = "/ref_spd"
 
 # TODO set proper times for callbacks
@@ -32,22 +35,21 @@ class TacticalNode(Node):
         self.q_aeb = queue.SimpleQueue()
         self.q_msg = queue.SimpleQueue()
 
-        self.sub_odom = self.create_subscription(
-            String,
+        self.sub_aeb = self.create_subscription(
+            Bool,
             ROS_TOPIC_AEB,
             self.list_aeb_callback,
             10)
 
-        self.sub_AEB = self.create_subscription(
-            String,
+        self.sub_odom = self.create_subscription(
+            Odometry,
             ROS_TOPIC_ODOM,
             self.list_odom_callback,
             10)
 
         self.logic_timer = self.create_timer(ROS_TACTICAL_LOGIC_TIMER, self.logic_callback)
 
-        # TODO put the correct format
-        self.pub_vel = self.create_publisher(Float, ROS_TOPIC_REF_VEL, 2)
+        self.pub_vel = self.create_publisher(Float32, ROS_TOPIC_REF_VEL, 2)
 
         critical_region_poly = critical_region.create_cr_polygon([parameters.CR_POINT_1,
                                                                   parameters.CR_POINT_2,
@@ -78,7 +80,21 @@ class TacticalNode(Node):
         self.get_logger().info('ODOM message is: "%s"' % msg.data)
         #TODO create EgoPose and queue it
         #parameters.EGO_LENGTH
-        ego_pose = EgoPose(msg.data.x, msg.data.y, 0, 0, 0,0)
+        # Ectract central point of the vehicle
+        center_x = msg.pose.pose.position.x
+        center_y = msg.pose.pose.position.y
+        # Extract orientation quaternion
+        orientation_q = msg.pose.pose.orientation
+        _, _, body_yaw = euler_from_quaternion([orientation_q.x, orientation_q.y, orientation_q.z, orientation_q.w])
+        # Calculate the front and rear point of the vehicle, considering the orientiation
+        front_x = center_x + parameters.EGO_LENGTH/2*math.cos(body_yaw)
+        front_y = center_y + parameters.EGO_LENGTH/2*math.sin(body_yaw)
+        rear_x = center_x - parameters.EGO_LENGTH/2*math.cos(body_yaw)
+        rear_y = center_y - parameters.EGO_LENGTH/2*math.sin(body_yaw)
+        # Extract vehicle velocity, vy is 0, since no lateral motion
+        vel_x = msg.twist.twist.linear.x
+        vel_y = 0
+        ego_pose = EgoPose(front_x, front_y, rear_x, rear_y, vel_x, vel_y)
         self.q_pose.put(ego_pose)
 
 
