@@ -17,7 +17,7 @@ class AEBRover(Node):
         self.publisher_aeb_triggered = self.create_publisher(Bool, '/aeb_triggered', 5)
 
         # Safety Threshold
-        self.declare_parameter('distance_threshold', 50.0)
+        self.declare_parameter('distance_threshold', 200.0)
         self.DISTANCE_THRESHOLD = self.get_parameter('distance_threshold').value
 
 
