@@ -19,10 +19,6 @@ ROS_TOPIC_AEB = "/aeb_triggered"
 ROS_TOPIC_ODOM = "/odometry/filtered"
 ROS_TOPIC_REF_VEL = "/ref_spd"
 
-# TODO set proper times for callbacks
-ROS_AEB_TIMER = 10
-ROS_ODOM_TIMER = 10
-
 # TODO set proper time for main timer
 ROS_TACTICAL_LOGIC_TIMER = 1/10
 
@@ -80,17 +76,17 @@ class TacticalNode(Node):
         self.get_logger().info('ODOM message is: "%s"' % msg.data)
         #TODO create EgoPose and queue it
         #parameters.EGO_LENGTH
-        # Ectract central point of the vehicle
+        # Extract central point of the vehicle
         center_x = msg.pose.pose.position.x
         center_y = msg.pose.pose.position.y
         # Extract orientation quaternion
         orientation_q = msg.pose.pose.orientation
         _, _, body_yaw = euler_from_quaternion([orientation_q.x, orientation_q.y, orientation_q.z, orientation_q.w])
-        # Calculate the front and rear point of the vehicle, considering the orientiation
+        # Calculate the front and rear point of the vehicle, considering the orientation
         front_x = center_x + parameters.EGO_LENGTH/2*math.cos(body_yaw)
-        front_y = center_y + parameters.EGO_LENGTH/2*math.sin(body_yaw)
+        front_y = center_y + parameters.EGO_WIDTH/2*math.sin(body_yaw)
         rear_x = center_x - parameters.EGO_LENGTH/2*math.cos(body_yaw)
-        rear_y = center_y - parameters.EGO_LENGTH/2*math.sin(body_yaw)
+        rear_y = center_y - parameters.EGO_WIDTH/2*math.sin(body_yaw)
         # Extract vehicle velocity, vy is 0, since no lateral motion
         vel_x = msg.twist.twist.linear.x
         vel_y = 0
@@ -99,13 +95,14 @@ class TacticalNode(Node):
 
 
     def logic_callback(self):
-        cause, run = self.check_termination()
-        if not run:
-            self.run = False
+        cause, end = self.is_exp_ended()
+        if end:
             self.get_logger().info("stopping the car, exp terminated with cause={0}".format(cause))
             self.pub_ref_speed(0)
-            exp_log = ExpLog(self.behaviour.data_log, cause)
-            exp_log.write_to_file()
+            if self.run:
+                exp_log = ExpLog(self.behaviour.data_log, cause)
+                exp_log.write_to_file()
+            self.run = False
 
         if self.run:
             msg = self.comm.get_latest_message()
@@ -118,19 +115,19 @@ class TacticalNode(Node):
             self.pub_ref_speed(speed)
             self.behaviour.log()
 
-    def check_termination(self):
+    def is_exp_ended(self):
         try:
             aeb = self.q_pose.get_nowait()
         except queue.Empty:
             aeb = None
         if aeb is not None:
             if aeb is True:
-                return "AEB", False
+                return "AEB", True
 
         if self.behaviour.ego_d_front > self.behaviour.ego_prediction.cr.cr_path.length - 3:
-            return "PASSED", False
+            return "PASSED", True
 
-        return None, True
+        return None, False
 
     def pub_ref_speed(self, vel):
         self.pub_vel.publish(Float32(data=vel))
