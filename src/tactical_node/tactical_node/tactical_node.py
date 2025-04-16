@@ -117,7 +117,7 @@ class TacticalNode(Node):
 
     def is_exp_ended(self):
         try:
-            aeb = self.q_pose.get_nowait()
+            aeb = self.q_aeb.get_nowait()
         except queue.Empty:
             self.get_logger().info("AEB IS NONE")
             aeb = None
