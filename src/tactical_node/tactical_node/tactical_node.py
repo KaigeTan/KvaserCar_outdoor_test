@@ -122,7 +122,7 @@ class TacticalNode(Node):
             self.get_logger().info("AEB IS NONE")
             aeb = None
         if aeb is not None:
-            self.get_logger().info("AEB IS {0}}".format(aeb))
+            self.get_logger().info("AEB IS {0}".format(aeb))
             if aeb is True:
                 self.get_logger().info("AEB IS TRUE")
                 return "AEB", True
