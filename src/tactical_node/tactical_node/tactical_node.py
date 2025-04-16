@@ -119,9 +119,12 @@ class TacticalNode(Node):
         try:
             aeb = self.q_pose.get_nowait()
         except queue.Empty:
+            self.get_logger().info("AEB IS NONE")
             aeb = None
         if aeb is not None:
+            self.get_logger().info("AEB IS {0}}".format(aeb))
             if aeb is True:
+                self.get_logger().info("AEB IS TRUE")
                 return "AEB", True
 
         if self.behaviour.ego_d_front > self.behaviour.ego_prediction.cr.cr_path.length - 3:
