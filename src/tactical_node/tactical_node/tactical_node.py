@@ -98,7 +98,7 @@ class TacticalNode(Node):
         cause, end = self.is_exp_ended()
         if end:
             self.get_logger().info("stopping the car, exp terminated with cause={0}".format(cause))
-            self.pub_ref_speed(0)
+            self.pub_ref_speed(0.0)
             if self.run:
                 exp_log = ExpLog(self.behaviour.data_log, cause)
                 exp_log.write_to_file()
