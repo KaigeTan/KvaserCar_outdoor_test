@@ -1,5 +1,4 @@
-import math
-import parameters
+import test_params as parameters
 
 
 class EgoPose:

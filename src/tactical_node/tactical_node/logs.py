@@ -15,7 +15,7 @@ class ExpLog:
     def write_to_file(self):
         timestamp = time.time()
         file_name = "{0}.json".format(timestamp)
-        os.path.join(parameters.EXP_LOG_PATH, file_name)
+        file_name = os.path.join(parameters.EXP_LOG_PATH, file_name)
         data = {"exp_name":timestamp,
                 "term_cause":self.term_cause,
                 "ego": self.vehicle_log}

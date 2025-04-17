@@ -3,16 +3,18 @@ from enum import IntEnum
 
 import shapely
 
-from critical_region import CriticalRegion
+from src.tactical_node.tactical_node.critical_region import CriticalRegion
+from src.tactical_node.tactical_node.kalman_filter import KalmanFilter
+
 from ego_pose import EgoPose
 from ego_prediction import EgoPrediction
-from kalman_filter import KalmanFilter
 from target_prediction import TargetPrediction
-import parameters
+import test_params as parameters
+
 
 
 def get_time() -> int:
-    return time.perf_counter_ns() // 1000
+    return time.perf_counter_ns() // (1000* 100)
 
 
 class TacticalAction(IntEnum):
@@ -143,7 +145,7 @@ class TacticalBehavior:
         if action == TacticalAction.CONTINUE:
             self.ego_tactical_speed = self.reference_speed
         else:
-            self.ego_tactical_speed = 0
+            self.ego_tactical_speed = 0.0
 
         return self.ego_tactical_speed
 

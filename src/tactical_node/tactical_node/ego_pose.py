@@ -1,4 +1,3 @@
-import math
 import tactical_node.parameters as parameters
 
 

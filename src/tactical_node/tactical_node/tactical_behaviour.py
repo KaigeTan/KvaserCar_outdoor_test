@@ -13,7 +13,7 @@ import tactical_node.parameters as parameters
 
 
 def get_time() -> int:
-    return time.perf_counter_ns() // 1000
+    return time.perf_counter_ns() // (1000* 100)
 
 
 class TacticalAction(IntEnum):
