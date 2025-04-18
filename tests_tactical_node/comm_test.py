@@ -16,7 +16,7 @@ class CommInterfaceTest(CommInterfaceBase):
         :return: a message if available, None otherwise
         """
         return CommInterfaceBase.Message(0,
-                                         time.perf_counter_ns() // (1000* 100),
+                                         (time.perf_counter_ns() // (1000* 1000) )-50,
                                          (0,5),
                                          (0,5 - parameters.ADV_LENGTH),
                                          2)
@@ -28,7 +28,7 @@ class CommInterfaceTest(CommInterfaceBase):
         :return: a message if available, None otherwise
         """
         return CommInterfaceBase.Message(0,
-                                         time.perf_counter_ns() // (1000* 100),
+                                         time.perf_counter_ns() // (1000* 1000) - 50,
                                          front,
                                          (0,5 - parameters.ADV_LENGTH),
                                          vel)

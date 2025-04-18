@@ -14,7 +14,7 @@ import test_params as parameters
 
 
 def get_time() -> int:
-    return time.perf_counter_ns() // (1000* 100)
+    return time.perf_counter_ns() // (1000*1000)
 
 
 class TacticalAction(IntEnum):
@@ -73,33 +73,39 @@ class TacticalBehavior:
         return parameters.ADV_MAX_ACC
 
     def decision(self, msg, ego_pose: EgoPose) -> TacticalAction:
+        """
+
+        :param msg:
+        :param ego_pose:
+        :return:
+        """
+        self.ego_action = TacticalAction.CONTINUE
+        ego_front_p = shapely.Point((ego_pose.front_x, ego_pose.front_y))
+        shapely.prepare(ego_front_p)
+        ego_vel = ego_pose.vel_fw
+        ego_acc = ego_pose.acc_fw
+
         self.msg = msg
         if self.msg is None or ego_pose is None:
-            return TacticalAction.CONTINUE
+            self.ego_d_front, self.ego_d_to_cr, self.ego_ttcr = self.ego_prediction.get_dist_and_time_to_cr(ego_vel,
+                                                                                                            ego_front_p)
+            return self.ego_action
 
         self.decision_time = get_time()
         self.aoi = self.decision_time - self.msg.time_stamp
+        self.aoi = self.aoi * 0.001 #milli
         target_length = self.msg.length if self.msg.length is not None else parameters.ADV_LENGTH
         target_front = shapely.Point(self.msg.front[0], self.msg.front[1])
         shapely.prepare(target_front)
         self.target_acc = self._get_target_acc(self.aoi, self.msg.velocity)
-        target_pos, self.target_ttcr = self.target_prediction.estimate_time_to_cr(
+        self.target_pred_pos, self.target_ttcr = self.target_prediction.estimate_time_to_cr(
             self.aoi,
             target_front,
             target_length,
             self.msg.velocity,
             self.target_acc)
 
-        self.ego_action = TacticalAction.CONTINUE
-
-
-        ego_front_p = shapely.Point((ego_pose.front_x, ego_pose.front_y))
-        shapely.prepare(ego_front_p)
-
-        ego_vel = ego_pose.vel_fw
-        ego_acc = ego_pose.acc_fw
-
-        if target_pos == CriticalRegion.Position.BEFORE_CR:
+        if self.target_pred_pos == CriticalRegion.Position.BEFORE_CR:
 
             pred_go_ttcr, pred_break_ttcr = self.ego_prediction.get_predicted_positions(ego_vel,
                                                                                         ego_acc,
@@ -120,10 +126,10 @@ class TacticalBehavior:
                 elif pred_go_leave_ttcr == CriticalRegion.Position.BEFORE_CR:
                     self.ego_action = TacticalAction.CONTINUE
 
-        elif target_pos == CriticalRegion.Position.AFTER_CR:
+        elif self.target_pred_pos == CriticalRegion.Position.AFTER_CR:
             self.ego_action = TacticalAction.CONTINUE
 
-        elif target_pos == CriticalRegion.Position.INSIDE_CR:
+        elif self.target_pred_pos == CriticalRegion.Position.INSIDE_CR:
             _, _, self.ego_pos = self.ego_prediction.get_current_pos(ego_front_p)
             if self.ego_pos == CriticalRegion.Position.AFTER_CR:
                 self.ego_action = TacticalAction.CONTINUE
@@ -138,6 +144,8 @@ class TacticalBehavior:
                     self.ego_action = TacticalAction.BREAKING
 
         self.ego_d_front, self.ego_d_to_cr, self.ego_ttcr = self.ego_prediction.get_dist_and_time_to_cr(ego_vel, ego_front_p)
+
+        self.target_d_to_cr = self.target_prediction.dist_to_cr
 
         return self.ego_action
 
