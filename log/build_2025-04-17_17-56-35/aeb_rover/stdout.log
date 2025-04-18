@@ -1,0 +1,43 @@
+running egg_info
+creating ../../build/aeb_rover/aeb_rover.egg-info
+writing ../../build/aeb_rover/aeb_rover.egg-info/PKG-INFO
+writing dependency_links to ../../build/aeb_rover/aeb_rover.egg-info/dependency_links.txt
+writing entry points to ../../build/aeb_rover/aeb_rover.egg-info/entry_points.txt
+writing requirements to ../../build/aeb_rover/aeb_rover.egg-info/requires.txt
+writing top-level names to ../../build/aeb_rover/aeb_rover.egg-info/top_level.txt
+writing manifest file '../../build/aeb_rover/aeb_rover.egg-info/SOURCES.txt'
+reading manifest file '../../build/aeb_rover/aeb_rover.egg-info/SOURCES.txt'
+writing manifest file '../../build/aeb_rover/aeb_rover.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/nvidia/KvaserCar_outdoor_test/build/aeb_rover/build
+creating /home/nvidia/KvaserCar_outdoor_test/build/aeb_rover/build/lib
+creating /home/nvidia/KvaserCar_outdoor_test/build/aeb_rover/build/lib/aeb_rover
+copying aeb_rover/aeb_outdoor.py -> /home/nvidia/KvaserCar_outdoor_test/build/aeb_rover/build/lib/aeb_rover
+copying aeb_rover/aeb_rover_node.py -> /home/nvidia/KvaserCar_outdoor_test/build/aeb_rover/build/lib/aeb_rover
+copying aeb_rover/__init__.py -> /home/nvidia/KvaserCar_outdoor_test/build/aeb_rover/build/lib/aeb_rover
+copying aeb_rover/PIctrl.py -> /home/nvidia/KvaserCar_outdoor_test/build/aeb_rover/build/lib/aeb_rover
+running install
+running install_lib
+creating /home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/lib/python3.10/site-packages/aeb_rover
+copying /home/nvidia/KvaserCar_outdoor_test/build/aeb_rover/build/lib/aeb_rover/aeb_outdoor.py -> /home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/lib/python3.10/site-packages/aeb_rover
+copying /home/nvidia/KvaserCar_outdoor_test/build/aeb_rover/build/lib/aeb_rover/aeb_rover_node.py -> /home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/lib/python3.10/site-packages/aeb_rover
+copying /home/nvidia/KvaserCar_outdoor_test/build/aeb_rover/build/lib/aeb_rover/__init__.py -> /home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/lib/python3.10/site-packages/aeb_rover
+copying /home/nvidia/KvaserCar_outdoor_test/build/aeb_rover/build/lib/aeb_rover/PIctrl.py -> /home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/lib/python3.10/site-packages/aeb_rover
+byte-compiling /home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/lib/python3.10/site-packages/aeb_rover/aeb_outdoor.py to aeb_outdoor.cpython-310.pyc
+byte-compiling /home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/lib/python3.10/site-packages/aeb_rover/aeb_rover_node.py to aeb_rover_node.cpython-310.pyc
+byte-compiling /home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/lib/python3.10/site-packages/aeb_rover/__init__.py to __init__.cpython-310.pyc
+byte-compiling /home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/lib/python3.10/site-packages/aeb_rover/PIctrl.py to PIctrl.cpython-310.pyc
+running install_data
+creating /home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/share/ament_index
+creating /home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/share/ament_index/resource_index
+creating /home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/share/ament_index/resource_index/packages
+copying resource/aeb_rover -> /home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/share/ament_index/resource_index/packages
+copying package.xml -> /home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/share/aeb_rover
+running install_egg_info
+Copying ../../build/aeb_rover/aeb_rover.egg-info to /home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/lib/python3.10/site-packages/aeb_rover-0.0.0-py3.10.egg-info
+running install_scripts
+Installing aeb_node_closed script to /home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/lib/aeb_rover
+Installing aeb_node_open script to /home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/lib/aeb_rover
+Installing aeb_outdoor script to /home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/lib/aeb_rover
+writing list of installed files to '/home/nvidia/KvaserCar_outdoor_test/build/aeb_rover/install.log'

@@ -1,0 +1,33 @@
+# take this as reference: 
+# http://docs.ros.org/en/lunar/api/robot_localization/html/configuring_robot_localization.html?highlight=wheel
+
+ekf_filter_node:
+  ros__parameters:
+    frequency: 20.0                # The update rate of the filter, (determined by the frequency of input odometry)
+    two_d_mode: true               # Restrict to 2D motion for non-holonomic robots
+    publish_tf: true               # Publish transform between frames
+    map_frame: map                 # Global fixed frame
+    odom_frame: odom               # Odometry frame
+    base_link_frame: base_link     # Robot base frame
+    world_frame: odom              # World frame to use for filtering
+
+    # Odometry input (e.g., wheel odometry)
+    odom0: /odometry
+    odom0_config: [true,  true,  false,  # x, y, z
+                   false, false, true,   # roll, pitch, yaw
+                   true,  false, false,  # x_vel, y_vel, z_vel
+                   false, false, true,   # roll_vel, pitch_vel, yaw_vel
+                   false, false, false]  # x_acc, y_acc, z_acc
+    odom0_queue_size: 10
+    odom0_nodelay: false
+
+    # IMU input
+    imu0: /imu/data
+    imu0_config: [false, false, false,  # x, y, z
+                  false, false, true,   # roll, pitch, yaw
+                  false, false, false,  # x_vel, y_vel, z_vel
+                  false, false, true,   # roll_vel, pitch_vel, yaw_vel
+                  true, false, false]   # x_acc, y_acc, z_acc
+    imu0_remove_gravitational_acceleration: true
+    imu0_queue_size: 10
+    imu0_nodelay: false

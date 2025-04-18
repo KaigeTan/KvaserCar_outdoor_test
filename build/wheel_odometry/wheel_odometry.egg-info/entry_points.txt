@@ -1,0 +1,3 @@
+[console_scripts]
+wheel_odometry_node = wheel_odometry.wheel_odometry_node:main
+

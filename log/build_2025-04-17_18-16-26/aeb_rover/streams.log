@@ -1,0 +1,23 @@
+[5.781s] Invoking command in '/home/nvidia/KvaserCar_outdoor_test/src/aeb_rover': PYTHONPATH=/home/nvidia/KvaserCar_outdoor_test/build/aeb_rover/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/aeb_rover build --build-base /home/nvidia/KvaserCar_outdoor_test/build/aeb_rover/build install --record /home/nvidia/KvaserCar_outdoor_test/build/aeb_rover/install.log --single-version-externally-managed install_data
+[6.539s] running egg_info
+[6.540s] writing ../../build/aeb_rover/aeb_rover.egg-info/PKG-INFO
+[6.541s] writing dependency_links to ../../build/aeb_rover/aeb_rover.egg-info/dependency_links.txt
+[6.543s] writing entry points to ../../build/aeb_rover/aeb_rover.egg-info/entry_points.txt
+[6.544s] writing requirements to ../../build/aeb_rover/aeb_rover.egg-info/requires.txt
+[6.544s] writing top-level names to ../../build/aeb_rover/aeb_rover.egg-info/top_level.txt
+[6.552s] reading manifest file '../../build/aeb_rover/aeb_rover.egg-info/SOURCES.txt'
+[6.555s] writing manifest file '../../build/aeb_rover/aeb_rover.egg-info/SOURCES.txt'
+[6.555s] running build
+[6.555s] running build_py
+[6.556s] running install
+[6.557s] running install_lib
+[6.560s] running install_data
+[6.560s] running install_egg_info
+[6.566s] removing '/home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/lib/python3.10/site-packages/aeb_rover-0.0.0-py3.10.egg-info' (and everything under it)
+[6.571s] Copying ../../build/aeb_rover/aeb_rover.egg-info to /home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/lib/python3.10/site-packages/aeb_rover-0.0.0-py3.10.egg-info
+[6.571s] running install_scripts
+[6.631s] Installing aeb_node_closed script to /home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/lib/aeb_rover
+[6.631s] Installing aeb_node_open script to /home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/lib/aeb_rover
+[6.633s] Installing aeb_outdoor script to /home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/lib/aeb_rover
+[6.634s] writing list of installed files to '/home/nvidia/KvaserCar_outdoor_test/build/aeb_rover/install.log'
+[6.711s] Invoked command in '/home/nvidia/KvaserCar_outdoor_test/src/aeb_rover' returned '0': PYTHONPATH=/home/nvidia/KvaserCar_outdoor_test/build/aeb_rover/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/aeb_rover build --build-base /home/nvidia/KvaserCar_outdoor_test/build/aeb_rover/build install --record /home/nvidia/KvaserCar_outdoor_test/build/aeb_rover/install.log --single-version-externally-managed install_data

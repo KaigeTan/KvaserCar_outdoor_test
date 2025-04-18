@@ -1,0 +1,71 @@
+[5.752s] Invoking command in '/home/nvidia/KvaserCar_outdoor_test/src/tactical_node': PYTHONPATH=/home/nvidia/KvaserCar_outdoor_test/build/tactical_node/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/tactical_node build --build-base /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build install --record /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/install.log --single-version-externally-managed install_data
+[6.412s] running egg_info
+[6.414s] creating ../../build/tactical_node/tactical_node.egg-info
+[6.414s] writing ../../build/tactical_node/tactical_node.egg-info/PKG-INFO
+[6.415s] writing dependency_links to ../../build/tactical_node/tactical_node.egg-info/dependency_links.txt
+[6.415s] writing entry points to ../../build/tactical_node/tactical_node.egg-info/entry_points.txt
+[6.415s] writing requirements to ../../build/tactical_node/tactical_node.egg-info/requires.txt
+[6.415s] writing top-level names to ../../build/tactical_node/tactical_node.egg-info/top_level.txt
+[6.416s] writing manifest file '../../build/tactical_node/tactical_node.egg-info/SOURCES.txt'
+[6.421s] reading manifest file '../../build/tactical_node/tactical_node.egg-info/SOURCES.txt'
+[6.421s] adding license file 'LICENSE'
+[6.423s] writing manifest file '../../build/tactical_node/tactical_node.egg-info/SOURCES.txt'
+[6.424s] running build
+[6.424s] running build_py
+[6.424s] creating /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build
+[6.424s] creating /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib
+[6.424s] creating /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib/tactical_node
+[6.425s] copying tactical_node/comm_base.py -> /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib/tactical_node
+[6.425s] copying tactical_node/parameters.py -> /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib/tactical_node
+[6.425s] copying tactical_node/critical_region.py -> /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib/tactical_node
+[6.425s] copying tactical_node/target_prediction.py -> /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib/tactical_node
+[6.426s] copying tactical_node/ego_prediction.py -> /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib/tactical_node
+[6.426s] copying tactical_node/tactical_behaviour.py -> /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib/tactical_node
+[6.426s] copying tactical_node/comm_test.py -> /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib/tactical_node
+[6.426s] copying tactical_node/tactical_action.py -> /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib/tactical_node
+[6.426s] copying tactical_node/ego_pose.py -> /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib/tactical_node
+[6.426s] copying tactical_node/tactical_node.py -> /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib/tactical_node
+[6.426s] copying tactical_node/logs.py -> /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib/tactical_node
+[6.427s] copying tactical_node/kalman_filter.py -> /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib/tactical_node
+[6.427s] copying tactical_node/__init__.py -> /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib/tactical_node
+[6.427s] running install
+[6.428s] running install_lib
+[6.430s] creating /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node
+[6.430s] copying /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib/tactical_node/comm_base.py -> /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node
+[6.430s] copying /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib/tactical_node/parameters.py -> /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node
+[6.431s] copying /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib/tactical_node/critical_region.py -> /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node
+[6.431s] copying /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib/tactical_node/target_prediction.py -> /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node
+[6.431s] copying /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib/tactical_node/ego_prediction.py -> /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node
+[6.432s] copying /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib/tactical_node/tactical_behaviour.py -> /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node
+[6.432s] copying /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib/tactical_node/comm_test.py -> /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node
+[6.432s] copying /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib/tactical_node/tactical_action.py -> /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node
+[6.432s] copying /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib/tactical_node/ego_pose.py -> /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node
+[6.432s] copying /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib/tactical_node/tactical_node.py -> /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node
+[6.433s] copying /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib/tactical_node/logs.py -> /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node
+[6.433s] copying /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib/tactical_node/kalman_filter.py -> /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node
+[6.433s] copying /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build/lib/tactical_node/__init__.py -> /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node
+[6.434s] byte-compiling /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node/comm_base.py to comm_base.cpython-310.pyc
+[6.435s] byte-compiling /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node/parameters.py to parameters.cpython-310.pyc
+[6.435s] byte-compiling /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node/critical_region.py to critical_region.cpython-310.pyc
+[6.438s] byte-compiling /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node/target_prediction.py to target_prediction.cpython-310.pyc
+[6.439s] byte-compiling /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node/ego_prediction.py to ego_prediction.cpython-310.pyc
+[6.440s] byte-compiling /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node/tactical_behaviour.py to tactical_behaviour.cpython-310.pyc
+[6.443s] byte-compiling /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node/comm_test.py to comm_test.cpython-310.pyc
+[6.443s] byte-compiling /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node/tactical_action.py to tactical_action.cpython-310.pyc
+[6.444s] byte-compiling /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node/ego_pose.py to ego_pose.cpython-310.pyc
+[6.444s] byte-compiling /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node/tactical_node.py to tactical_node.cpython-310.pyc
+[6.447s] byte-compiling /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node/logs.py to logs.cpython-310.pyc
+[6.448s] byte-compiling /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node/kalman_filter.py to kalman_filter.cpython-310.pyc
+[6.449s] byte-compiling /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node/__init__.py to __init__.cpython-310.pyc
+[6.449s] running install_data
+[6.449s] creating /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/share/ament_index
+[6.450s] creating /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/share/ament_index/resource_index
+[6.450s] creating /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/share/ament_index/resource_index/packages
+[6.450s] copying resource/tactical_node -> /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/share/ament_index/resource_index/packages
+[6.450s] copying package.xml -> /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/share/tactical_node
+[6.450s] running install_egg_info
+[6.455s] Copying ../../build/tactical_node/tactical_node.egg-info to /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages/tactical_node-0.0.0-py3.10.egg-info
+[6.457s] running install_scripts
+[6.506s] Installing tactical_node script to /home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/tactical_node
+[6.511s] writing list of installed files to '/home/nvidia/KvaserCar_outdoor_test/build/tactical_node/install.log'
+[6.587s] Invoked command in '/home/nvidia/KvaserCar_outdoor_test/src/tactical_node' returned '0': PYTHONPATH=/home/nvidia/KvaserCar_outdoor_test/build/tactical_node/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/tactical_node build --build-base /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build install --record /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/install.log --single-version-externally-managed install_data

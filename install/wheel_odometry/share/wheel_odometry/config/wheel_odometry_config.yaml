@@ -1,0 +1,5 @@
+rover_odometry_node:
+  ros__parameters:
+    wheelbase: 0.55
+    update_frequency: 20.0
+    is_radio: 1

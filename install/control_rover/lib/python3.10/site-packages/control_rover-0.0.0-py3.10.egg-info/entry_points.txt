@@ -1,0 +1,3 @@
+[console_scripts]
+low_level_control = control_rover.low_level_control:main
+

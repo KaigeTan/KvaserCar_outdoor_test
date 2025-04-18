@@ -1,0 +1,20 @@
+[5.593s] Invoking command in '/home/nvidia/KvaserCar_outdoor_test/src/outdoor_test': PYTHONPATH=/home/nvidia/KvaserCar_outdoor_test/build/outdoor_test/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/KvaserCar_outdoor_test/install/outdoor_test/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/outdoor_test build --build-base /home/nvidia/KvaserCar_outdoor_test/build/outdoor_test/build install --record /home/nvidia/KvaserCar_outdoor_test/build/outdoor_test/install.log --single-version-externally-managed install_data
+[6.346s] running egg_info
+[6.349s] writing ../../build/outdoor_test/outdoor_test.egg-info/PKG-INFO
+[6.350s] writing dependency_links to ../../build/outdoor_test/outdoor_test.egg-info/dependency_links.txt
+[6.350s] writing entry points to ../../build/outdoor_test/outdoor_test.egg-info/entry_points.txt
+[6.350s] writing requirements to ../../build/outdoor_test/outdoor_test.egg-info/requires.txt
+[6.351s] writing top-level names to ../../build/outdoor_test/outdoor_test.egg-info/top_level.txt
+[6.355s] reading manifest file '../../build/outdoor_test/outdoor_test.egg-info/SOURCES.txt'
+[6.359s] writing manifest file '../../build/outdoor_test/outdoor_test.egg-info/SOURCES.txt'
+[6.359s] running build
+[6.359s] running build_py
+[6.359s] running install
+[6.360s] running install_lib
+[6.363s] running install_data
+[6.363s] running install_egg_info
+[6.369s] removing '/home/nvidia/KvaserCar_outdoor_test/install/outdoor_test/lib/python3.10/site-packages/outdoor_test-0.0.0-py3.10.egg-info' (and everything under it)
+[6.370s] Copying ../../build/outdoor_test/outdoor_test.egg-info to /home/nvidia/KvaserCar_outdoor_test/install/outdoor_test/lib/python3.10/site-packages/outdoor_test-0.0.0-py3.10.egg-info
+[6.372s] running install_scripts
+[6.431s] writing list of installed files to '/home/nvidia/KvaserCar_outdoor_test/build/outdoor_test/install.log'
+[6.526s] Invoked command in '/home/nvidia/KvaserCar_outdoor_test/src/outdoor_test' returned '0': PYTHONPATH=/home/nvidia/KvaserCar_outdoor_test/build/outdoor_test/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/KvaserCar_outdoor_test/install/outdoor_test/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/outdoor_test build --build-base /home/nvidia/KvaserCar_outdoor_test/build/outdoor_test/build install --record /home/nvidia/KvaserCar_outdoor_test/build/outdoor_test/install.log --single-version-externally-managed install_data

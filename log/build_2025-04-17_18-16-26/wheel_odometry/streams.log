@@ -1,0 +1,21 @@
+[5.541s] Invoking command in '/home/nvidia/KvaserCar_outdoor_test/src/wheel_odometry': PYTHONPATH=/home/nvidia/KvaserCar_outdoor_test/build/wheel_odometry/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/KvaserCar_outdoor_test/install/wheel_odometry/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/wheel_odometry build --build-base /home/nvidia/KvaserCar_outdoor_test/build/wheel_odometry/build install --record /home/nvidia/KvaserCar_outdoor_test/build/wheel_odometry/install.log --single-version-externally-managed install_data
+[6.202s] running egg_info
+[6.203s] writing ../../build/wheel_odometry/wheel_odometry.egg-info/PKG-INFO
+[6.208s] writing dependency_links to ../../build/wheel_odometry/wheel_odometry.egg-info/dependency_links.txt
+[6.208s] writing entry points to ../../build/wheel_odometry/wheel_odometry.egg-info/entry_points.txt
+[6.208s] writing requirements to ../../build/wheel_odometry/wheel_odometry.egg-info/requires.txt
+[6.208s] writing top-level names to ../../build/wheel_odometry/wheel_odometry.egg-info/top_level.txt
+[6.212s] reading manifest file '../../build/wheel_odometry/wheel_odometry.egg-info/SOURCES.txt'
+[6.214s] writing manifest file '../../build/wheel_odometry/wheel_odometry.egg-info/SOURCES.txt'
+[6.215s] running build
+[6.215s] running build_py
+[6.215s] running install
+[6.215s] running install_lib
+[6.221s] running install_data
+[6.221s] running install_egg_info
+[6.222s] removing '/home/nvidia/KvaserCar_outdoor_test/install/wheel_odometry/lib/python3.10/site-packages/wheel_odometry-0.1.0-py3.10.egg-info' (and everything under it)
+[6.223s] Copying ../../build/wheel_odometry/wheel_odometry.egg-info to /home/nvidia/KvaserCar_outdoor_test/install/wheel_odometry/lib/python3.10/site-packages/wheel_odometry-0.1.0-py3.10.egg-info
+[6.224s] running install_scripts
+[6.279s] Installing wheel_odometry_node script to /home/nvidia/KvaserCar_outdoor_test/install/wheel_odometry/lib/wheel_odometry
+[6.280s] writing list of installed files to '/home/nvidia/KvaserCar_outdoor_test/build/wheel_odometry/install.log'
+[6.398s] Invoked command in '/home/nvidia/KvaserCar_outdoor_test/src/wheel_odometry' returned '0': PYTHONPATH=/home/nvidia/KvaserCar_outdoor_test/build/wheel_odometry/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/KvaserCar_outdoor_test/install/wheel_odometry/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/wheel_odometry build --build-base /home/nvidia/KvaserCar_outdoor_test/build/wheel_odometry/build install --record /home/nvidia/KvaserCar_outdoor_test/build/wheel_odometry/install.log --single-version-externally-managed install_data

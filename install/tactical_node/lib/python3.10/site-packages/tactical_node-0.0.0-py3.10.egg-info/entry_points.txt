@@ -1,0 +1,3 @@
+[console_scripts]
+tactical_node = tactical_node.tactical_node:main
+

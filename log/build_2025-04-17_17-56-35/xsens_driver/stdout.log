@@ -1,0 +1,44 @@
+running egg_info
+creating ../../build/xsens_driver/xsens_driver.egg-info
+writing ../../build/xsens_driver/xsens_driver.egg-info/PKG-INFO
+writing dependency_links to ../../build/xsens_driver/xsens_driver.egg-info/dependency_links.txt
+writing entry points to ../../build/xsens_driver/xsens_driver.egg-info/entry_points.txt
+writing requirements to ../../build/xsens_driver/xsens_driver.egg-info/requires.txt
+writing top-level names to ../../build/xsens_driver/xsens_driver.egg-info/top_level.txt
+writing manifest file '../../build/xsens_driver/xsens_driver.egg-info/SOURCES.txt'
+reading manifest file '../../build/xsens_driver/xsens_driver.egg-info/SOURCES.txt'
+adding license file 'LICENCE'
+adding license file 'AUTHORS'
+writing manifest file '../../build/xsens_driver/xsens_driver.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/nvidia/KvaserCar_outdoor_test/build/xsens_driver/build
+creating /home/nvidia/KvaserCar_outdoor_test/build/xsens_driver/build/lib
+creating /home/nvidia/KvaserCar_outdoor_test/build/xsens_driver/build/lib/xsens_driver
+copying xsens_driver/mtnode.py -> /home/nvidia/KvaserCar_outdoor_test/build/xsens_driver/build/lib/xsens_driver
+copying xsens_driver/mtdef.py -> /home/nvidia/KvaserCar_outdoor_test/build/xsens_driver/build/lib/xsens_driver
+copying xsens_driver/mtdevice.py -> /home/nvidia/KvaserCar_outdoor_test/build/xsens_driver/build/lib/xsens_driver
+copying xsens_driver/__init__.py -> /home/nvidia/KvaserCar_outdoor_test/build/xsens_driver/build/lib/xsens_driver
+running install
+running install_lib
+creating /home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/lib/python3.10/site-packages/xsens_driver
+copying /home/nvidia/KvaserCar_outdoor_test/build/xsens_driver/build/lib/xsens_driver/mtnode.py -> /home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/lib/python3.10/site-packages/xsens_driver
+copying /home/nvidia/KvaserCar_outdoor_test/build/xsens_driver/build/lib/xsens_driver/mtdef.py -> /home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/lib/python3.10/site-packages/xsens_driver
+copying /home/nvidia/KvaserCar_outdoor_test/build/xsens_driver/build/lib/xsens_driver/mtdevice.py -> /home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/lib/python3.10/site-packages/xsens_driver
+copying /home/nvidia/KvaserCar_outdoor_test/build/xsens_driver/build/lib/xsens_driver/__init__.py -> /home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/lib/python3.10/site-packages/xsens_driver
+byte-compiling /home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/lib/python3.10/site-packages/xsens_driver/mtnode.py to mtnode.cpython-310.pyc
+byte-compiling /home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/lib/python3.10/site-packages/xsens_driver/mtdef.py to mtdef.cpython-310.pyc
+byte-compiling /home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/lib/python3.10/site-packages/xsens_driver/mtdevice.py to mtdevice.cpython-310.pyc
+byte-compiling /home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/lib/python3.10/site-packages/xsens_driver/__init__.py to __init__.cpython-310.pyc
+running install_data
+copying package.xml -> /home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/share/xsens_driver
+creating /home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/share/ament_index
+creating /home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/share/ament_index/resource_index
+creating /home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/share/ament_index/resource_index/packages
+copying resource/xsens_driver -> /home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/share/ament_index/resource_index/packages
+copying launch/xsens_driver.launch.xml -> /home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/share/xsens_driver
+running install_egg_info
+Copying ../../build/xsens_driver/xsens_driver.egg-info to /home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/lib/python3.10/site-packages/xsens_driver-3.0.0-py3.10.egg-info
+running install_scripts
+Installing mtnode.py script to /home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/lib/xsens_driver
+writing list of installed files to '/home/nvidia/KvaserCar_outdoor_test/build/xsens_driver/install.log'
