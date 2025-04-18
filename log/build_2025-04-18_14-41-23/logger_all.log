@@ -1,0 +1,442 @@
+[0.209s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build']
+[0.209s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='build', build_base='build', install_base='install', merge_install=False, symlink_install=False, test_result_base=None, continue_on_error=False, executor='parallel', parallel_workers=8, event_handlers=None, ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=None, packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, allow_overriding=[], cmake_args=None, cmake_target=None, cmake_target_skip_unavailable=False, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, ament_cmake_args=None, catkin_cmake_args=None, catkin_skip_building_tests=False, mixin_files=None, mixin=None, verb_parser=<colcon_mixin.mixin.mixin_argument.MixinArgumentDecorator object at 0xffffa0b98c70>, verb_extension=<colcon_core.verb.build.BuildVerb object at 0xffffa0b98640>, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0xffffa0b98640>>, mixin_verb=('build',))
+[0.582s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.582s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.583s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.583s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.583s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[0.583s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.583s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/nvidia/KvaserCar_outdoor_test'
+[0.583s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[0.584s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[0.584s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[0.584s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[0.584s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[0.584s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[0.584s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[0.584s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[0.584s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[0.623s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'python']
+[0.623s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[0.623s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[0.624s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['python_setup_py']
+[0.624s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python_setup_py'
+[0.624s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extensions ['ignore', 'ignore_ament_install']
+[0.624s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extension 'ignore'
+[0.624s] Level 1:colcon.colcon_core.package_identification:_identify(build) ignored
+[0.624s] Level 1:colcon.colcon_core.package_identification:_identify(data) by extensions ['ignore', 'ignore_ament_install']
+[0.625s] Level 1:colcon.colcon_core.package_identification:_identify(data) by extension 'ignore'
+[0.625s] Level 1:colcon.colcon_core.package_identification:_identify(data) by extension 'ignore_ament_install'
+[0.625s] Level 1:colcon.colcon_core.package_identification:_identify(data) by extensions ['colcon_pkg']
+[0.625s] Level 1:colcon.colcon_core.package_identification:_identify(data) by extension 'colcon_pkg'
+[0.625s] Level 1:colcon.colcon_core.package_identification:_identify(data) by extensions ['colcon_meta']
+[0.625s] Level 1:colcon.colcon_core.package_identification:_identify(data) by extension 'colcon_meta'
+[0.625s] Level 1:colcon.colcon_core.package_identification:_identify(data) by extensions ['ros']
+[0.625s] Level 1:colcon.colcon_core.package_identification:_identify(data) by extension 'ros'
+[0.625s] Level 1:colcon.colcon_core.package_identification:_identify(data) by extensions ['cmake', 'python']
+[0.625s] Level 1:colcon.colcon_core.package_identification:_identify(data) by extension 'cmake'
+[0.625s] Level 1:colcon.colcon_core.package_identification:_identify(data) by extension 'python'
+[0.626s] Level 1:colcon.colcon_core.package_identification:_identify(data) by extensions ['python_setup_py']
+[0.626s] Level 1:colcon.colcon_core.package_identification:_identify(data) by extension 'python_setup_py'
+[0.626s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extensions ['ignore', 'ignore_ament_install']
+[0.626s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extension 'ignore'
+[0.626s] Level 1:colcon.colcon_core.package_identification:_identify(install) ignored
+[0.626s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extensions ['ignore', 'ignore_ament_install']
+[0.626s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extension 'ignore'
+[0.627s] Level 1:colcon.colcon_core.package_identification:_identify(log) ignored
+[0.627s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ignore', 'ignore_ament_install']
+[0.627s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore'
+[0.627s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore_ament_install'
+[0.627s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_pkg']
+[0.627s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_pkg'
+[0.627s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_meta']
+[0.627s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_meta'
+[0.627s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ros']
+[0.627s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ros'
+[0.628s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['cmake', 'python']
+[0.628s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'cmake'
+[0.628s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python'
+[0.628s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['python_setup_py']
+[0.628s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python_setup_py'
+[0.628s] Level 1:colcon.colcon_core.package_identification:_identify(src/aeb_rover) by extensions ['ignore', 'ignore_ament_install']
+[0.628s] Level 1:colcon.colcon_core.package_identification:_identify(src/aeb_rover) by extension 'ignore'
+[0.628s] Level 1:colcon.colcon_core.package_identification:_identify(src/aeb_rover) by extension 'ignore_ament_install'
+[0.628s] Level 1:colcon.colcon_core.package_identification:_identify(src/aeb_rover) by extensions ['colcon_pkg']
+[0.628s] Level 1:colcon.colcon_core.package_identification:_identify(src/aeb_rover) by extension 'colcon_pkg'
+[0.628s] Level 1:colcon.colcon_core.package_identification:_identify(src/aeb_rover) by extensions ['colcon_meta']
+[0.629s] Level 1:colcon.colcon_core.package_identification:_identify(src/aeb_rover) by extension 'colcon_meta'
+[0.629s] Level 1:colcon.colcon_core.package_identification:_identify(src/aeb_rover) by extensions ['ros']
+[0.629s] Level 1:colcon.colcon_core.package_identification:_identify(src/aeb_rover) by extension 'ros'
+[0.633s] DEBUG:colcon.colcon_core.package_identification:Package 'src/aeb_rover' with type 'ros.ament_python' and name 'aeb_rover'
+[0.633s] Level 1:colcon.colcon_core.package_identification:_identify(src/control_rover) by extensions ['ignore', 'ignore_ament_install']
+[0.633s] Level 1:colcon.colcon_core.package_identification:_identify(src/control_rover) by extension 'ignore'
+[0.634s] Level 1:colcon.colcon_core.package_identification:_identify(src/control_rover) by extension 'ignore_ament_install'
+[0.634s] Level 1:colcon.colcon_core.package_identification:_identify(src/control_rover) by extensions ['colcon_pkg']
+[0.634s] Level 1:colcon.colcon_core.package_identification:_identify(src/control_rover) by extension 'colcon_pkg'
+[0.634s] Level 1:colcon.colcon_core.package_identification:_identify(src/control_rover) by extensions ['colcon_meta']
+[0.634s] Level 1:colcon.colcon_core.package_identification:_identify(src/control_rover) by extension 'colcon_meta'
+[0.634s] Level 1:colcon.colcon_core.package_identification:_identify(src/control_rover) by extensions ['ros']
+[0.634s] Level 1:colcon.colcon_core.package_identification:_identify(src/control_rover) by extension 'ros'
+[0.635s] DEBUG:colcon.colcon_core.package_identification:Package 'src/control_rover' with type 'ros.ament_python' and name 'control_rover'
+[0.635s] Level 1:colcon.colcon_core.package_identification:_identify(src/norlab_xsens_driver) by extensions ['ignore', 'ignore_ament_install']
+[0.635s] Level 1:colcon.colcon_core.package_identification:_identify(src/norlab_xsens_driver) by extension 'ignore'
+[0.636s] Level 1:colcon.colcon_core.package_identification:_identify(src/norlab_xsens_driver) by extension 'ignore_ament_install'
+[0.636s] Level 1:colcon.colcon_core.package_identification:_identify(src/norlab_xsens_driver) by extensions ['colcon_pkg']
+[0.636s] Level 1:colcon.colcon_core.package_identification:_identify(src/norlab_xsens_driver) by extension 'colcon_pkg'
+[0.636s] Level 1:colcon.colcon_core.package_identification:_identify(src/norlab_xsens_driver) by extensions ['colcon_meta']
+[0.636s] Level 1:colcon.colcon_core.package_identification:_identify(src/norlab_xsens_driver) by extension 'colcon_meta'
+[0.636s] Level 1:colcon.colcon_core.package_identification:_identify(src/norlab_xsens_driver) by extensions ['ros']
+[0.636s] Level 1:colcon.colcon_core.package_identification:_identify(src/norlab_xsens_driver) by extension 'ros'
+[0.638s] DEBUG:colcon.colcon_core.package_identification:Package 'src/norlab_xsens_driver' with type 'ros.ament_python' and name 'xsens_driver'
+[0.638s] Level 1:colcon.colcon_core.package_identification:_identify(src/outdoor_test) by extensions ['ignore', 'ignore_ament_install']
+[0.638s] Level 1:colcon.colcon_core.package_identification:_identify(src/outdoor_test) by extension 'ignore'
+[0.638s] Level 1:colcon.colcon_core.package_identification:_identify(src/outdoor_test) by extension 'ignore_ament_install'
+[0.638s] Level 1:colcon.colcon_core.package_identification:_identify(src/outdoor_test) by extensions ['colcon_pkg']
+[0.638s] Level 1:colcon.colcon_core.package_identification:_identify(src/outdoor_test) by extension 'colcon_pkg'
+[0.638s] Level 1:colcon.colcon_core.package_identification:_identify(src/outdoor_test) by extensions ['colcon_meta']
+[0.639s] Level 1:colcon.colcon_core.package_identification:_identify(src/outdoor_test) by extension 'colcon_meta'
+[0.639s] Level 1:colcon.colcon_core.package_identification:_identify(src/outdoor_test) by extensions ['ros']
+[0.639s] Level 1:colcon.colcon_core.package_identification:_identify(src/outdoor_test) by extension 'ros'
+[0.640s] DEBUG:colcon.colcon_core.package_identification:Package 'src/outdoor_test' with type 'ros.ament_python' and name 'outdoor_test'
+[0.640s] Level 1:colcon.colcon_core.package_identification:_identify(src/tactical_node) by extensions ['ignore', 'ignore_ament_install']
+[0.640s] Level 1:colcon.colcon_core.package_identification:_identify(src/tactical_node) by extension 'ignore'
+[0.640s] Level 1:colcon.colcon_core.package_identification:_identify(src/tactical_node) by extension 'ignore_ament_install'
+[0.640s] Level 1:colcon.colcon_core.package_identification:_identify(src/tactical_node) by extensions ['colcon_pkg']
+[0.640s] Level 1:colcon.colcon_core.package_identification:_identify(src/tactical_node) by extension 'colcon_pkg'
+[0.641s] Level 1:colcon.colcon_core.package_identification:_identify(src/tactical_node) by extensions ['colcon_meta']
+[0.641s] Level 1:colcon.colcon_core.package_identification:_identify(src/tactical_node) by extension 'colcon_meta'
+[0.641s] Level 1:colcon.colcon_core.package_identification:_identify(src/tactical_node) by extensions ['ros']
+[0.641s] Level 1:colcon.colcon_core.package_identification:_identify(src/tactical_node) by extension 'ros'
+[0.642s] DEBUG:colcon.colcon_core.package_identification:Package 'src/tactical_node' with type 'ros.ament_python' and name 'tactical_node'
+[0.642s] Level 1:colcon.colcon_core.package_identification:_identify(src/visualize_car) by extensions ['ignore', 'ignore_ament_install']
+[0.642s] Level 1:colcon.colcon_core.package_identification:_identify(src/visualize_car) by extension 'ignore'
+[0.642s] Level 1:colcon.colcon_core.package_identification:_identify(src/visualize_car) by extension 'ignore_ament_install'
+[0.642s] Level 1:colcon.colcon_core.package_identification:_identify(src/visualize_car) by extensions ['colcon_pkg']
+[0.642s] Level 1:colcon.colcon_core.package_identification:_identify(src/visualize_car) by extension 'colcon_pkg'
+[0.642s] Level 1:colcon.colcon_core.package_identification:_identify(src/visualize_car) by extensions ['colcon_meta']
+[0.642s] Level 1:colcon.colcon_core.package_identification:_identify(src/visualize_car) by extension 'colcon_meta'
+[0.642s] Level 1:colcon.colcon_core.package_identification:_identify(src/visualize_car) by extensions ['ros']
+[0.642s] Level 1:colcon.colcon_core.package_identification:_identify(src/visualize_car) by extension 'ros'
+[0.643s] DEBUG:colcon.colcon_core.package_identification:Package 'src/visualize_car' with type 'ros.ament_python' and name 'visualize_car'
+[0.643s] Level 1:colcon.colcon_core.package_identification:_identify(src/wheel_odometry) by extensions ['ignore', 'ignore_ament_install']
+[0.644s] Level 1:colcon.colcon_core.package_identification:_identify(src/wheel_odometry) by extension 'ignore'
+[0.644s] Level 1:colcon.colcon_core.package_identification:_identify(src/wheel_odometry) by extension 'ignore_ament_install'
+[0.644s] Level 1:colcon.colcon_core.package_identification:_identify(src/wheel_odometry) by extensions ['colcon_pkg']
+[0.644s] Level 1:colcon.colcon_core.package_identification:_identify(src/wheel_odometry) by extension 'colcon_pkg'
+[0.644s] Level 1:colcon.colcon_core.package_identification:_identify(src/wheel_odometry) by extensions ['colcon_meta']
+[0.644s] Level 1:colcon.colcon_core.package_identification:_identify(src/wheel_odometry) by extension 'colcon_meta'
+[0.644s] Level 1:colcon.colcon_core.package_identification:_identify(src/wheel_odometry) by extensions ['ros']
+[0.644s] Level 1:colcon.colcon_core.package_identification:_identify(src/wheel_odometry) by extension 'ros'
+[0.645s] DEBUG:colcon.colcon_core.package_identification:Package 'src/wheel_odometry' with type 'ros.ament_python' and name 'wheel_odometry'
+[0.645s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[0.645s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[0.645s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[0.645s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[0.645s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[0.684s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) check parameters
+[0.684s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) discover
+[0.688s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 7 installed packages in /home/nvidia/KvaserCar_outdoor_test/install
+[0.690s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 382 installed packages in /opt/ros/humble
+[0.693s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) using defaults
+[0.776s] Level 5:colcon.colcon_core.verb:set package 'aeb_rover' build argument 'cmake_args' from command line to 'None'
+[0.776s] Level 5:colcon.colcon_core.verb:set package 'aeb_rover' build argument 'cmake_target' from command line to 'None'
+[0.776s] Level 5:colcon.colcon_core.verb:set package 'aeb_rover' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.776s] Level 5:colcon.colcon_core.verb:set package 'aeb_rover' build argument 'cmake_clean_cache' from command line to 'False'
+[0.776s] Level 5:colcon.colcon_core.verb:set package 'aeb_rover' build argument 'cmake_clean_first' from command line to 'False'
+[0.777s] Level 5:colcon.colcon_core.verb:set package 'aeb_rover' build argument 'cmake_force_configure' from command line to 'False'
+[0.777s] Level 5:colcon.colcon_core.verb:set package 'aeb_rover' build argument 'ament_cmake_args' from command line to 'None'
+[0.777s] Level 5:colcon.colcon_core.verb:set package 'aeb_rover' build argument 'catkin_cmake_args' from command line to 'None'
+[0.777s] Level 5:colcon.colcon_core.verb:set package 'aeb_rover' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.777s] DEBUG:colcon.colcon_core.verb:Building package 'aeb_rover' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/nvidia/KvaserCar_outdoor_test/build/aeb_rover', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/nvidia/KvaserCar_outdoor_test/install/aeb_rover', 'merge_install': False, 'path': '/home/nvidia/KvaserCar_outdoor_test/src/aeb_rover', 'symlink_install': False, 'test_result_base': None}
+[0.777s] Level 5:colcon.colcon_core.verb:set package 'control_rover' build argument 'cmake_args' from command line to 'None'
+[0.777s] Level 5:colcon.colcon_core.verb:set package 'control_rover' build argument 'cmake_target' from command line to 'None'
+[0.777s] Level 5:colcon.colcon_core.verb:set package 'control_rover' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.778s] Level 5:colcon.colcon_core.verb:set package 'control_rover' build argument 'cmake_clean_cache' from command line to 'False'
+[0.778s] Level 5:colcon.colcon_core.verb:set package 'control_rover' build argument 'cmake_clean_first' from command line to 'False'
+[0.778s] Level 5:colcon.colcon_core.verb:set package 'control_rover' build argument 'cmake_force_configure' from command line to 'False'
+[0.778s] Level 5:colcon.colcon_core.verb:set package 'control_rover' build argument 'ament_cmake_args' from command line to 'None'
+[0.778s] Level 5:colcon.colcon_core.verb:set package 'control_rover' build argument 'catkin_cmake_args' from command line to 'None'
+[0.778s] Level 5:colcon.colcon_core.verb:set package 'control_rover' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.778s] DEBUG:colcon.colcon_core.verb:Building package 'control_rover' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/nvidia/KvaserCar_outdoor_test/build/control_rover', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/nvidia/KvaserCar_outdoor_test/install/control_rover', 'merge_install': False, 'path': '/home/nvidia/KvaserCar_outdoor_test/src/control_rover', 'symlink_install': False, 'test_result_base': None}
+[0.778s] Level 5:colcon.colcon_core.verb:set package 'outdoor_test' build argument 'cmake_args' from command line to 'None'
+[0.778s] Level 5:colcon.colcon_core.verb:set package 'outdoor_test' build argument 'cmake_target' from command line to 'None'
+[0.778s] Level 5:colcon.colcon_core.verb:set package 'outdoor_test' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.779s] Level 5:colcon.colcon_core.verb:set package 'outdoor_test' build argument 'cmake_clean_cache' from command line to 'False'
+[0.779s] Level 5:colcon.colcon_core.verb:set package 'outdoor_test' build argument 'cmake_clean_first' from command line to 'False'
+[0.779s] Level 5:colcon.colcon_core.verb:set package 'outdoor_test' build argument 'cmake_force_configure' from command line to 'False'
+[0.779s] Level 5:colcon.colcon_core.verb:set package 'outdoor_test' build argument 'ament_cmake_args' from command line to 'None'
+[0.779s] Level 5:colcon.colcon_core.verb:set package 'outdoor_test' build argument 'catkin_cmake_args' from command line to 'None'
+[0.779s] Level 5:colcon.colcon_core.verb:set package 'outdoor_test' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.779s] DEBUG:colcon.colcon_core.verb:Building package 'outdoor_test' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/nvidia/KvaserCar_outdoor_test/build/outdoor_test', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/nvidia/KvaserCar_outdoor_test/install/outdoor_test', 'merge_install': False, 'path': '/home/nvidia/KvaserCar_outdoor_test/src/outdoor_test', 'symlink_install': False, 'test_result_base': None}
+[0.779s] Level 5:colcon.colcon_core.verb:set package 'tactical_node' build argument 'cmake_args' from command line to 'None'
+[0.779s] Level 5:colcon.colcon_core.verb:set package 'tactical_node' build argument 'cmake_target' from command line to 'None'
+[0.779s] Level 5:colcon.colcon_core.verb:set package 'tactical_node' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.779s] Level 5:colcon.colcon_core.verb:set package 'tactical_node' build argument 'cmake_clean_cache' from command line to 'False'
+[0.780s] Level 5:colcon.colcon_core.verb:set package 'tactical_node' build argument 'cmake_clean_first' from command line to 'False'
+[0.780s] Level 5:colcon.colcon_core.verb:set package 'tactical_node' build argument 'cmake_force_configure' from command line to 'False'
+[0.780s] Level 5:colcon.colcon_core.verb:set package 'tactical_node' build argument 'ament_cmake_args' from command line to 'None'
+[0.780s] Level 5:colcon.colcon_core.verb:set package 'tactical_node' build argument 'catkin_cmake_args' from command line to 'None'
+[0.780s] Level 5:colcon.colcon_core.verb:set package 'tactical_node' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.780s] DEBUG:colcon.colcon_core.verb:Building package 'tactical_node' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/nvidia/KvaserCar_outdoor_test/build/tactical_node', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/nvidia/KvaserCar_outdoor_test/install/tactical_node', 'merge_install': False, 'path': '/home/nvidia/KvaserCar_outdoor_test/src/tactical_node', 'symlink_install': False, 'test_result_base': None}
+[0.780s] Level 5:colcon.colcon_core.verb:set package 'visualize_car' build argument 'cmake_args' from command line to 'None'
+[0.780s] Level 5:colcon.colcon_core.verb:set package 'visualize_car' build argument 'cmake_target' from command line to 'None'
+[0.780s] Level 5:colcon.colcon_core.verb:set package 'visualize_car' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.780s] Level 5:colcon.colcon_core.verb:set package 'visualize_car' build argument 'cmake_clean_cache' from command line to 'False'
+[0.781s] Level 5:colcon.colcon_core.verb:set package 'visualize_car' build argument 'cmake_clean_first' from command line to 'False'
+[0.781s] Level 5:colcon.colcon_core.verb:set package 'visualize_car' build argument 'cmake_force_configure' from command line to 'False'
+[0.781s] Level 5:colcon.colcon_core.verb:set package 'visualize_car' build argument 'ament_cmake_args' from command line to 'None'
+[0.781s] Level 5:colcon.colcon_core.verb:set package 'visualize_car' build argument 'catkin_cmake_args' from command line to 'None'
+[0.781s] Level 5:colcon.colcon_core.verb:set package 'visualize_car' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.781s] DEBUG:colcon.colcon_core.verb:Building package 'visualize_car' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/nvidia/KvaserCar_outdoor_test/build/visualize_car', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/nvidia/KvaserCar_outdoor_test/install/visualize_car', 'merge_install': False, 'path': '/home/nvidia/KvaserCar_outdoor_test/src/visualize_car', 'symlink_install': False, 'test_result_base': None}
+[0.781s] Level 5:colcon.colcon_core.verb:set package 'wheel_odometry' build argument 'cmake_args' from command line to 'None'
+[0.781s] Level 5:colcon.colcon_core.verb:set package 'wheel_odometry' build argument 'cmake_target' from command line to 'None'
+[0.781s] Level 5:colcon.colcon_core.verb:set package 'wheel_odometry' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.781s] Level 5:colcon.colcon_core.verb:set package 'wheel_odometry' build argument 'cmake_clean_cache' from command line to 'False'
+[0.781s] Level 5:colcon.colcon_core.verb:set package 'wheel_odometry' build argument 'cmake_clean_first' from command line to 'False'
+[0.782s] Level 5:colcon.colcon_core.verb:set package 'wheel_odometry' build argument 'cmake_force_configure' from command line to 'False'
+[0.782s] Level 5:colcon.colcon_core.verb:set package 'wheel_odometry' build argument 'ament_cmake_args' from command line to 'None'
+[0.782s] Level 5:colcon.colcon_core.verb:set package 'wheel_odometry' build argument 'catkin_cmake_args' from command line to 'None'
+[0.782s] Level 5:colcon.colcon_core.verb:set package 'wheel_odometry' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.782s] DEBUG:colcon.colcon_core.verb:Building package 'wheel_odometry' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/nvidia/KvaserCar_outdoor_test/build/wheel_odometry', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/nvidia/KvaserCar_outdoor_test/install/wheel_odometry', 'merge_install': False, 'path': '/home/nvidia/KvaserCar_outdoor_test/src/wheel_odometry', 'symlink_install': False, 'test_result_base': None}
+[0.782s] Level 5:colcon.colcon_core.verb:set package 'xsens_driver' build argument 'cmake_args' from command line to 'None'
+[0.782s] Level 5:colcon.colcon_core.verb:set package 'xsens_driver' build argument 'cmake_target' from command line to 'None'
+[0.782s] Level 5:colcon.colcon_core.verb:set package 'xsens_driver' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.782s] Level 5:colcon.colcon_core.verb:set package 'xsens_driver' build argument 'cmake_clean_cache' from command line to 'False'
+[0.782s] Level 5:colcon.colcon_core.verb:set package 'xsens_driver' build argument 'cmake_clean_first' from command line to 'False'
+[0.782s] Level 5:colcon.colcon_core.verb:set package 'xsens_driver' build argument 'cmake_force_configure' from command line to 'False'
+[0.783s] Level 5:colcon.colcon_core.verb:set package 'xsens_driver' build argument 'ament_cmake_args' from command line to 'None'
+[0.783s] Level 5:colcon.colcon_core.verb:set package 'xsens_driver' build argument 'catkin_cmake_args' from command line to 'None'
+[0.783s] Level 5:colcon.colcon_core.verb:set package 'xsens_driver' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.783s] DEBUG:colcon.colcon_core.verb:Building package 'xsens_driver' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/nvidia/KvaserCar_outdoor_test/build/xsens_driver', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/nvidia/KvaserCar_outdoor_test/install/xsens_driver', 'merge_install': False, 'path': '/home/nvidia/KvaserCar_outdoor_test/src/norlab_xsens_driver', 'symlink_install': False, 'test_result_base': None}
+[0.783s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[0.785s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[0.786s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/nvidia/KvaserCar_outdoor_test/src/aeb_rover' with build type 'ament_python'
+[0.786s] Level 1:colcon.colcon_core.shell:create_environment_hook('aeb_rover', 'ament_prefix_path')
+[0.790s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[0.790s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/share/aeb_rover/hook/ament_prefix_path.ps1'
+[0.791s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/share/aeb_rover/hook/ament_prefix_path.dsv'
+[0.792s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/share/aeb_rover/hook/ament_prefix_path.sh'
+[0.794s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.794s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.800s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/nvidia/KvaserCar_outdoor_test/src/control_rover' with build type 'ament_python'
+[0.801s] Level 1:colcon.colcon_core.shell:create_environment_hook('control_rover', 'ament_prefix_path')
+[0.801s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/control_rover/share/control_rover/hook/ament_prefix_path.ps1'
+[0.802s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/nvidia/KvaserCar_outdoor_test/install/control_rover/share/control_rover/hook/ament_prefix_path.dsv'
+[0.803s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/control_rover/share/control_rover/hook/ament_prefix_path.sh'
+[0.804s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.804s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.810s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/nvidia/KvaserCar_outdoor_test/src/outdoor_test' with build type 'ament_python'
+[0.810s] Level 1:colcon.colcon_core.shell:create_environment_hook('outdoor_test', 'ament_prefix_path')
+[0.811s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/outdoor_test/share/outdoor_test/hook/ament_prefix_path.ps1'
+[0.812s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/nvidia/KvaserCar_outdoor_test/install/outdoor_test/share/outdoor_test/hook/ament_prefix_path.dsv'
+[0.813s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/outdoor_test/share/outdoor_test/hook/ament_prefix_path.sh'
+[0.814s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.814s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.820s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/nvidia/KvaserCar_outdoor_test/src/tactical_node' with build type 'ament_python'
+[0.820s] Level 1:colcon.colcon_core.shell:create_environment_hook('tactical_node', 'ament_prefix_path')
+[0.821s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/tactical_node/share/tactical_node/hook/ament_prefix_path.ps1'
+[0.822s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/nvidia/KvaserCar_outdoor_test/install/tactical_node/share/tactical_node/hook/ament_prefix_path.dsv'
+[0.823s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/tactical_node/share/tactical_node/hook/ament_prefix_path.sh'
+[0.824s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.824s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.830s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/nvidia/KvaserCar_outdoor_test/src/visualize_car' with build type 'ament_python'
+[0.830s] Level 1:colcon.colcon_core.shell:create_environment_hook('visualize_car', 'ament_prefix_path')
+[0.831s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/visualize_car/share/visualize_car/hook/ament_prefix_path.ps1'
+[0.832s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/nvidia/KvaserCar_outdoor_test/install/visualize_car/share/visualize_car/hook/ament_prefix_path.dsv'
+[0.833s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/visualize_car/share/visualize_car/hook/ament_prefix_path.sh'
+[0.834s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.834s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.839s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/nvidia/KvaserCar_outdoor_test/src/wheel_odometry' with build type 'ament_python'
+[0.840s] Level 1:colcon.colcon_core.shell:create_environment_hook('wheel_odometry', 'ament_prefix_path')
+[0.840s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/wheel_odometry/share/wheel_odometry/hook/ament_prefix_path.ps1'
+[0.841s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/nvidia/KvaserCar_outdoor_test/install/wheel_odometry/share/wheel_odometry/hook/ament_prefix_path.dsv'
+[0.842s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/wheel_odometry/share/wheel_odometry/hook/ament_prefix_path.sh'
+[0.843s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.843s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.849s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/nvidia/KvaserCar_outdoor_test/src/norlab_xsens_driver' with build type 'ament_python'
+[0.849s] Level 1:colcon.colcon_core.shell:create_environment_hook('xsens_driver', 'ament_prefix_path')
+[0.849s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/share/xsens_driver/hook/ament_prefix_path.ps1'
+[0.850s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/share/xsens_driver/hook/ament_prefix_path.dsv'
+[0.851s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/share/xsens_driver/hook/ament_prefix_path.sh'
+[0.852s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.852s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.415s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/nvidia/KvaserCar_outdoor_test/src/aeb_rover'
+[1.416s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.416s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.969s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/nvidia/KvaserCar_outdoor_test/src/control_rover'
+[1.969s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.969s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[2.524s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/nvidia/KvaserCar_outdoor_test/src/outdoor_test'
+[2.525s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[2.526s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[3.090s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/nvidia/KvaserCar_outdoor_test/src/tactical_node'
+[3.091s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[3.091s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[3.645s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/nvidia/KvaserCar_outdoor_test/src/visualize_car'
+[3.647s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[3.647s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[4.199s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/nvidia/KvaserCar_outdoor_test/src/wheel_odometry'
+[4.200s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[4.200s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[4.782s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/nvidia/KvaserCar_outdoor_test/src/norlab_xsens_driver'
+[4.783s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[4.783s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[5.929s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/nvidia/KvaserCar_outdoor_test/src/outdoor_test': PYTHONPATH=/home/nvidia/KvaserCar_outdoor_test/build/outdoor_test/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/KvaserCar_outdoor_test/install/outdoor_test/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/outdoor_test build --build-base /home/nvidia/KvaserCar_outdoor_test/build/outdoor_test/build install --record /home/nvidia/KvaserCar_outdoor_test/build/outdoor_test/install.log --single-version-externally-managed install_data
+[5.935s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/nvidia/KvaserCar_outdoor_test/src/aeb_rover': PYTHONPATH=/home/nvidia/KvaserCar_outdoor_test/build/aeb_rover/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/aeb_rover build --build-base /home/nvidia/KvaserCar_outdoor_test/build/aeb_rover/build install --record /home/nvidia/KvaserCar_outdoor_test/build/aeb_rover/install.log --single-version-externally-managed install_data
+[5.946s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/nvidia/KvaserCar_outdoor_test/src/norlab_xsens_driver': PYTHONPATH=/home/nvidia/KvaserCar_outdoor_test/build/xsens_driver/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/xsens_driver build --build-base /home/nvidia/KvaserCar_outdoor_test/build/xsens_driver/build install --record /home/nvidia/KvaserCar_outdoor_test/build/xsens_driver/install.log --single-version-externally-managed install_data
+[5.953s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/nvidia/KvaserCar_outdoor_test/src/control_rover': PYTHONPATH=/home/nvidia/KvaserCar_outdoor_test/build/control_rover/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/KvaserCar_outdoor_test/install/control_rover/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/control_rover build --build-base /home/nvidia/KvaserCar_outdoor_test/build/control_rover/build install --record /home/nvidia/KvaserCar_outdoor_test/build/control_rover/install.log --single-version-externally-managed install_data
+[5.956s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/nvidia/KvaserCar_outdoor_test/src/wheel_odometry': PYTHONPATH=/home/nvidia/KvaserCar_outdoor_test/build/wheel_odometry/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/KvaserCar_outdoor_test/install/wheel_odometry/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/wheel_odometry build --build-base /home/nvidia/KvaserCar_outdoor_test/build/wheel_odometry/build install --record /home/nvidia/KvaserCar_outdoor_test/build/wheel_odometry/install.log --single-version-externally-managed install_data
+[5.967s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/nvidia/KvaserCar_outdoor_test/src/tactical_node': PYTHONPATH=/home/nvidia/KvaserCar_outdoor_test/build/tactical_node/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/tactical_node build --build-base /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build install --record /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/install.log --single-version-externally-managed install_data
+[6.006s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/nvidia/KvaserCar_outdoor_test/src/visualize_car': PYTHONPATH=/home/nvidia/KvaserCar_outdoor_test/build/visualize_car/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/KvaserCar_outdoor_test/install/visualize_car/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/visualize_car build --build-base /home/nvidia/KvaserCar_outdoor_test/build/visualize_car/build install --record /home/nvidia/KvaserCar_outdoor_test/build/visualize_car/install.log --single-version-externally-managed install_data
+[6.628s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/aeb_rover' for CMake module files
+[6.632s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/nvidia/KvaserCar_outdoor_test/src/aeb_rover' returned '0': PYTHONPATH=/home/nvidia/KvaserCar_outdoor_test/build/aeb_rover/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/aeb_rover build --build-base /home/nvidia/KvaserCar_outdoor_test/build/aeb_rover/build install --record /home/nvidia/KvaserCar_outdoor_test/build/aeb_rover/install.log --single-version-externally-managed install_data
+[6.633s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/aeb_rover' for CMake config files
+[6.634s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/lib'
+[6.635s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/bin'
+[6.635s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/lib/pkgconfig/aeb_rover.pc'
+[6.635s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/lib/python3.10/site-packages'
+[6.636s] Level 1:colcon.colcon_core.shell:create_environment_hook('aeb_rover', 'pythonpath')
+[6.636s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/share/aeb_rover/hook/pythonpath.ps1'
+[6.637s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/share/aeb_rover/hook/pythonpath.dsv'
+[6.638s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/share/aeb_rover/hook/pythonpath.sh'
+[6.639s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/bin'
+[6.640s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(aeb_rover)
+[6.640s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/share/aeb_rover/package.ps1'
+[6.642s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/share/aeb_rover/package.dsv'
+[6.644s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/share/aeb_rover/package.sh'
+[6.646s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/share/aeb_rover/package.bash'
+[6.647s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/share/aeb_rover/package.zsh'
+[6.648s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/nvidia/KvaserCar_outdoor_test/install/aeb_rover/share/colcon-core/packages/aeb_rover)
+[6.652s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/outdoor_test' for CMake module files
+[6.653s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/nvidia/KvaserCar_outdoor_test/src/outdoor_test' returned '0': PYTHONPATH=/home/nvidia/KvaserCar_outdoor_test/build/outdoor_test/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/KvaserCar_outdoor_test/install/outdoor_test/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/outdoor_test build --build-base /home/nvidia/KvaserCar_outdoor_test/build/outdoor_test/build install --record /home/nvidia/KvaserCar_outdoor_test/build/outdoor_test/install.log --single-version-externally-managed install_data
+[6.653s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/outdoor_test' for CMake config files
+[6.655s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/outdoor_test/lib'
+[6.655s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/outdoor_test/bin'
+[6.655s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/outdoor_test/lib/pkgconfig/outdoor_test.pc'
+[6.656s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/outdoor_test/lib/python3.10/site-packages'
+[6.656s] Level 1:colcon.colcon_core.shell:create_environment_hook('outdoor_test', 'pythonpath')
+[6.657s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/outdoor_test/share/outdoor_test/hook/pythonpath.ps1'
+[6.658s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/nvidia/KvaserCar_outdoor_test/install/outdoor_test/share/outdoor_test/hook/pythonpath.dsv'
+[6.659s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/outdoor_test/share/outdoor_test/hook/pythonpath.sh'
+[6.661s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/outdoor_test/bin'
+[6.661s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(outdoor_test)
+[6.662s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/outdoor_test/share/outdoor_test/package.ps1'
+[6.664s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/nvidia/KvaserCar_outdoor_test/install/outdoor_test/share/outdoor_test/package.dsv'
+[6.666s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/outdoor_test/share/outdoor_test/package.sh'
+[6.667s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/outdoor_test/share/outdoor_test/package.bash'
+[6.668s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/outdoor_test/share/outdoor_test/package.zsh'
+[6.669s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/nvidia/KvaserCar_outdoor_test/install/outdoor_test/share/colcon-core/packages/outdoor_test)
+[6.671s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/xsens_driver' for CMake module files
+[6.673s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/xsens_driver' for CMake config files
+[6.673s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/nvidia/KvaserCar_outdoor_test/src/norlab_xsens_driver' returned '0': PYTHONPATH=/home/nvidia/KvaserCar_outdoor_test/build/xsens_driver/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/xsens_driver build --build-base /home/nvidia/KvaserCar_outdoor_test/build/xsens_driver/build install --record /home/nvidia/KvaserCar_outdoor_test/build/xsens_driver/install.log --single-version-externally-managed install_data
+[6.675s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/lib'
+[6.675s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/bin'
+[6.675s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/lib/pkgconfig/xsens_driver.pc'
+[6.676s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/lib/python3.10/site-packages'
+[6.676s] Level 1:colcon.colcon_core.shell:create_environment_hook('xsens_driver', 'pythonpath')
+[6.677s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/share/xsens_driver/hook/pythonpath.ps1'
+[6.678s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/share/xsens_driver/hook/pythonpath.dsv'
+[6.679s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/share/xsens_driver/hook/pythonpath.sh'
+[6.681s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/bin'
+[6.681s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(xsens_driver)
+[6.682s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/share/xsens_driver/package.ps1'
+[6.683s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/share/xsens_driver/package.dsv'
+[6.684s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/share/xsens_driver/package.sh'
+[6.685s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/share/xsens_driver/package.bash'
+[6.686s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/share/xsens_driver/package.zsh'
+[6.687s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/nvidia/KvaserCar_outdoor_test/install/xsens_driver/share/colcon-core/packages/xsens_driver)
+[6.689s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/control_rover' for CMake module files
+[6.690s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/nvidia/KvaserCar_outdoor_test/src/control_rover' returned '0': PYTHONPATH=/home/nvidia/KvaserCar_outdoor_test/build/control_rover/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/KvaserCar_outdoor_test/install/control_rover/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/control_rover build --build-base /home/nvidia/KvaserCar_outdoor_test/build/control_rover/build install --record /home/nvidia/KvaserCar_outdoor_test/build/control_rover/install.log --single-version-externally-managed install_data
+[6.691s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/control_rover' for CMake config files
+[6.692s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/control_rover/lib'
+[6.693s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/control_rover/bin'
+[6.693s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/control_rover/lib/pkgconfig/control_rover.pc'
+[6.693s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/control_rover/lib/python3.10/site-packages'
+[6.693s] Level 1:colcon.colcon_core.shell:create_environment_hook('control_rover', 'pythonpath')
+[6.694s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/control_rover/share/control_rover/hook/pythonpath.ps1'
+[6.695s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/nvidia/KvaserCar_outdoor_test/install/control_rover/share/control_rover/hook/pythonpath.dsv'
+[6.696s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/control_rover/share/control_rover/hook/pythonpath.sh'
+[6.698s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/control_rover/bin'
+[6.698s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(control_rover)
+[6.698s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/control_rover/share/control_rover/package.ps1'
+[6.700s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/nvidia/KvaserCar_outdoor_test/install/control_rover/share/control_rover/package.dsv'
+[6.701s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/control_rover/share/control_rover/package.sh'
+[6.702s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/control_rover/share/control_rover/package.bash'
+[6.703s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/control_rover/share/control_rover/package.zsh'
+[6.704s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/nvidia/KvaserCar_outdoor_test/install/control_rover/share/colcon-core/packages/control_rover)
+[6.706s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/wheel_odometry' for CMake module files
+[6.708s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/nvidia/KvaserCar_outdoor_test/src/wheel_odometry' returned '0': PYTHONPATH=/home/nvidia/KvaserCar_outdoor_test/build/wheel_odometry/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/KvaserCar_outdoor_test/install/wheel_odometry/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/wheel_odometry build --build-base /home/nvidia/KvaserCar_outdoor_test/build/wheel_odometry/build install --record /home/nvidia/KvaserCar_outdoor_test/build/wheel_odometry/install.log --single-version-externally-managed install_data
+[6.708s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/wheel_odometry' for CMake config files
+[6.710s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/wheel_odometry/lib'
+[6.710s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/wheel_odometry/bin'
+[6.710s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/wheel_odometry/lib/pkgconfig/wheel_odometry.pc'
+[6.711s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/wheel_odometry/lib/python3.10/site-packages'
+[6.711s] Level 1:colcon.colcon_core.shell:create_environment_hook('wheel_odometry', 'pythonpath')
+[6.711s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/wheel_odometry/share/wheel_odometry/hook/pythonpath.ps1'
+[6.712s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/nvidia/KvaserCar_outdoor_test/install/wheel_odometry/share/wheel_odometry/hook/pythonpath.dsv'
+[6.713s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/wheel_odometry/share/wheel_odometry/hook/pythonpath.sh'
+[6.715s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/wheel_odometry/bin'
+[6.715s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(wheel_odometry)
+[6.716s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/wheel_odometry/share/wheel_odometry/package.ps1'
+[6.717s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/nvidia/KvaserCar_outdoor_test/install/wheel_odometry/share/wheel_odometry/package.dsv'
+[6.718s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/wheel_odometry/share/wheel_odometry/package.sh'
+[6.719s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/wheel_odometry/share/wheel_odometry/package.bash'
+[6.720s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/wheel_odometry/share/wheel_odometry/package.zsh'
+[6.721s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/nvidia/KvaserCar_outdoor_test/install/wheel_odometry/share/colcon-core/packages/wheel_odometry)
+[6.722s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/tactical_node' for CMake module files
+[6.723s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/tactical_node' for CMake config files
+[6.725s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/nvidia/KvaserCar_outdoor_test/src/tactical_node' returned '0': PYTHONPATH=/home/nvidia/KvaserCar_outdoor_test/build/tactical_node/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/tactical_node build --build-base /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/build install --record /home/nvidia/KvaserCar_outdoor_test/build/tactical_node/install.log --single-version-externally-managed install_data
+[6.726s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib'
+[6.726s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/tactical_node/bin'
+[6.727s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/pkgconfig/tactical_node.pc'
+[6.727s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/tactical_node/lib/python3.10/site-packages'
+[6.727s] Level 1:colcon.colcon_core.shell:create_environment_hook('tactical_node', 'pythonpath')
+[6.728s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/tactical_node/share/tactical_node/hook/pythonpath.ps1'
+[6.729s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/nvidia/KvaserCar_outdoor_test/install/tactical_node/share/tactical_node/hook/pythonpath.dsv'
+[6.730s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/tactical_node/share/tactical_node/hook/pythonpath.sh'
+[6.732s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/tactical_node/bin'
+[6.732s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(tactical_node)
+[6.732s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/tactical_node/share/tactical_node/package.ps1'
+[6.734s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/nvidia/KvaserCar_outdoor_test/install/tactical_node/share/tactical_node/package.dsv'
+[6.735s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/tactical_node/share/tactical_node/package.sh'
+[6.736s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/tactical_node/share/tactical_node/package.bash'
+[6.737s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/tactical_node/share/tactical_node/package.zsh'
+[6.738s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/nvidia/KvaserCar_outdoor_test/install/tactical_node/share/colcon-core/packages/tactical_node)
+[6.740s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/visualize_car' for CMake module files
+[6.742s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/nvidia/KvaserCar_outdoor_test/src/visualize_car' returned '0': PYTHONPATH=/home/nvidia/KvaserCar_outdoor_test/build/visualize_car/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/KvaserCar_outdoor_test/install/visualize_car/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/visualize_car build --build-base /home/nvidia/KvaserCar_outdoor_test/build/visualize_car/build install --record /home/nvidia/KvaserCar_outdoor_test/build/visualize_car/install.log --single-version-externally-managed install_data
+[6.743s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/visualize_car' for CMake config files
+[6.744s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/visualize_car/lib'
+[6.744s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/visualize_car/bin'
+[6.744s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/visualize_car/lib/pkgconfig/visualize_car.pc'
+[6.745s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/visualize_car/lib/python3.10/site-packages'
+[6.745s] Level 1:colcon.colcon_core.shell:create_environment_hook('visualize_car', 'pythonpath')
+[6.746s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/visualize_car/share/visualize_car/hook/pythonpath.ps1'
+[6.747s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/nvidia/KvaserCar_outdoor_test/install/visualize_car/share/visualize_car/hook/pythonpath.dsv'
+[6.747s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/KvaserCar_outdoor_test/install/visualize_car/share/visualize_car/hook/pythonpath.sh'
+[6.749s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/KvaserCar_outdoor_test/install/visualize_car/bin'
+[6.749s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(visualize_car)
+[6.750s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/visualize_car/share/visualize_car/package.ps1'
+[6.751s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/nvidia/KvaserCar_outdoor_test/install/visualize_car/share/visualize_car/package.dsv'
+[6.752s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/visualize_car/share/visualize_car/package.sh'
+[6.753s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/visualize_car/share/visualize_car/package.bash'
+[6.754s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/KvaserCar_outdoor_test/install/visualize_car/share/visualize_car/package.zsh'
+[6.754s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/nvidia/KvaserCar_outdoor_test/install/visualize_car/share/colcon-core/packages/visualize_car)
+[6.755s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[6.756s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[6.756s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '0'
+[6.756s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[6.774s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[6.775s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[6.775s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[6.797s] DEBUG:colcon.colcon_notification.desktop_notification.notify2:Failed to initialize notify2: org.freedesktop.DBus.Error.Spawn.ChildExited: Process org.freedesktop.Notifications exited with status 1
+[6.798s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[6.799s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/nvidia/KvaserCar_outdoor_test/install/local_setup.ps1'
+[6.801s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/nvidia/KvaserCar_outdoor_test/install/_local_setup_util_ps1.py'
+[6.804s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/nvidia/KvaserCar_outdoor_test/install/setup.ps1'
+[6.807s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/nvidia/KvaserCar_outdoor_test/install/local_setup.sh'
+[6.808s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/nvidia/KvaserCar_outdoor_test/install/_local_setup_util_sh.py'
+[6.809s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/nvidia/KvaserCar_outdoor_test/install/setup.sh'
+[6.812s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/nvidia/KvaserCar_outdoor_test/install/local_setup.bash'
+[6.813s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/nvidia/KvaserCar_outdoor_test/install/setup.bash'
+[6.815s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/nvidia/KvaserCar_outdoor_test/install/local_setup.zsh'
+[6.816s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/nvidia/KvaserCar_outdoor_test/install/setup.zsh'

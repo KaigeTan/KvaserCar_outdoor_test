@@ -57,6 +57,24 @@ def generate_launch_description():
         output='screen'
     )
 
+    # Include the baselink to map transformation node
+    bluecar_tf = Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            name='tf_map_to_baselink',
+            arguments=['0', '0', '0', '0', '0', '0', 'map', 'base_link'],
+            output='screen'
+    )
+
+    # Include the camera to map transformation node
+    camera_tf = Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            name='tf_map_to_camera',
+            arguments=['0', '0', '0', '0', '0', '0', 'map', 'camera'],
+            output='screen'
+    )
+
     # Add a log message to indicate successful launch
     launch_complete_message = LogInfo(msg="All nodes and launch files have been successfully started!")
 
@@ -69,5 +87,7 @@ def generate_launch_description():
         ekf_launch,
         aeb_rover,
         ctrl_rover,
+        bluecar_tf,
+        camera_tf,
         launch_complete_message
     ])
