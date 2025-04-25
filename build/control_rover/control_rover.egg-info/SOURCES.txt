@@ -1,4 +1,3 @@
-LICENSE
 package.xml
 setup.cfg
 setup.py
@@ -11,7 +10,11 @@ setup.py
 ../../build/control_rover/control_rover.egg-info/zip-safe
 control_rover/__init__.py
 control_rover/low_level_control.py
+control_rover.egg-info/PKG-INFO
+control_rover.egg-info/SOURCES.txt
+control_rover.egg-info/dependency_links.txt
+control_rover.egg-info/entry_points.txt
+control_rover.egg-info/requires.txt
+control_rover.egg-info/top_level.txt
+control_rover.egg-info/zip-safe
 resource/control_rover
-test/test_copyright.py
-test/test_flake8.py
-test/test_pep257.py

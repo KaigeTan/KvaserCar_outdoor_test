@@ -3,7 +3,7 @@ import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float32, Bool
 from nav_msgs.msg import Odometry
-from tf_transformations import euler_from_quaternion
+from scipy.spatial.transform import Rotation as R
 import math
 
 import tactical_node.critical_region as cr
@@ -81,7 +81,10 @@ class TacticalNode(Node):
         center_y = msg.pose.pose.position.y
         # Extract orientation quaternion
         orientation_q = msg.pose.pose.orientation
-        _, _, body_yaw = euler_from_quaternion([orientation_q.x, orientation_q.y, orientation_q.z, orientation_q.w])
+        r = R.from_quat([orientation_q.x, orientation_q.y, orientation_q.z, orientation_q.w])
+        # Convert to Euler angles: here 'xyz' = roll, pitch, yaw
+        # `degrees=True` returns angles in degrees; omit for radians
+        _, _, body_yaw = r.as_euler('xyz', degrees=True)
         # Calculate the front and rear point of the vehicle, considering the orientation
         front_x = center_x + parameters.EGO_LENGTH/2*math.cos(body_yaw)
         front_y = center_y + parameters.EGO_WIDTH/2*math.sin(body_yaw)
@@ -127,7 +130,7 @@ class TacticalNode(Node):
                 self.get_logger().warn("AEB IS TRUE", throttle_duration_sec=1.0)
                 return "AEB", True
 
-        if self.behaviour.ego_d_front > self.behaviour.ego_prediction.cr.cr_path.length - 3:
+        if self.behaviour.ego_d_front > self.behaviour.ego_prediction.cr.cr_path.length - 1:
             return "PASSED", True
 
         return None, False

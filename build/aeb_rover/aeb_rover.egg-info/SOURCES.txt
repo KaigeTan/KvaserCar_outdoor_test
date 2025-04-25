@@ -12,7 +12,11 @@ aeb_rover/PIctrl.py
 aeb_rover/__init__.py
 aeb_rover/aeb_outdoor.py
 aeb_rover/aeb_rover_node.py
+aeb_rover.egg-info/PKG-INFO
+aeb_rover.egg-info/SOURCES.txt
+aeb_rover.egg-info/dependency_links.txt
+aeb_rover.egg-info/entry_points.txt
+aeb_rover.egg-info/requires.txt
+aeb_rover.egg-info/top_level.txt
+aeb_rover.egg-info/zip-safe
 resource/aeb_rover
-test/test_copyright.py
-test/test_flake8.py
-test/test_pep257.py
