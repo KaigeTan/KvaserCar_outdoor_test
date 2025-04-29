@@ -129,7 +129,7 @@ class TacticalNode(Node):
             if aeb is True:
                 self.get_logger().warn("AEB IS TRUE", throttle_duration_sec=1.0)
                 return "AEB", True
-
+        self.get_logger().info("ego_front_d {0}".format(self.behaviour.ego_d_front), throttle_duration_sec=1.0)
         if self.behaviour.ego_d_front > self.behaviour.ego_prediction.cr.cr_path.length - 1:
             return "PASSED", True
 
