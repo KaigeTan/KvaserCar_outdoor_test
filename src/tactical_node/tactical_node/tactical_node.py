@@ -1,4 +1,3 @@
-import queue
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float32, Bool
@@ -12,6 +11,7 @@ from tactical_node.logs import ExpLog
 from tactical_node.tactical_behaviour import TacticalBehavior
 import tactical_node.parameters as parameters
 from tactical_node.ego_pose import EgoPose
+from tactical_node.shared_object import SharedObj
 
 
 # topics name
@@ -27,21 +27,20 @@ class TacticalNode(Node):
     def __init__(self):
         super().__init__('tactical_node')
         self.run = True
-        self.q_pose = queue.SimpleQueue()
-        self.q_aeb = queue.SimpleQueue()
-        self.q_msg = queue.SimpleQueue()
+        self.pose = SharedObj()
+        self.aeb = SharedObj()
 
         self.sub_aeb = self.create_subscription(
             Bool,
             ROS_TOPIC_AEB,
             self.list_aeb_callback,
-            10)
+            2)
 
         self.sub_odom = self.create_subscription(
             Odometry,
             ROS_TOPIC_ODOM,
             self.list_odom_callback,
-            10)
+            2)
 
         self.logic_timer = self.create_timer(ROS_TACTICAL_LOGIC_TIMER, self.logic_callback)
 
@@ -70,7 +69,7 @@ class TacticalNode(Node):
 
     def list_aeb_callback(self, msg):
         # self.get_logger().info('AEB message is: "%s"' % msg.data)
-        self.q_aeb.put(msg.data)
+        self.aeb.set_data(msg.data)
 
     def list_odom_callback(self, msg):
         #self.get_logger().info('ODOM message is: "%s"' % msg.data)
@@ -94,7 +93,7 @@ class TacticalNode(Node):
         vel_x = msg.twist.twist.linear.x
         vel_y = 0
         ego_pose = EgoPose(front_x, front_y, rear_x, rear_y, vel_x, vel_y)
-        self.q_pose.put(ego_pose)
+        self.pose.set_data(ego_pose)
 
 
     def logic_callback(self):
@@ -109,26 +108,20 @@ class TacticalNode(Node):
 
         if self.run:
             msg = self.comm.get_latest_message()
-            try:
-                ego_pose = self.q_pose.get_nowait()
-            except queue.Empty:
-                ego_pose = None
+            ego_pose = self.pose.get_data()
             action = self.behaviour.decision(msg, ego_pose)
             speed = self.behaviour.action_to_speed(action)
             self.pub_ref_speed(speed)
             self.behaviour.log()
 
     def is_exp_ended(self):
-        try:
-            aeb = self.q_aeb.get_nowait()
-        except queue.Empty:
-            #self.get_logger().warn("AEB IS NONE", throttle_duration_sec=1.0)
-            aeb = None
+        aeb = self.aeb.get_data()            
         if aeb is not None:
             #self.get_logger().info("AEB IS {0}".format(aeb), throttle_duration_sec=1.0)
             if aeb is True:
                 self.get_logger().warn("AEB IS TRUE", throttle_duration_sec=1.0)
                 return "AEB", True
+        
         self.get_logger().info("ego_front_d {0}".format(self.behaviour.ego_d_front), throttle_duration_sec=1.0)
         if self.behaviour.ego_d_front > self.behaviour.ego_prediction.cr.cr_path.length - 1:
             return "PASSED", True

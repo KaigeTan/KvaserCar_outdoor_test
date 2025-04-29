@@ -163,7 +163,7 @@ def get_messages(bag_path):
 
 def main():
     # >>>>> Set your ROS2 bag path here <<<<<
-    bag_path = '/home/gianfi/Documents/KvaserCar_outdoor_test/rosbag/rosbag2_1970_01_01-02_30_13'
+    bag_path = '/home/gianfi/Documents/KvaserCar_outdoor_test/recorded_rosbag/rosbag2_1970_01_01-02_30_13'
     storage_id = 'sqlite3'
 
     # Only these topics will be extracted
@@ -177,8 +177,11 @@ def main():
         print(f"Bag path '{bag_path}' does not exist.")
         return
 
-    out_dict = extract_messages(bag_path, storage_id, target_topics)
-    print(out_dict)
+    #out_dict = extract_messages(bag_path, storage_id, target_topics)
+
+    #print(out_dict)
+    di = get_messages(bag_path)
+    print(di)
 
 
 if __name__ == '__main__':
