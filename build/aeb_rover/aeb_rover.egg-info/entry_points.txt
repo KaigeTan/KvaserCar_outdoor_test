@@ -1,5 +1,0 @@
-[console_scripts]
-aeb_node_closed = aeb_rover.PIctrl:main
-aeb_node_open = aeb_rover.aeb_rover_node:main
-aeb_outdoor = aeb_rover.aeb_outdoor:main
-

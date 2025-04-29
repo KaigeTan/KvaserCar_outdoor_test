@@ -1,3 +1,0 @@
-[console_scripts]
-mtnode.py = xsens_driver.mtnode:main
-
