@@ -14,11 +14,7 @@ launch/imu_launch.py
 launch/odometry_launch.py
 launch/outdoor_launch.py
 outdoor_test/__init__.py
-outdoor_test.egg-info/PKG-INFO
-outdoor_test.egg-info/SOURCES.txt
-outdoor_test.egg-info/dependency_links.txt
-outdoor_test.egg-info/entry_points.txt
-outdoor_test.egg-info/requires.txt
-outdoor_test.egg-info/top_level.txt
-outdoor_test.egg-info/zip-safe
 resource/outdoor_test
+test/test_copyright.py
+test/test_flake8.py
+test/test_pep257.py

@@ -26,11 +26,11 @@ class CriticalRegion:
 
 
     #                critical region
-    #                 (P1)-----(P2)
+    #                 (P4)-----(P1)
     #                  |         |
     # path_start--->>(*cn)    (*cf)-->>path_end
     #                  |         |
-    #                 (P4)_____(P3)
+    #                 (P3)_____(P2)
     #
     def __init__(self, path: shapely.LineString, critical_region: shapely.Polygon):
         self.cn = None

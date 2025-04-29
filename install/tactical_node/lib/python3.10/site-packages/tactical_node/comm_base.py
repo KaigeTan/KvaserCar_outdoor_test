@@ -1,26 +1,11 @@
 from typing import Tuple, Optional
+from tactical_node.comm_msg import ComMsg
 
 class CommInterfaceBase:
     def __init__(self):
-        pass
+        pass    
 
-    class Message:
-        def __init__(self, id, time_stamp, front, back, vel, length=None):
-            """
-
-            :param time_stamp:
-            :param front:
-            :param back:
-            :param vel:
-            """
-            self.id = id
-            self.time_stamp: int = time_stamp
-            self.front: Tuple[float, float] = front
-            self.back: Tuple[float, float] = back
-            self.velocity: float = vel
-            self.length: Optional[float, None] = length
-
-    def get_latest_message(self) -> Optional[Message]:
+    def get_latest_message(self) -> Optional[ComMsg]:
         pass
 
     def start(self):

@@ -9,6 +9,7 @@ from tactical_node.ego_prediction import EgoPrediction
 from tactical_node.kalman_filter import KalmanFilter
 from tactical_node.target_prediction import TargetPrediction
 import tactical_node.parameters as parameters
+from  tactical_node.comm_msg import ComMsg
 
 
 
@@ -72,7 +73,7 @@ class TacticalBehavior:
 
         return parameters.ADV_MAX_ACC
 
-    def decision(self, msg, ego_pose: EgoPose) -> TacticalAction:
+    def decision(self, msg: ComMsg, ego_pose: EgoPose) -> TacticalAction:
         """
 
 

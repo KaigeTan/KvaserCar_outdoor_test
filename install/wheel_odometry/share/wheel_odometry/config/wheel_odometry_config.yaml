@@ -1,1 +1,5 @@
-/home/gianfi/Documents/KvaserCar_outdoor_test/build/wheel_odometry/config/wheel_odometry_config.yaml
+rover_odometry_node:
+  ros__parameters:
+    wheelbase: 0.55
+    update_frequency: 20.0
+    is_radio: 1

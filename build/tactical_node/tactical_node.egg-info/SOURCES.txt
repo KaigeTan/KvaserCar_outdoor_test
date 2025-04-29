@@ -1,3 +1,4 @@
+LICENSE
 package.xml
 setup.cfg
 setup.py
@@ -23,10 +24,6 @@ tactical_node/tactical_action.py
 tactical_node/tactical_behaviour.py
 tactical_node/tactical_node.py
 tactical_node/target_prediction.py
-tactical_node.egg-info/PKG-INFO
-tactical_node.egg-info/SOURCES.txt
-tactical_node.egg-info/dependency_links.txt
-tactical_node.egg-info/entry_points.txt
-tactical_node.egg-info/requires.txt
-tactical_node.egg-info/top_level.txt
-tactical_node.egg-info/zip-safe
+test/test_copyright.py
+test/test_flake8.py
+test/test_pep257.py

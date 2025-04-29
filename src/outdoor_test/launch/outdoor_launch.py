@@ -57,16 +57,16 @@ def generate_launch_description():
         output='screen'
     )
 
-    # Include the baselink to map transformation node
+    # Include the map to odom transformation node
     bluecar_tf = Node(
             package='tf2_ros',
             executable='static_transform_publisher',
             name='tf_map_to_baselink',
-            arguments=['11.98', '0', '0', '0', '0', '3.14', 'map', 'base_link'],
+            arguments=['11.98', '0', '0', '0', '0', '3.14', 'map', 'odom'],
             output='screen'
     )
 
-    # Include the camera to map transformation node
+    # Include the map to external camera transformation node
     camera_tf = Node(
             package='tf2_ros',
             executable='static_transform_publisher',
