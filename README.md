@@ -56,7 +56,7 @@ developed by Gianfilippo.
 * In the launch file, we set `parameters=[{'is_radio': 0}]` since the vehicle is not controlled by radio but by **tactical_node**. If the rover is controlled by the radio, then the state machine will use `/rover/radio/throttle` but not `/rover/throttle`.
 
 ## outdoor_test
-* The outdoor test is a launch package, where we use [outdoor_launch.py](./src/outdoor_test/launch/outdoor_launch.py) for experiments. Besides the function described above, we also use [XSENS IMU mti ROS2 driver](https://github.com/DEMCON/ros2_xsens_mti_driver), [imu_complementary_filter](https://github.com/CCNYRoboticsLab/imu_tools/tree/humble), and [EKF filter](https://github.com/cra-ros-pkg/robot_localization).
+* The outdoor test is a launch package, where we use [outdoor_launch.py](./src/outdoor_test/launch/outdoor_launch.py) for experiments. Besides the function described above, we also use [XSENS IMU mti ROS2 driver](https://github.com/norlab-ulaval/norlab_xsens_driver), [imu_complementary_filter](https://github.com/CCNYRoboticsLab/imu_tools/tree/humble), and [EKF filter](https://github.com/cra-ros-pkg/robot_localization).
 
 * The final estimated state of the rover is in `/odometry/filtered`, which is from EKF filter by combining the odometry estimation from IMU and wheel odom.
 
