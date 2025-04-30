@@ -1,0 +1,3 @@
+[submodule "src/src/norlab_xsens_driver"]
+	path = src/src/norlab_xsens_driver
+	url = https://github.com/norlab-ulaval/norlab_xsens_driver
