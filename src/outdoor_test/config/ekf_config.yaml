@@ -9,7 +9,7 @@ ekf_filter_node:
     map_frame: map                 # Global fixed frame
     odom_frame: odom               # Odometry frame
     base_link_frame: base_link     # Robot base frame
-    world_frame: odom              # World frame to use for filtering
+    world_frame: map              # World frame to use for filtering
 
     # Odometry input (e.g., wheel odometry)
     odom0: /odometry
