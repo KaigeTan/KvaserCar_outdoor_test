@@ -5,6 +5,8 @@ from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
+
+# TODO: add the parameter module for the tactical_node and bluecar_tf
 def generate_launch_description():
     # Get the paths to the individual launch files
     imu_launch_path = get_package_share_directory('outdoor_test') + '/launch/imu_launch.py'
@@ -50,10 +52,17 @@ def generate_launch_description():
         output='screen'
     )
 
-    # Include the aeb_rover
+    # Include the control_rover
     ctrl_rover = Node(
         package='control_rover',
         executable='low_level_control',
+        output='screen'
+    )
+
+    # Include the map_odom_tf
+    map_odom_tf = Node(
+        package='map_odom_tf',
+        executable='odom_transformer',
         output='screen'
     )
 
@@ -62,7 +71,7 @@ def generate_launch_description():
             package='tf2_ros',
             executable='static_transform_publisher',
             name='tf_map_to_baselink',
-            arguments=['11.98', '0', '0', '0', '0', '3.14', 'map', 'odom'],
+            arguments=['9.007', '0', '0', '3.14159', '0', '0', 'map', 'odom'],  # TODO: check the RPY frame, now 3.14 is set to the first entry to get the correct value
             output='screen'
     )
 
@@ -89,5 +98,6 @@ def generate_launch_description():
         bluecar_tf,
         camera_tf,
         tactical_node,
+        map_odom_tf,
         launch_complete_message
     ])

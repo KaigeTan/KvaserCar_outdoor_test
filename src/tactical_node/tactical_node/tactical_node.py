@@ -16,7 +16,7 @@ from tactical_node.shared_object import SharedObj
 
 # topics name
 ROS_TOPIC_AEB = "/aeb_triggered"
-ROS_TOPIC_ODOM = "/odometry/filtered"
+ROS_TOPIC_ODOM = "/odometry/map"
 ROS_TOPIC_REF_VEL = "/ref_spd"
 
 # TODO set proper time for main timer
@@ -83,7 +83,7 @@ class TacticalNode(Node):
         r = R.from_quat([orientation_q.x, orientation_q.y, orientation_q.z, orientation_q.w])
         # Convert to Euler angles: here 'xyz' = roll, pitch, yaw
         # `degrees=True` returns angles in degrees; omit for radians
-        _, _, body_yaw = r.as_euler('xyz', degrees=True)
+        _, _, body_yaw = r.as_euler('xyz')
         # Calculate the front and rear point of the vehicle, considering the orientation
         front_x = center_x + parameters.EGO_LENGTH/2*math.cos(body_yaw)
         front_y = center_y + parameters.EGO_WIDTH/2*math.sin(body_yaw)
@@ -123,6 +123,7 @@ class TacticalNode(Node):
                 return "AEB", True
         
         self.get_logger().info("ego_front_d {0}".format(self.behaviour.ego_d_front), throttle_duration_sec=1.0)
+        self.get_logger().info("path_length {0}".format(self.behaviour.ego_prediction.cr.cr_path.length), throttle_duration_sec=1.0)
         if self.behaviour.ego_d_front > self.behaviour.ego_prediction.cr.cr_path.length - 1:
             return "PASSED", True
 

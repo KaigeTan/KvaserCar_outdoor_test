@@ -56,7 +56,10 @@ class EgoPrediction:
         if gt_pos == CriticalRegion.Position.BEFORE_CR:
             dist_to_cr = self.cr.cn_orig_d - gt_d_front
             # we need to cap the max value for too small values of v
-            tt_cr = min(dist_to_cr / vel, dist_to_cr / 0.5)
+            if vel == 0:
+                tt_cr = 100000000
+            else:
+                tt_cr = min(dist_to_cr / vel, dist_to_cr / 0.5)
         else:
             dist_to_cr = -1
             tt_cr = -1

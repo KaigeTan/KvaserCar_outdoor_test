@@ -5,11 +5,11 @@ ekf_filter_node:
   ros__parameters:
     frequency: 20.0                # The update rate of the filter, (determined by the frequency of input odometry)
     two_d_mode: true               # Restrict to 2D motion for non-holonomic robots
-    publish_tf: true               # Publish transform between frames
+    publish_tf: false               # Publish transform between frames
     map_frame: map                 # Global fixed frame
     odom_frame: odom               # Odometry frame
     base_link_frame: base_link     # Robot base frame
-    world_frame: map              # World frame to use for filtering
+    world_frame: odom              # World frame to use for filtering
 
     # Odometry input (e.g., wheel odometry)
     odom0: /odometry

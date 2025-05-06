@@ -2,12 +2,16 @@ import math
 import time
 from scipy.spatial.transform import Rotation as R
 
-import test_tactical_node.extract_ros_bags as extract
+import os, sys
+sys.path.insert(0, os.path.dirname(__file__))
+
+import extract_ros_bags as extract
 import tactical_node.critical_region as cr
 from tactical_node.comm_test import CommInterfaceTest
 from tactical_node.logs import ExpLog
 from tactical_node.tactical_behaviour import TacticalBehavior
 import tactical_node.parameters as parameters
+#import test_params as parameters
 from tactical_node.ego_pose import EgoPose
 from tactical_node.comm_msg import ComMsg
 
@@ -22,7 +26,7 @@ def get_ego_pose(msg):
     r = R.from_quat(orientation_q)
     # Convert to Euler angles: here 'xyz' = roll, pitch, yaw
     # `degrees=True` returns angles in degrees; omit for radians
-    _, _, body_yaw = r.as_euler('xyz', degrees=True)
+    _, _, body_yaw = r.as_euler('xyz')
     # Calculate the front and rear point of the vehicle, considering the orientation
     front_x = center_x + parameters.EGO_LENGTH/2*math.cos(body_yaw)
     front_y = center_y + parameters.EGO_WIDTH/2*math.sin(body_yaw)
@@ -62,9 +66,8 @@ def get_obps_msg():
 def main():
 
     #read all messages from the rosbag
-    bag_path_1 = "/home/gianfi/Documents/KvaserCar_outdoor_test/recorded_rosbag/rosbag2_1970_01_01-02_30_13"
-    bag_path_2 = "/home/gianfi/Documents/KvaserCar_outdoor_test/recorded_rosbag/rosbag2_1970_01_01-02_31_15"
-    bag_path_3 = "/home/gianfi/Documents/KvaserCar_outdoor_test/recorded_rosbag/rosbag2_1970_01_01-02_31_50"
+    bag_path_1 = "/home/nvidia/KvaserCar_outdoor_test/recorded_rosbag/0502/rosbag2_2025_05_02-16_27_26"
+
     ros_msgs = extract.get_messages(bag_path_1)
                     
     critical_region_poly = cr.create_cr_polygon([parameters.CR_POINT_1,
@@ -105,7 +108,7 @@ def main():
                 break
 
         msg = None
-        msg = get_obps_msg()
+        #msg = get_obps_msg()
         ego_pose = get_ego_pose(ros_msgs["odom"][i])
 
         action = behaviour.decision(msg, ego_pose)

@@ -20,7 +20,7 @@ class RoverOdometryNode(Node):
         # Declare parameters, default value
         self.declare_parameter('wheelbase', 0.55)           # wheelbase length
         self.declare_parameter('update_frequency', 20.0)    # update frequency for wheel odometry estimation
-        self.declare_parameter('is_radio', 0)               # if controlled by radio, set 1; if controlled by ros topic, set 0.
+        self.declare_parameter('is_radio', 1)               # if controlled by radio, set 1; if controlled by ros topic, set 0.
 
         # Read parameters from the YAML file
         self.wheelbase = self.get_parameter('wheelbase').value

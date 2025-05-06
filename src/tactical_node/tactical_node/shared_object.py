@@ -2,7 +2,7 @@ import threading
 
 class SharedObj:
     def __init__(self):
-        self.lock = threading.lock()
+        self.lock = threading.Lock()
         self.data = None
     
     def set_data(self, elem):
