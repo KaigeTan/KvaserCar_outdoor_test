@@ -90,7 +90,7 @@ def generate_launch_description():
     # Combine everything in a single LaunchDescription
     return LaunchDescription([
         imu_launch,
-        # imu_filter,
+        imu_filter,
         wheel_odom,
         ekf_launch,
         aeb_rover,
