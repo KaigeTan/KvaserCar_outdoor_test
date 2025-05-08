@@ -55,7 +55,7 @@ def generate_launch_description():
     # Include the control_rover
     ctrl_rover = Node(
         package='control_rover',
-        executable='low_level_control',
+        executable='low_level_control_feedback', # 'low_level_control',
         output='screen'
     )
 

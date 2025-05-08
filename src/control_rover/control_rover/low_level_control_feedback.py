@@ -22,7 +22,7 @@ class LowLevelCtrl(Node):
         self.publisher_steering = self.create_publisher(Float32, '/rover/steering', 50)
 
         # add a timer to continuously publish throttle control data
-        self.timer = self.create_timer(1.0 / 50.0, self.timer_callback)
+        self.timer = self.create_timer(1.0 / 100.0, self.timer_callback)
 
 
         # State 
@@ -40,7 +40,7 @@ class LowLevelCtrl(Node):
         self.vel = 0.0
         self.heading_angle = 0.0
         self.threshold_heading = math.pi/18 # 10 degre
-        self.ctrl_steer_angle = 5 # 5 degree
+        self.ctrl_steer_angle = 5.0 # 5 degree
         self.flag = 0 # judge if newly executed
 
 
@@ -115,11 +115,12 @@ class LowLevelCtrl(Node):
         if abs(err) < self.threshold_heading:
             return 0.0 # No correction needed
         else:
+            self.get_logger().info("heading_angle {0}".format(err), throttle_duration_sec=1.0)
             # Clip to max steering range
             if err > 0:
-                return -self.ctrl_steer_angle
-            else:
                 return self.ctrl_steer_angle
+            else:
+                return -self.ctrl_steer_angle
 
 
 def main(args=None):
