@@ -71,7 +71,7 @@ def generate_launch_description():
             package='tf2_ros',
             executable='static_transform_publisher',
             name='tf_map_to_baselink',
-            arguments=['9.007', '0', '0', '3.14159', '0', '0', 'map', 'odom'],  # TODO: check the RPY frame, now 3.14 is set to the first entry to get the correct value
+            arguments=['5', '0', '0', '3.14159', '0', '0', 'map', 'odom'],  # TODO: check the RPY frame, now 3.14 is set to the first entry to get the correct value
             output='screen'
     )
 
@@ -90,7 +90,7 @@ def generate_launch_description():
     # Combine everything in a single LaunchDescription
     return LaunchDescription([
         imu_launch,
-        imu_filter,
+        # imu_filter,
         wheel_odom,
         ekf_launch,
         aeb_rover,

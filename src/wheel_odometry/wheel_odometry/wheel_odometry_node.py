@@ -208,21 +208,21 @@ class RoverOdometryNode(Node):
 
         # TODO: check the IMU covariance setting, Pose covariance (x, y, theta)
         odom_msg.pose.covariance = [float(x) for x in [
-            0.01, 0, 0, 0, 0, 0,
-            0, 0.01, 0, 0, 0, 0,
-            0, 0, 0.1, 0, 0, 0,
-            0, 0, 0, 0.1, 0, 0,
-            0, 0, 0, 0, 0.1, 0,
-            0, 0, 0, 0, 0, 0.1]]
+            0.1, 0, 0, 0, 0, 0,
+            0, 0.1, 0, 0, 0, 0,
+            0, 0, 10, 0, 0, 0,
+            0, 0, 0, 10, 0, 0,
+            0, 0, 0, 0, 10, 0,
+            0, 0, 0, 0, 0, 10]]
 
         # TODO: check the IMU covariance setting, Twist covariance (vx, vy, vtheta)
         odom_msg.twist.covariance = [float(x) for x in [
-            0.01, 0, 0, 0, 0, 0,
-            0, 0.01, 0, 0, 0, 0,
-            0, 0, 0.1, 0, 0, 0,
-            0, 0, 0, 0.1, 0, 0,
-            0, 0, 0, 0, 0.1, 0,
-            0, 0, 0, 0, 0, 0.1]]
+            0.1, 0, 0, 0, 0, 0,
+            0, 0.1, 0, 0, 0, 0,
+            0, 0, 10, 0, 0, 0,
+            0, 0, 0, 10, 0, 0,
+            0, 0, 0, 0, 10, 0,
+            0, 0, 0, 0, 0, 10]]
 
         self.odom_pub.publish(odom_msg)
 

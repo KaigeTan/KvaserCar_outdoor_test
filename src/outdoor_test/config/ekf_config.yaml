@@ -5,29 +5,39 @@ ekf_filter_node:
   ros__parameters:
     frequency: 20.0                # The update rate of the filter, (determined by the frequency of input odometry)
     two_d_mode: true               # Restrict to 2D motion for non-holonomic robots
-    publish_tf: false               # Publish transform between frames
+    publish_tf: true               # Publish transform between frames
     map_frame: map                 # Global fixed frame
     odom_frame: odom               # Odometry frame
     base_link_frame: base_link     # Robot base frame
     world_frame: odom              # World frame to use for filtering
 
+
+    # IMU input
+    imu0: /imu/data_raw
+    imu0_config: [false, false, false,  # x, y, z
+                  true, true, true,   # roll, pitch, yaw
+                  false, false, false,  # x_vel, y_vel, z_vel
+                  false, false, true,   # roll_vel, pitch_vel, yaw_vel
+                  false, false, false]   # x_acc, y_acc, z_acc
+    imu0_remove_gravitational_acceleration: true
+    imu0_queue_size: 10
+    imu0_nodelay: false
+    imu0_differential: false
+
+
     # Odometry input (e.g., wheel odometry)
     odom0: /odometry
     odom0_config: [true,  true,  false,  # x, y, z
-                   false, false, true,   # roll, pitch, yaw
+                   false, false, false,   # roll, pitch, yaw
                    true,  false, false,  # x_vel, y_vel, z_vel
-                   false, false, true,   # roll_vel, pitch_vel, yaw_vel
+                   false, false, false,   # roll_vel, pitch_vel, yaw_vel
                    false, false, false]  # x_acc, y_acc, z_acc
     odom0_queue_size: 10
     odom0_nodelay: false
 
-    # IMU input
-    imu0: /imu/data
-    imu0_config: [false, false, false,  # x, y, z
-                  false, false, true,   # roll, pitch, yaw
-                  false, false, false,  # x_vel, y_vel, z_vel
-                  false, false, true,   # roll_vel, pitch_vel, yaw_vel
-                  true, false, false]   # x_acc, y_acc, z_acc
-    imu0_remove_gravitational_acceleration: true
-    imu0_queue_size: 10
-    imu0_nodelay: false
+    # imu0_pose_rejection_threshold: 15.0
+    # imu0_twist_rejection_threshold: 15.0
+
+    # debug: true
+    # debug_out_file: /tmp/ekf_debug.txt
+    

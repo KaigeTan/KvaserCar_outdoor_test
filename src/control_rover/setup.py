@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'low_level_control = control_rover.low_level_control:main'
+            'low_level_control = control_rover.low_level_control:main',
+            'low_level_control_feedback = control_rover.low_level_control_feedback:main'
         ],
     },
 )
