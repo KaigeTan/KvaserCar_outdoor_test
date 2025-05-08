@@ -63,3 +63,9 @@ developed by Gianfilippo.
 * We create two static coordination transformations in the launch file, and the current tf structure is [here](./frames_tf.pdf). The transformation definition may be changed in the future, depending on the experimental setup.
 
 * Note that, in [EKF configuration file](./src/outdoor_test/config/ekf_config.yaml), we change the world frame to map `world_frame: map`. Thus, `/odometry/filtered` topic is in `map` coordinate but not `odom` coordinate.
+
+* Note for XSENS IMU sdk, we changed one line of code in [mtnode.py](./src/norlab_xsens_driver/xsens_driver/mtnode.py):
+```python
+aself.frame_id = self.get_param('frame_id', 'base_imu').lstrip('/')
+```
+This is because EKF filter in robot localization needs `imu` as tf but not `/imu`. **mtnode.py** hardcoded it so we need to change manually.
