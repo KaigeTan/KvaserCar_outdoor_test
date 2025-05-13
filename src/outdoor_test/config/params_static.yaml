@@ -1,0 +1,20 @@
+# static transform from map to odom (rover initialization position)
+static_transform_odom:
+  x: 5.0
+  y: 0.0
+  z: 0.0
+  roll: 3.14159
+  pitch: 0.0
+  yaw: 0.0
+  parent_frame: "map"
+  child_frame: "odom"
+
+static_transform_camera:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+  roll: 0.0
+  pitch: 0.0
+  yaw: 0.0
+  parent_frame: "map"
+  child_frame: "camera"

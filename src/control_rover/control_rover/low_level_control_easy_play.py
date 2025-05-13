@@ -27,25 +27,28 @@ class LowLevelCtrl(Node):
         # Declare parameters, default value
         self.declare_parameter('is_steering_correction', 0)           # decide whether to use steering correction
         self.declare_parameter('is_throttle_correction', 0)           # decide whether to use throttle correction
+        self.declare_parameter('distance_travel', 0.0)                  # the distance the vehicle will travel
         self.is_steering_correction = self.get_parameter('is_steering_correction').value # Read parameters
-        self.is_throttle_correction = self.get_parameter('is_throttle_correction').value # Read parameters
+        self.is_throttle_correction = self.get_parameter('is_throttle_correction').value
+        self.distance_total = self.get_parameter('distance_travel').value
 
         # State 
         self.aeb_triggered = Bool(data=False)
         self.ref_spd = 0.0
         self.ref_heading = 0.0
+        self.distance_traveled = 0.0
 
         # Control Variables
         self.throttle = 0.0
-        self.kp = 0.5 # Proportional gain
-        self.ki = 0.001 # Integral gain
+        self.kp = 7.5 # Proportional gain
+        self.ki = 1.0 # Integral gain
         self.output_limits = [0.0, 100.0] # (min, max) output
         self.integral = 0.0
         self.last_time = None
         self.vel = 0.0
         self.heading_angle = 0.0
         self.threshold_heading = math.pi/18 # 10 degre
-        self.ctrl_steer_angle = 5.0 # 5 degree
+        self.ctrl_steer_angle = 10.0 # 5 degree
         self.flag = 0 # judge if newly executed
 
 
@@ -67,6 +70,7 @@ class LowLevelCtrl(Node):
     def odom_callback(self, msg):
         """Check the current longitudial velocity and vehicle heading"""
         self.vel = msg.twist.twist.linear.x
+        self.distance_traveled = msg.pose.pose.position.x
         # Extract orientation quaternion
         orientation_q = msg.pose.pose.orientation
         r = R.from_quat([orientation_q.x, orientation_q.y, orientation_q.z, orientation_q.w])
@@ -78,6 +82,7 @@ class LowLevelCtrl(Node):
         """Publish motor commands at a fixed rate of 50Hz"""
         throttle_val = 0.0 if self.aeb_triggered else self.throttle
         self.publisher_throttle.publish(Float32(data=throttle_val))
+        self.get_logger().info("is_steering_correction {0}".format(self.is_steering_correction), throttle_duration_sec=1.0)
         if self.is_steering_correction:
             steer_val = self.cal_steering()
         else:
@@ -115,6 +120,10 @@ class LowLevelCtrl(Node):
         """Convert the reference speed to the throttle control value, use a open test mapping, this is NOT a closed-loop control."""
         if ref_spd < 1 or ref_spd > 3:
             self.get_logger().warn("The reference speed must be from the range of [1, 3].", throttle_duration_sec=1.0)
+            return 0.0
+        elif self.distance_traveled > self.distance_total:
+            self.get_logger().info("Stop, since the vehicle has traveled {0} m".format(self.distance_traveled), throttle_duration_sec=1.0)
+            self.get_logger().info("reference distance is {0} m".format(self.distance_total), throttle_duration_sec=1.0)
             return 0.0
         else:
             return self.cal_throttle(ref_spd)

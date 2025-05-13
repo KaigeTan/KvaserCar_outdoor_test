@@ -16,7 +16,6 @@ from tactical_node.shared_object import SharedObj
 from tactical_msgs.msg import LogEntry
 
 
-
 # topics name
 ROS_TOPIC_AEB = "/aeb_triggered"
 ROS_TOPIC_ODOM = "/odometry/map"
@@ -45,12 +44,16 @@ class TacticalNode(Node):
             ROS_TOPIC_ODOM,
             self.list_odom_callback,
             2)
-
+        
         self.log_pub = self.create_publisher(LogEntry, ROS_TOPIC_TACTICAL_LOG, 10)
 
         self.logic_timer = self.create_timer(ROS_TACTICAL_LOGIC_TIMER, self.logic_callback)
 
         self.pub_vel = self.create_publisher(Float32, ROS_TOPIC_REF_VEL, 2)
+
+        # Declare parameters, default value
+        self.declare_parameter('ego_path_start', [5.0, 0.0])           # ego vehicle start position
+        self.ego_path_start = tuple(self.get_parameter('ego_path_start').value)
 
         critical_region_poly = cr.create_cr_polygon([parameters.CR_POINT_1,
                                                                   parameters.CR_POINT_2,
@@ -61,7 +64,8 @@ class TacticalNode(Node):
         target_cr = cr.CriticalRegion(target_path, critical_region_poly)
         target_cr.compute_critical_points()
 
-        ego_path = cr.create_path(parameters.EGO_PATH_START, parameters.EGO_PATH_END)
+        # self.get_logger().info(f"ego_path_start: {self.ego_path_start}")
+        ego_path = cr.create_path(self.ego_path_start, parameters.EGO_PATH_END)
         ego_cr = cr.CriticalRegion(ego_path, critical_region_poly)
         ego_cr.compute_critical_points()
 
@@ -125,7 +129,6 @@ class TacticalNode(Node):
 
         self.log_pub.publish(entry)
 
-
     def logic_callback(self):
         cause, end = self.is_exp_ended()
         if end:
@@ -144,8 +147,6 @@ class TacticalNode(Node):
             self.pub_ref_speed(speed)
             self.behaviour.log()
             self.publish_log()
-
-    
 
     def is_exp_ended(self):
         aeb = self.aeb.get_data()            

@@ -14,7 +14,7 @@ from  tactical_node.comm_msg import ComMsg
 
 
 def get_time() -> int:
-    return time.perf_counter_ns() // (1000* 100)
+    return time.time_ns()
 
 
 class TacticalAction(IntEnum):

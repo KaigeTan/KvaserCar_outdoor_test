@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'tactical_node'
+package_name = 'pub_ref_spd'
 
 setup(
     name=package_name,
@@ -13,15 +13,14 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='tk22',
+    maintainer='nvidia',
     maintainer_email='kaiget@kth.se',
     description='TODO: Package description',
-    license='Apache-2.0',
+    license='TODO: License declaration',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'tactical_node = tactical_node.tactical_node:main',
-            'tactical_node_new = tactical_node.tactical_node_new:main'
+            'pub_ref_spd = pub_ref_spd.pub_ref_spd:main',  # just publish a reference speed in the ros2 topic
         ],
     },
 )
