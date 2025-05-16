@@ -1,12 +1,15 @@
 import rclpy
+from rclpy.qos import QoSProfile, QoSHistoryPolicy, QoSReliabilityPolicy
 from rclpy.node import Node
 from std_msgs.msg import Float32, Bool
+from std_msgs.msg import String
 from nav_msgs.msg import Odometry
 from scipy.spatial.transform import Rotation as R
 import math
+import json
 
 import tactical_node.critical_region as cr
-from tactical_node.comm_test import CommInterfaceTest
+from tactical_node.comm_msg import ComMsg
 from tactical_node.logs import ExpLog
 from tactical_node.tactical_behaviour import TacticalBehavior
 import tactical_node.parameters as parameters
@@ -17,11 +20,13 @@ from tactical_msgs.msg import LogEntry
 
 
 
+
 # topics name
 ROS_TOPIC_AEB = "/aeb_triggered"
 ROS_TOPIC_ODOM = "/odometry/map"
 ROS_TOPIC_REF_VEL = "/ref_spd"
 ROS_TOPIC_TACTICAL_LOG = "/tactical_log"
+ROS_TOPIC_OBPS = "/obps"
 
 # TODO set proper time for main timer
 ROS_TACTICAL_LOGIC_TIMER = 1/10
@@ -33,18 +38,30 @@ class TacticalNode(Node):
         self.run = True
         self.pose = SharedObj()
         self.aeb = SharedObj()
+        self.obps = SharedObj()
 
         self.sub_aeb = self.create_subscription(
             Bool,
             ROS_TOPIC_AEB,
-            self.list_aeb_callback,
+            self.aeb_callback,
             2)
 
         self.sub_odom = self.create_subscription(
             Odometry,
             ROS_TOPIC_ODOM,
-            self.list_odom_callback,
+            self.odom_callback,
             2)
+        
+        qos_obps = QoSProfile(
+                history=QoSHistoryPolicy.KEEP_LAST,       # only keep the last N messages
+                depth=1,                                   # N = 1 (just the freshest)
+                reliability=QoSReliabilityPolicy.BEST_EFFORT,  # don’t retry old data
+            )
+        self.sub_obps_msg = self.create_subscription(
+            String,
+            ROS_TOPIC_OBPS,
+            self.obps_callback,
+            qos_obps)
 
         self.log_pub = self.create_publisher(LogEntry, ROS_TOPIC_TACTICAL_LOG, 10)
 
@@ -66,18 +83,25 @@ class TacticalNode(Node):
         ego_cr.compute_critical_points()
 
         # communication interface
-        self.comm = CommInterfaceTest()
-        self.comm.start()
-
         self.behaviour = TacticalBehavior(ego_reference_speed=parameters.EGO_REFERENCE_SPEED,
                                      ego_critical_region=ego_cr,
                                      target_critical_region=target_cr)
 
-    def list_aeb_callback(self, msg):
+    def aeb_callback(self, msg):
         # self.get_logger().info('AEB message is: "%s"' % msg.data)
         self.aeb.set_data(msg.data)
 
-    def list_odom_callback(self, msg):
+    def obps_callback(self, msg):
+        # self.get_logger().info('OBPS message is: "%s"' % msg)
+        content = json.loads(msg)
+
+        com_msg = ComMsg(id=1, time_stamp=content["t_stamp"],
+                          front=(content["front_x"], content["front_y"]), 
+                          vel=content["vel"], 
+                          lenght=parameters.ADV_LENGTH)
+        self.obps.set_data(com_msg)
+
+    def odom_callback(self, msg):
         #self.get_logger().info('ODOM message is: "%s"' % msg.data)
         #TODO create EgoPose and queue it
         #parameters.EGO_LENGTH
@@ -137,7 +161,7 @@ class TacticalNode(Node):
             self.run = False
 
         if self.run:
-            msg = self.comm.get_latest_message()
+            msg = self.obps.get_data()
             ego_pose = self.pose.get_data()
             action = self.behaviour.decision(msg, ego_pose)
             speed = self.behaviour.action_to_speed(action)

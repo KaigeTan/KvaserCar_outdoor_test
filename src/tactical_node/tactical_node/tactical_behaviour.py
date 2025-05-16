@@ -11,7 +11,8 @@ from tactical_node.target_prediction import TargetPrediction
 import tactical_node.parameters as parameters
 from  tactical_node.comm_msg import ComMsg
 
-
+def aoi_to_seconds(aoi) -> float:
+    return aoi * 1000_000
 
 def get_time() -> int:
     return time.time_ns()
@@ -48,6 +49,7 @@ class TacticalBehavior:
         self.ego_tactical_speed = self.reference_speed
         self.ego_action = TacticalAction.CONTINUE
         self.target_acc = -1
+        self.kalman_acc_value = -1
         self.kalman_f = KalmanFilter(1)
         self.decision_time = -1
         self.data_log = {"decision_time": list(),
@@ -62,14 +64,16 @@ class TacticalBehavior:
                          "target_ttcr": list(),
                          "target_d_to_cr": list(),
                          "target_pos": list(),
-                         "target_d_front": list()}
+                         "target_d_front": list(),
+                         "kalman_acc": list(),
+                         }
 
     def _get_target_acc(self, aoi, velocity):
 
-        kalman_acc = self.kalman_f.predict_acc(aoi, velocity)
-        if kalman_acc > parameters.ADV_MAX_ACC:
-            print("kalman acc is higher: {0}, assumption acc: {1}".format(kalman_acc, parameters.ADV_MAX_ACC))
-            return kalman_acc
+        self.kalman_acc_value = self.kalman_f.predict_acc(aoi, velocity)
+        if self.kalman_acc_value > parameters.ADV_MAX_ACC:
+            print("kalman acc is higher: {0}, assumption acc: {1}".format(self.kalman_acc_value, parameters.ADV_MAX_ACC))
+            return self.kalman_acc_value
 
         return parameters.ADV_MAX_ACC
 
@@ -98,7 +102,7 @@ class TacticalBehavior:
 
         self.decision_time = get_time()
         self.aoi = self.decision_time - self.msg.time_stamp
-        self.aoi = self.aoi * 0.001 #transform from milli!
+        self.aoi = aoi_to_seconds(self.aoi) #transform in seconds!
         target_length = self.msg.length if self.msg.length is not None else parameters.ADV_LENGTH
         target_front = shapely.Point(self.msg.front[0], self.msg.front[1])
         shapely.prepare(target_front)
@@ -179,3 +183,5 @@ class TacticalBehavior:
         self.data_log["target_d_to_cr"].append(self.target_d_to_cr)
         self.data_log["target_pos"].append(self.target_pred_pos)
         self.data_log["target_d_front"].append(self.target_prediction.d_front)
+
+        self.data_log["kalman_acc"].append(self.kalman_acc_value)
