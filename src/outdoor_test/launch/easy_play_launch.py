@@ -121,6 +121,12 @@ def generate_launch_description():
             output='screen'
     )
 
+    chrony_sync = Node(
+            package='chrony_tracker',
+            executable='chrony_tracker',
+            output='screen'
+    )
+
     # Base folder to store rosbag files
     bag_base_dir = os.path.expanduser('~/KvaserCar_outdoor_test/recorded_rosbag')
 
@@ -144,7 +150,6 @@ def generate_launch_description():
         output='screen'
     )
 
-
     # Add a log message to indicate successful launch
     launch_complete_message = LogInfo(msg="All nodes and launch files have been successfully started!")
 
@@ -160,6 +165,7 @@ def generate_launch_description():
         bluecar_tf,
         camera_tf,
         map_odom_tf,
+        chrony_sync,
         rosbag_record,
         launch_complete_message
     ])

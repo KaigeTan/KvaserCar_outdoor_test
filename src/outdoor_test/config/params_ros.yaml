@@ -1,7 +1,7 @@
 # parameter for the reference speed
 pub_ref_spd:
   ros__parameters:
-    ref_spd: 1.0
+    ref_spd: 0.0
 
 # control by joystick or automatically
 rover_odometry_node:
@@ -13,6 +13,6 @@ rover_odometry_node:
 # decide whether to use angle steering correction and throttle speed PI control
 low_level_control_easy_play:
   ros__parameters:
-    is_steering_correction: 0
+    is_steering_correction: 1
     is_throttle_correction: 0
     distance_travel: 5.0

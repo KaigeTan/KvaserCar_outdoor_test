@@ -82,7 +82,7 @@ class LowLevelCtrl(Node):
         """Publish motor commands at a fixed rate of 50Hz"""
         throttle_val = 0.0 if self.aeb_triggered else self.throttle
         self.publisher_throttle.publish(Float32(data=throttle_val))
-        self.get_logger().info("is_steering_correction {0}".format(self.is_steering_correction), throttle_duration_sec=1.0)
+        # self.get_logger().info("is_steering_correction {0}".format(self.is_steering_correction), throttle_duration_sec=1.0)
         if self.is_steering_correction:
             steer_val = self.cal_steering()
         else:
