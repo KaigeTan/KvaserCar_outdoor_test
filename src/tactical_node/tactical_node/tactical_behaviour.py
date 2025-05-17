@@ -12,7 +12,7 @@ import tactical_node.parameters as parameters
 from  tactical_node.comm_msg import ComMsg
 
 def aoi_to_seconds(aoi) -> float:
-    return aoi * 1000_000
+    return aoi / 1_000_000_000
 
 def get_time() -> int:
     return time.time_ns()
