@@ -18,5 +18,7 @@ float64 target_ttcr
 float64 target_d_to_cr
 int32   target_pos
 float64 target_d_front
+float64 target_front_coord_x
+float64 target_front_coord_y
 
 float64 kalman_acc_val

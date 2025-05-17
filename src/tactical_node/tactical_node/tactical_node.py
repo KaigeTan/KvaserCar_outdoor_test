@@ -141,11 +141,13 @@ class TacticalNode(Node):
         entry.ego_d_to_cr        = float(self.behaviour.ego_d_to_cr)
         entry.ego_ttcr           = float(self.behaviour.ego_ttcr)
 
-        entry.target_acc         = float(self.behaviour.target_acc)
-        entry.target_ttcr        = float(self.behaviour.target_ttcr)
-        entry.target_d_to_cr     = float(self.behaviour.target_d_to_cr)
-        entry.target_pos         = int(self.behaviour.target_pred_pos)
-        entry.target_d_front     = float(self.behaviour.target_prediction.d_front)
+        entry.target_acc           = float(self.behaviour.target_acc)
+        entry.target_ttcr          = float(self.behaviour.target_ttcr)
+        entry.target_d_to_cr       = float(self.behaviour.target_d_to_cr)
+        entry.target_pos           = int(self.behaviour.target_pred_pos)
+        entry.target_d_front       = float(self.behaviour.target_prediction.d_front)
+        entry.target_front_coord_x = float(self.behaviour.target_front_coord_x)
+        entry.target_front_coord_y = float(self.behaviour.target_front_coord_y)
 
         self.log_pub.publish(entry)
 

@@ -40,6 +40,7 @@ class TacticalBehavior:
         self.target_ttcr = -1
         self.ego_d_to_cr = -1
         self.ego_d_front = -1
+        self.target_front_coord_x, self.target_front_coord_y = None, None
         self.target_d_to_cr = -1
         self.ego_pos = CriticalRegion.Position.UNKNOWN
         self.ego_pred_go_pos = CriticalRegion.Position.UNKNOWN
@@ -65,7 +66,8 @@ class TacticalBehavior:
                          "target_d_to_cr": list(),
                          "target_pos": list(),
                          "target_d_front": list(),
-                         "kalman_acc": list(),
+                         "target_front_coords": list(),
+                         "kalman_acc": list()                         
                          }
 
     def _get_target_acc(self, aoi, velocity):
@@ -183,5 +185,10 @@ class TacticalBehavior:
         self.data_log["target_d_to_cr"].append(self.target_d_to_cr)
         self.data_log["target_pos"].append(self.target_pred_pos)
         self.data_log["target_d_front"].append(self.target_prediction.d_front)
+       
+        
+        if self.target_prediction.d_front != -1:
+            self.target_front_coord_x, self.target_front_coord_y = self.target_prediction.get_coords_of_projected_front()
+            self.data_log["target_front_coords"].append((self.target_front_coord_x, self.target_front_coord_y))
 
         self.data_log["kalman_acc"].append(self.kalman_acc_value)
