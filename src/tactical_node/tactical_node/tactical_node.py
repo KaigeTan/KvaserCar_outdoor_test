@@ -146,8 +146,12 @@ class TacticalNode(Node):
         entry.target_d_to_cr       = float(self.behaviour.target_d_to_cr)
         entry.target_pos           = int(self.behaviour.target_pred_pos)
         entry.target_d_front       = float(self.behaviour.target_prediction.d_front)
-        entry.target_front_coord_x = float(self.behaviour.target_front_coord_x)
-        entry.target_front_coord_y = float(self.behaviour.target_front_coord_y)
+        if self.behaviour.target_front_coord_x is not None and self.behaviour.target_front_coord_y is not None:
+            entry.target_front_coord_x = float(self.behaviour.target_front_coord_x)
+            entry.target_front_coord_y = float(self.behaviour.target_front_coord_y)
+        else:
+            entry.target_front_coord_x = float(-10_0000)
+            entry.target_front_coord_y = float(-10_0000)
 
         self.log_pub.publish(entry)
 
