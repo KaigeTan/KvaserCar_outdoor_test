@@ -26,14 +26,14 @@ def pub_ego_ref_speed(vel):
 
 def get_obps_static_msg():
     return ComMsg(0,
-                time.perf_counter_ns() // (1000 * 100),
+                time.time_ns(),
                 (0.5 , 0),
                 (0.5, 0 - parameters.ADV_LENGTH),
                 0)
 
 def get_obps_msg(adv_v, front_target_x, front_target_y):
     return ComMsg(0,
-            time.perf_counter_ns() // (1000 * 100),
+            time.time_ns(),
             (front_target_x , front_target_y),
             (front_target_x, front_target_y - parameters.ADV_LENGTH),
             adv_v)
@@ -64,9 +64,6 @@ if __name__ == '__main__':
 
     ego_motion = Motion(max_acc=parameters.EGO_MAX_ACC)
     adv_motion = Motion(max_acc=parameters.ADV_MAX_ACC)
-
-    print((time.perf_counter_ns() // (1000 * 100)) - 50)
-    print(time.perf_counter_ns() // (1000 * 100))
 
     total_dist_ego = 0
     total_dist_target = 0

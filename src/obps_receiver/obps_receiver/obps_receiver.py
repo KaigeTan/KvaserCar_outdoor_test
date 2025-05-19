@@ -50,7 +50,7 @@ class UdpListenerNode(Node):
             try:
                 data, addr = self.sock.recvfrom(buf_size)
                 text = data.decode('utf-8', errors='replace')
-                self.publisher_.publish(String(data=text))
+                self.pub.publish(String(data=text))
                 self.get_logger().debug(f'[{addr}] {text!r}')
             except socket.timeout:
                 # just loop again

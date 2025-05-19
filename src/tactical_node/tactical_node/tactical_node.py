@@ -7,6 +7,7 @@ from nav_msgs.msg import Odometry
 from scipy.spatial.transform import Rotation as R
 import math
 import json
+import time
 
 import tactical_node.critical_region as cr
 from tactical_node.comm_msg import ComMsg
@@ -23,7 +24,7 @@ from tactical_msgs.msg import LogEntry
 
 # topics name
 ROS_TOPIC_AEB = "/aeb_triggered"
-ROS_TOPIC_ODOM = "/odometry/map"
+ROS_TOPIC_ODOM = "/odometry/map/sim"
 ROS_TOPIC_REF_VEL = "/ref_spd"
 ROS_TOPIC_TACTICAL_LOG = "/tactical_log"
 ROS_TOPIC_OBPS = "/obps"
@@ -44,13 +45,18 @@ class TacticalNode(Node):
             Bool,
             ROS_TOPIC_AEB,
             self.aeb_callback,
-            2)
+            1)
+
+        qos = QoSProfile(
+            history=QoSHistoryPolicy.KEEP_LAST, depth=1,
+            reliability=QoSReliabilityPolicy.BEST_EFFORT
+        )
 
         self.sub_odom = self.create_subscription(
             Odometry,
             ROS_TOPIC_ODOM,
             self.odom_callback,
-            2)
+            qos)
         
         qos_obps = QoSProfile(
                 history=QoSHistoryPolicy.KEEP_LAST,       # only keep the last N messages
@@ -93,18 +99,17 @@ class TacticalNode(Node):
 
     def obps_callback(self, msg):
         # self.get_logger().info('OBPS message is: "%s"' % msg)
-        content = json.loads(msg)
+        content = json.loads(msg.data)
 
-        com_msg = ComMsg(id=1, time_stamp=content["t_stamp"],
+        com_msg = ComMsg(id=content["id"], time_stamp=content["t_stamp"],
+                          arrival_time=time.time_ns(),
                           front=(content["front_x"], content["front_y"]), 
                           vel=content["vel"], 
-                          lenght=parameters.ADV_LENGTH)
+                          length=parameters.ADV_LENGTH)
         self.obps.set_data(com_msg)
 
     def odom_callback(self, msg):
         #self.get_logger().info('ODOM message is: "%s"' % msg.data)
-        #TODO create EgoPose and queue it
-        #parameters.EGO_LENGTH
         # Extract central point of the vehicle
         center_x = msg.pose.pose.position.x
         center_y = msg.pose.pose.position.y
@@ -131,8 +136,9 @@ class TacticalNode(Node):
         entry = LogEntry()
         entry.header.stamp = self.get_clock().now().to_msg()
 
-        entry.decision_time      = self.behaviour.decision_time
-        entry.aoi                = self.behaviour.aoi
+        entry.decision_time      = int(self.behaviour.decision_time)
+        entry.aoi                = int(self.behaviour.aoi)
+        entry.aoi_in_sec         = float(self.behaviour.aoi_in_seconds)
 
         entry.ego_tactical_speed = float(self.behaviour.ego_tactical_speed)
         entry.ego_front_d        = float(self.behaviour.ego_d_front)
@@ -142,6 +148,7 @@ class TacticalNode(Node):
         entry.ego_ttcr           = float(self.behaviour.ego_ttcr)
 
         entry.target_acc           = float(self.behaviour.target_acc)
+        entry.kalman_acc_val       = float(self.behaviour.kalman_acc_value)
         entry.target_ttcr          = float(self.behaviour.target_ttcr)
         entry.target_d_to_cr       = float(self.behaviour.target_d_to_cr)
         entry.target_pos           = int(self.behaviour.target_pred_pos)
@@ -195,22 +202,20 @@ class TacticalNode(Node):
     def pub_ref_speed(self, vel):
         self.pub_vel.publish(Float32(data=vel))
 
-    def destroy_node(self):
-        self.comm.stop()
-
 
 def main(args=None):
     rclpy.init(args=args)
 
     tactical_node = TacticalNode()
 
-    rclpy.spin(tactical_node)
-
-    # Destroy the node explicitly
-    # (optional - otherwise it will be done automatically
-    # when the garbage collector destroys the node object)
-    tactical_node.destroy_node()
-    rclpy.shutdown()
+    try:
+        rclpy.spin(tactical_node)
+    except KeyboardInterrupt:
+        exp_log = ExpLog(tactical_node.behaviour.data_log, "Force-exit")
+        exp_log.write_to_file()
+    finally:
+        tactical_node.destroy_node()
+        rclpy.shutdown()
 
 
 if __name__ == '__main__':

@@ -1,8 +1,9 @@
 std_msgs/Header header
 
 # timestamps
-int64 decision_time
-int64 aoi
+int64   decision_time
+int64   aoi
+float64 aoi_in_sec
 
 # ego state
 float64 ego_tactical_speed
