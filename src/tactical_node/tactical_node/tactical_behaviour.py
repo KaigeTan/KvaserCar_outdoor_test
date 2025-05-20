@@ -54,7 +54,9 @@ class TacticalBehavior:
         self.kalman_acc_value = -1
         self.kalman_f = KalmanFilter(1)
         self.decision_time = -1
-        self.data_log = {"decision_time": list(),
+        self.call_time = -1
+        self.data_log = {"call_time": list(),
+                        "decision_time": list(),
                          "aoi": list(),
                          "aoi_seconds": list(),
                          "ego_tactical_speed": list(),
@@ -69,9 +71,10 @@ class TacticalBehavior:
                          "target_pos": list(),
                          "target_d_front": list(),
                          "target_front_coords": list(),
+                         "target_vel" : list(),
                          "kalman_acc": list(),
-                         "msg_time": list(),
-                         "msg_id": list()                      
+                         "msg_current": list(),
+                         "all_rec_msg": list(),                  
                          }
 
     def _get_target_acc(self, aoi, velocity):
@@ -84,12 +87,20 @@ class TacticalBehavior:
         return parameters.ADV_MAX_ACC
     
     def validate_new_msg(self, msg):
-        if self.msg is None:
-            return msg
-        
         if msg is not None:
-            if msg.time_stamp > self.msg.time_stamp:
+            if len(self.data_log["all_rec_msg"]) > 0:
+                _, temp_id, _ = self.data_log["all_rec_msg"][-1]
+                if temp_id != msg.id:
+                    # log it only if it is new
+                    self.data_log["all_rec_msg"].append((self.call_time, msg.id, msg.time_stamp))
+            else:
+                self.data_log["all_rec_msg"].append((self.call_time, msg.id, msg.time_stamp))
+            
+            if self.msg is None:
                 return msg
+            
+            if msg.time_stamp > self.msg.time_stamp:
+                    return msg
 
         return self.msg
 
@@ -102,10 +113,12 @@ class TacticalBehavior:
         :param ego_pose:
         :return:
         """
+        self.call_time = get_time()
         self.ego_action = TacticalAction.BREAKING
         if ego_pose is None:
             return self.ego_action
 
+        self.decision_time = get_time()
         self.ego_action = TacticalAction.CONTINUE
         ego_front_p = shapely.Point((ego_pose.front_x, ego_pose.front_y))
         shapely.prepare(ego_front_p)
@@ -116,8 +129,7 @@ class TacticalBehavior:
         self.ego_d_front, self.ego_d_to_cr, self.ego_ttcr = self.ego_prediction.get_dist_and_time_to_cr(ego_vel, ego_front_p)
         if self.msg is None:
             return self.ego_action
-
-        self.decision_time = get_time()
+        
         self.aoi = self.decision_time - self.msg.time_stamp
         self.aoi_in_seconds = aoi_to_seconds(self.aoi) #transform in seconds!
         target_length = self.msg.length if self.msg.length is not None else parameters.ADV_LENGTH
@@ -188,6 +200,7 @@ class TacticalBehavior:
         return self.ego_tactical_speed
 
     def log(self):
+        self.data_log["call_time"].append(self.call_time)
         self.data_log["decision_time"].append(self.decision_time)
         self.data_log["ego_tactical_speed"].append(self.ego_tactical_speed)
         self.data_log["ego_front_d"].append(self.ego_d_front)
@@ -199,14 +212,15 @@ class TacticalBehavior:
         self.data_log["aoi_seconds"].append(self.aoi_in_seconds)
        
         if self.msg is not None:
-            self.data_log["msg_id"].append(self.msg.id)
-            self.data_log["msg_time"].append(self.msg.time_stamp)
+            self.data_log["msg_current"].append((self.call_time, self.msg.id, self.msg.time_stamp))
+            self.data_log["target_vel"].append(self.msg.velocity)
 
         self.data_log["target_acc"].append(self.target_acc)
         self.data_log["target_ttcr"].append(self.target_ttcr)
         self.data_log["target_d_to_cr"].append(self.target_d_to_cr)
         self.data_log["target_pos"].append(self.target_pred_pos)
         self.data_log["target_d_front"].append(self.target_prediction.d_front)
+
        
         
         if self.target_prediction.d_front != -1:

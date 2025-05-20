@@ -50,26 +50,42 @@ class EgoAdvSimNode(Node):
         # parameters for ego (start/end positions overridden directly)
         self.declare_parameter('ego_start_x', 5.0)
         self.declare_parameter('ego_start_y', 0.0)
-        self.declare_parameter('ego_end_x', -3.0)
+        self.declare_parameter('ego_end_x', -5.0)
         self.declare_parameter('ego_end_y', 0.0)
-        self.declare_parameter('ego_ref_speed', 1.0)
+        self.declare_parameter('ego_ref_speed', 4.0)
         self.declare_parameter('ego_max_acc', 2.0)
         # parameters for adv (start/end positions overridden directly)
         self.declare_parameter('adv_start_x', 0.0)
-        self.declare_parameter('adv_start_y', -10.0)
+        self.declare_parameter('adv_start_y', -5.0)
         self.declare_parameter('adv_end_x', 0.0)
-        self.declare_parameter('adv_end_y', 10.0)
-        self.declare_parameter('adv_ref_speed', 1.0)
+        self.declare_parameter('adv_end_y', 5.0)
+        self.declare_parameter('adv_ref_speed', 4.0)
         self.declare_parameter('adv_max_acc', 2.0)
         # UDP parameters
         self.declare_parameter('udp_target_ip', '127.0.0.1')
         self.declare_parameter('udp_target_port', 9999)
         # transmission delay T [s]
-        self.declare_parameter('udp_delay', 0.1)
+        self.declare_parameter('udp_delay', 1.0)
+        # maximum queue size for adv UDP messages
+        self.declare_parameter('adv_queue_size', 1)
+        # communication failure parameters
+        self.declare_parameter('comm_fail_start', 1.0)  # [s] from node start
+        self.declare_parameter('comm_fail_duration', 0.0) # [s]
         # simulation step
-        self.declare_parameter('sim_step', 0.02)
+        self.declare_parameter('sim_step', 0.01)
 
-        # read back parameters
+        # read parameters
+        self.comm_fail_start = self.get_parameter('comm_fail_start').value
+        self.comm_fail_duration = self.get_parameter('comm_fail_duration').value
+  
+
+        # compute nanosecond delays and failure window
+        self._start_time_ns = self.get_clock().now().nanoseconds 
+        self._comm_fail_start_ns = self._start_time_ns + int(self.comm_fail_start * 1e9)
+        self._comm_fail_end_ns = self._comm_fail_start_ns + int(self.comm_fail_duration * 1e9)
+        
+
+        # read back parameters cars
         ex, ey = (self.get_parameter('ego_end_x').value,
                   self.get_parameter('ego_end_y').value)
         sx, sy = (self.get_parameter('ego_start_x').value,
@@ -112,19 +128,21 @@ class EgoAdvSimNode(Node):
         self.udp_ip = self.get_parameter('udp_target_ip').value
         self.udp_port = self.get_parameter('udp_target_port').value
         self.udp_delay = self.get_parameter('udp_delay').value
+        self.adv_queue_size = self.get_parameter('adv_queue_size').value
         # nanosecond delay for comparison
         self._udp_delay_ns = int(self.udp_delay * 1e9)
         self.udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         # queue stores dicts with 't_stamp' in ns and message id
         self.adv_queue = deque()
         self._msg_id = 0  # initialize message ID counter
+        self.udp_payload = {}
 
         # timers for simulation and UDP
         self.sim_step = self.get_parameter('sim_step').value
         self.create_timer(self.sim_step, self._simulate)
-        self.create_timer(self.sim_step, self._send_udp)
         self.get_logger().info(
-            'Ego-Adv simulation started with UDP delay %.3f s' % self.udp_delay
+            'Ego-Adv simulation started with UDP delay %.3f s, queue size %d'
+            % (self.udp_delay, self.adv_queue_size)
         )
 
     def _ref_spd_callback(self, msg: Float32):
@@ -153,15 +171,38 @@ class EgoAdvSimNode(Node):
         adv_msg.pose.pose.orientation = quaternion_from_yaw(self.adv_yaw)
         adv_msg.twist.twist.linear.x = self.adv_motion.v
         self.adv_pub.publish(adv_msg)
-        # enqueue with message id
-        self.adv_queue.append({
+        # enqueue with message id, enforce max queue size
+
+        if len(self.adv_queue) < self.adv_queue_size:
+            self.udp_payload = {
             "id": self._msg_id,
             "t_stamp": now,
             "front_x": ax,
             "front_y": ay,
-            "vel": self.adv_motion.v
-        })
-        self._msg_id += 1
+            "vel": self._add_vel_noise(self.adv_motion.v)
+            }
+            self.adv_queue.append(self.udp_payload)
+            self._msg_id += 1
+
+        self._send_udp()
+
+    def _send_udp(self):
+        """
+        Send queued adv info after delay, but suppress during comm failure window.
+        """
+        now_ns = self.get_clock().now().nanoseconds
+        # if in failure window, skip sending
+        if self._comm_fail_start_ns <= now_ns < self._comm_fail_end_ns:
+            print(f"HERE {(self._comm_fail_end_ns - self._comm_fail_start_ns)/1e9}, {(self._comm_fail_start_ns - now_ns)/1e9} {(self._comm_fail_end_ns - now_ns)/1e9}")
+            return
+        # send as before
+        if self.adv_queue and (now_ns - self.adv_queue[0]['t_stamp'] >= self._udp_delay_ns):
+            print(f"SENT {(now_ns - self.adv_queue[0]['t_stamp'])/1e9}")
+            info = self.adv_queue.popleft()
+            packet = json.dumps(info).encode('utf-8')
+            self.udp_sock.sendto(packet, (self.udp_ip, self.udp_port))
+            
+
 
     def _publish_ego(self):
         # advance ego using dynamic ref_spd and publish odometry
@@ -180,20 +221,12 @@ class EgoAdvSimNode(Node):
         ego_msg.twist.twist.linear.x = self.ego_motion.v
         self.ego_pub.publish(ego_msg)
 
-    def _send_udp(self):
-        """
-        Send any queued adversary info whose age >= udp_delay.
-        """
-        if not self.adv_queue:
-            return
-        now = self.get_clock().now().nanoseconds
-        while self.adv_queue and (
-            now - self.adv_queue[0]["t_stamp"] >= self._udp_delay_ns
-        ):
-            info = self.adv_queue.popleft()
-            packet = json.dumps(info).encode('utf-8')
-            self.udp_sock.sendto(packet, (self.udp_ip, self.udp_port))
+    
 
+    def _add_vel_noise(self, value: float) -> float:
+        # stub: add uncertainty, edit later
+        return value - 0.2
+    
     def _add_noise(self, value: float) -> float:
         # stub: add uncertainty, edit later
         return value

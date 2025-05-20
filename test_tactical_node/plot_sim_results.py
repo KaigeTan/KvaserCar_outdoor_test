@@ -1,6 +1,7 @@
 import json
 import plotly.graph_objs as go
 import numpy as np
+from pathlib import Path
 
 
 def get_traces(data: dict, x_axis, skip_index):
@@ -20,16 +21,29 @@ def get_traces(data: dict, x_axis, skip_index):
         y=(np.asarray(data["ego"]["aoi"][skip_index:]) / 1000_000),
         mode="lines+markers",
         name="aoi [ms]",
+        visible='legendonly',
         line=dict(color=colors[len(traces)]),
         marker=dict(color=colors[len(traces)], size=4),
     )
     traces.append(aoi)
+
+    trace_aoi_seconds = go.Scatter(
+        x=x_axis,
+        y=data["ego"]["aoi_seconds"][skip_index:],
+        mode="lines+markers",
+        name="aoi_seconds [s]",
+        visible='legendonly',
+        line=dict(color=colors[len(traces)]),
+        marker=dict(color=colors[len(traces)], size=4),
+    )
+    traces.append(trace_aoi_seconds)
 
     trace_tactical_speed = go.Scattergl(
         x=x_axis,
         y=data["ego"]["ego_tactical_speed"][skip_index:],
         mode="lines+markers",
         name="tactical_speed [m/s]",
+        visible='legendonly',
         line=dict(color=colors[len(traces)]),
         marker=dict(color=colors[len(traces)], size=4),
     )
@@ -51,6 +65,7 @@ def get_traces(data: dict, x_axis, skip_index):
         y=data["ego"]["ego_pred_go_pos"][skip_index:],
         mode="lines+markers",
         name="ego_pred_go_pos",
+        visible='legendonly',
         line=dict(color=colors[len(traces)]),
         marker=dict(color=colors[len(traces)], size=4),
     )
@@ -61,7 +76,6 @@ def get_traces(data: dict, x_axis, skip_index):
         y=data["ego"]["ego_d_to_cr"][skip_index:],
         mode="lines+markers",
         name="ego_d_to_cr [m]",
-        visible='legendonly',
         line=dict(color=colors[len(traces)]),
         marker=dict(color=colors[len(traces)], size=4),
     )
@@ -72,6 +86,7 @@ def get_traces(data: dict, x_axis, skip_index):
         y=data["ego"]["ego_ttcr"][skip_index:],
         mode="lines+markers",
         name="ego_ttcr [s]",
+        visible='legendonly',
         line=dict(color=colors[len(traces)]),
         marker=dict(color=colors[len(traces)], size=4),
     )
@@ -82,6 +97,7 @@ def get_traces(data: dict, x_axis, skip_index):
         y=data["ego"]["target_acc"][skip_index:],
         mode="lines+markers",
         name="target_acc [m/s2]",
+        visible='legendonly',
         line=dict(color=colors[len(traces)]),
         marker=dict(color=colors[len(traces)], size=4),
     )
@@ -93,6 +109,7 @@ def get_traces(data: dict, x_axis, skip_index):
         y=data["ego"]["target_ttcr"][skip_index:],
         mode="lines+markers",
         name="target_ttcr [s]",
+        visible='legendonly',
         line=dict(color=colors[len(traces)]),
         marker=dict(color=colors[len(traces)], size=4),
     )
@@ -113,6 +130,7 @@ def get_traces(data: dict, x_axis, skip_index):
         y=data["ego"]["target_pos"][skip_index:],
         mode="lines+markers",
         name="target_pos",
+        visible='legendonly',
         line=dict(color=colors[len(traces)]),
         marker=dict(color=colors[len(traces)], size=4),
     )
@@ -123,26 +141,20 @@ def get_traces(data: dict, x_axis, skip_index):
         y=data["ego"]["target_d_front"][skip_index:],
         mode="lines+markers",
         name="target_d_front [m]",
+        visible='legendonly',
         line=dict(color=colors[len(traces)]),
         marker=dict(color=colors[len(traces)], size=4),
     )
     traces.append(trace_target_d_front)
 
-    trace_target_d_front = go.Scatter(
-        x=x_axis,
-        y=data["ego"]["aoi_seconds"][skip_index:],
-        mode="lines+markers",
-        name="aoi_seconds [s]",
-        line=dict(color=colors[len(traces)]),
-        marker=dict(color=colors[len(traces)], size=4),
-    )
-    traces.append(trace_target_d_front)
+
 
     trace_ego_d_front = go.Scatter(
         x=x_axis,
         y=data["ego"]["kalman_acc"][skip_index:],
         mode="lines+markers",
         name="kalman_acc [m/s2]",
+        visible='legendonly',
         line=dict(color=colors[len(traces)]),
         marker=dict(color=colors[len(traces)], size=4),
     )
@@ -153,46 +165,77 @@ def get_traces(data: dict, x_axis, skip_index):
         y=data["ego"]["ego_front_d"][skip_index:],
         mode="lines+markers",
         name="ego_front_d [m]",
+        visible='legendonly',
         line=dict(color=colors[len(traces)]),
         marker=dict(color=colors[len(traces)], size=4),
     )
     traces.append(trace_ego_v)
 
+    t_rec_list, id_list, t_msg_list = zip(*data["ego"]["all_rec_msg"])
+
+    trace_all_msg_time = go.Scatter(
+        x=(np.asarray(t_rec_list) - data["ego"]["call_time"][0])/1000_000_000,
+        y=(np.asarray(t_msg_list) - t_msg_list[0])  /1000_000_000,
+        mode="lines+markers",
+        name="all_msg_time",
+        visible='legendonly',
+        line=dict(color=colors[len(traces)]),
+        marker=dict(color=colors[len(traces)], size=4),
+    )
+    traces.append(trace_all_msg_time)
+
+    trace_all_msg_id = go.Scatter(
+        x=(np.asarray(t_rec_list)-data["ego"]["call_time"][0])/1000_000_000,
+        y=id_list,
+        mode="lines+markers",
+        name="all_msg_id",
+        visible='legendonly',
+        line=dict(color=colors[len(traces)]),
+        marker=dict(color=colors[len(traces)], size=4),
+    )
+    traces.append(trace_all_msg_id)
+
+    t_rec_list, id_list, t_msg_list = zip(*data["ego"]["msg_current"])
+
     trace_msg_id = go.Scatter(
-        x=x_axis,
-        y=data["ego"]["msg_id"],
+        x=(np.asarray(t_rec_list)- data["ego"]["call_time"][0])/1000_000_000,
+        y=id_list ,
         mode="lines+markers",
         name="msg_id",
+        visible='legendonly',
         line=dict(color=colors[len(traces)]),
         marker=dict(color=colors[len(traces)], size=4),
     )
     traces.append(trace_msg_id)
 
     trace_msg_time = go.Scatter(
-        x=x_axis,
-        y=(np.asarray(data["ego"]["msg_time"]) - data["ego"]["msg_time"][0]) /1000_000_000,
+        x=(np.asarray(t_rec_list) - data["ego"]["call_time"][0])/1000_000_000,
+        y=(np.asarray(t_msg_list) - t_msg_list[0] )/1000_000_000,
         mode="lines+markers",
         name="msg_time",
+        visible='legendonly',
         line=dict(color=colors[len(traces)]),
         marker=dict(color=colors[len(traces)], size=4),
     )
     traces.append(trace_msg_time)
 
+
+
     return traces
 
 
 
-def plot(file_name):
-    with open(file_name, "r") as f:
-        parsed = json.load(f)
+def plot(parsed):
+
 
     # Create the graph layout
     plot_heading = ("Debug chart {0}, cause {1}".format(parsed["exp_name"], parsed["term_cause"]))
 
-    dec_time = [x for x in parsed["ego"]["decision_time"] if x>-1]
-    skip_index = len(parsed["ego"]["decision_time"]) - len(dec_time)
-    x_axis = (np.asarray(dec_time) - dec_time[0])/1000_000
-    traces = get_traces(parsed, x_axis, skip_index)
+    dec_time = [x for x in parsed["ego"]["call_time"] if x>-1]
+    #skip_index = len(parsed["ego"]["decision_time"]) - len(dec_time)
+    #x_axis = (np.asarray(dec_time) - dec_time[0])/1000_000
+    x_axis = (np.asarray(parsed["ego"]["call_time"]) - parsed["ego"]["call_time"][0])/1000_000_000
+    traces = get_traces(parsed, x_axis, 0)
 
     # Create the graph layout
     layout = go.Layout(
@@ -206,7 +249,31 @@ def plot(file_name):
     fig.show()
 
 
+
+def load_most_recent_json(directory: str) -> dict:
+    
+    # Create a Path object for the directory
+    dir_path = Path(directory)
+
+    # Find all .json files
+    json_files = list(dir_path.glob('*.json'))
+    if not json_files:
+        raise FileNotFoundError(f"No JSON files found in directory: {directory}")
+
+    # Select the file with the latest modification time
+    latest_file = max(json_files, key=lambda f: f.stat().st_mtime)
+
+    # Load and return the JSON content
+    with latest_file.open('r', encoding='utf-8') as f:
+        return json.load(f)
+
 if __name__ == '__main__':
 
     fileName = "/home/gianfi/KvaserCar_outdoor_test/data/1747663167.0827518.json"
-    plot(fileName)
+    dir = "/home/gianfi/KvaserCar_outdoor_test/data/"
+
+    #with open(fileName, "r") as f:
+    #    parsed = json.load(f)
+
+    parsed = load_most_recent_json(dir)
+    plot(parsed)
