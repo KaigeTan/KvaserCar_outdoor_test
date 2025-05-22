@@ -30,6 +30,12 @@ def generate_launch_description():
             name='fake_odom_node',
             output='screen'
         ),
+        Node(
+            package='visualize_car',
+            executable='sim_node',
+            name='sim_node',
+            output='screen'
+        ),
          Node(
             package='tf2_ros',
             executable='static_transform_publisher',
