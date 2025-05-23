@@ -4,6 +4,7 @@ from visualization_msgs.msg import Marker
 from geometry_msgs.msg import Point
 from nav_msgs.msg import Odometry
 import math
+from rclpy.qos import QoSProfile, QoSHistoryPolicy, QoSReliabilityPolicy
 
 class CarMarkerPublisher(Node):
     def __init__(self):
@@ -16,17 +17,35 @@ class CarMarkerPublisher(Node):
         self.latest_red_pose = None
         
 
+        qos = QoSProfile(
+            history=QoSHistoryPolicy.KEEP_LAST, depth=1,
+            reliability=QoSReliabilityPolicy.BEST_EFFORT
+        )
+
         self.blue_odom_sub = self.create_subscription(
             Odometry,
-            '/blue_car/odom', # TODO: check the blue car odom topic name
+            '/odometry/map/sim',
             self.update_blue_box,
-            10)
+            qos)
 
         self.red_odom_sub = self.create_subscription(
             Odometry,
-            '/red_car/odom',
-            self.update_red_box, # TODO: check the red car odom topic name
-            10)
+            '/adv_emu_odometry',
+            self.update_red_box,
+            qos)
+        
+
+        # self.blue_odom_sub = self.create_subscription(
+        #     Odometry,
+        #     '/blue_car/odom', # TODO: check the blue car odom topic name
+        #     self.update_blue_box,
+        #     10)
+
+        # self.red_odom_sub = self.create_subscription(
+        #     Odometry,
+        #     '/red_car/odom',
+        #     self.update_red_box, # TODO: check the red car odom topic name
+        #     10)
 
 
     # update the blue car position
@@ -75,8 +94,8 @@ class CarMarkerPublisher(Node):
         marker.type = Marker.CUBE
         marker.action = Marker.ADD
         marker.pose = self.latest_red_pose
-        marker.scale.x = 0.3
-        marker.scale.y = 0.75
+        marker.scale.x = 0.75
+        marker.scale.y = 0.3
         marker.scale.z = 0.4
         marker.color.r = 1.0
         marker.color.g = 0.0

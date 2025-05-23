@@ -124,6 +124,13 @@ def generate_launch_description():
             output='screen'
     )
 
+    # Include the OBPS receiver node
+    obps_receiver_tf = Node(
+            package='obps_receiver',
+            executable='obps_receiver',
+            output='screen'
+    )
+
     # Add a log message to indicate successful launch
     launch_complete_message = LogInfo(msg="All nodes and launch files have been successfully started!")
 
@@ -135,6 +142,7 @@ def generate_launch_description():
         ekf_launch,
         aeb_rover,
         ctrl_rover,
+        obps_receiver_tf,
         bluecar_tf,
         camera_tf,
         tactical_node,
