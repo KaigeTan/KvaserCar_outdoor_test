@@ -48,8 +48,9 @@ class TacticalNode(Node):
             1)
 
         qos = QoSProfile(
-            history=QoSHistoryPolicy.KEEP_LAST, depth=1,
-            reliability=QoSReliabilityPolicy.BEST_EFFORT
+            history=QoSHistoryPolicy.KEEP_LAST, 
+            depth=2,
+            reliability=QoSReliabilityPolicy.RELIABLE
         )
 
         self.sub_odom = self.create_subscription(
@@ -61,7 +62,7 @@ class TacticalNode(Node):
         qos_obps = QoSProfile(
                 history=QoSHistoryPolicy.KEEP_LAST,       # only keep the last N messages
                 depth=1,                                   # N = 1 (just the freshest)
-                reliability=QoSReliabilityPolicy.BEST_EFFORT,  # don’t retry old data
+                reliability=QoSReliabilityPolicy.RELIABLE,  # don’t retry old data
             )
         self.sub_obps_msg = self.create_subscription(
             String,

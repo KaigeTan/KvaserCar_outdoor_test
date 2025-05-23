@@ -25,7 +25,7 @@ class UdpListenerNode(Node):
         qos = QoSProfile(
             history=QoSHistoryPolicy.KEEP_LAST,            # only keep up to `depth` messages
             depth=1,                                       # queue size = 1
-            reliability=QoSReliabilityPolicy.BEST_EFFORT,  # drop rather than retry old data
+            reliability=QoSReliabilityPolicy.RELIABLE,  # drop rather than retry old data
         )
         self.pub = self.create_publisher(String, TOPIC_NAME, qos)
 

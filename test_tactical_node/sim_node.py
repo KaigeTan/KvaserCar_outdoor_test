@@ -8,7 +8,7 @@ import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, QoSHistoryPolicy, QoSReliabilityPolicy
 from nav_msgs.msg import Odometry
-from geometry_msgs.msg import Quaternion
+from geometry_msgs.msg import Quaternion, Point
 from std_msgs.msg import Float32  # for reference speed subscription
 
 class Motion:
@@ -43,172 +43,122 @@ def quaternion_from_yaw(yaw: float) -> Quaternion:
     q.w = math.cos(yaw * 0.5)
     return q
 
-
 class EgoAdvSimNode(Node):
     def __init__(self):
         super().__init__('ego_adv_sim')
-        # parameters for ego (start/end positions overridden directly)
+        # Declare parameters
         self.declare_parameter('ego_start_x', 5.0)
         self.declare_parameter('ego_start_y', 0.0)
         self.declare_parameter('ego_end_x', -5.0)
         self.declare_parameter('ego_end_y', 0.0)
-        self.declare_parameter('ego_ref_speed', 4.0)
-        self.declare_parameter('ego_max_acc', 2.0)
-        # parameters for adv (start/end positions overridden directly)
+        self.declare_parameter('ego_ref_speed', 2.5)
+        self.declare_parameter('ego_max_acc', 2.5)
+
         self.declare_parameter('adv_start_x', 0.0)
         self.declare_parameter('adv_start_y', -5.0)
         self.declare_parameter('adv_end_x', 0.0)
         self.declare_parameter('adv_end_y', 5.0)
-        self.declare_parameter('adv_ref_speed', 4.0)
-        self.declare_parameter('adv_max_acc', 2.0)
-        # UDP parameters
+        self.declare_parameter('adv_ref_speed', 2.5)
+        self.declare_parameter('adv_max_acc', 2.5)
+
+        # UDP & sim parameters
         self.declare_parameter('udp_target_ip', '127.0.0.1')
         self.declare_parameter('udp_target_port', 9999)
-        # transmission delay T [s]
-        self.declare_parameter('udp_delay', 1.0)
-        # maximum queue size for adv UDP messages
+        self.declare_parameter('udp_delay', 0.03)
         self.declare_parameter('adv_queue_size', 1)
-        # communication failure parameters
-        self.declare_parameter('comm_fail_start', 1.0)  # [s] from node start
-        self.declare_parameter('comm_fail_duration', 0.0) # [s]
-        # simulation step
-        self.declare_parameter('sim_step', 0.01)
+        self.declare_parameter('comm_fail_start', 0.02)
+        self.declare_parameter('comm_fail_duration', 1.3)
+        self.declare_parameter('sim_step', 0.03)
+        self.declare_parameter('comm_step', 0.001)
 
-        # read parameters
-        self.comm_fail_start = self.get_parameter('comm_fail_start').value
-        self.comm_fail_duration = self.get_parameter('comm_fail_duration').value
-  
-
-        # compute nanosecond delays and failure window
-        self._start_time_ns = self.get_clock().now().nanoseconds 
-        self._comm_fail_start_ns = self._start_time_ns + int(self.comm_fail_start * 1e9)
-        self._comm_fail_end_ns = self._comm_fail_start_ns + int(self.comm_fail_duration * 1e9)
-        
-
-        # read back parameters cars
-        ex, ey = (self.get_parameter('ego_end_x').value,
-                  self.get_parameter('ego_end_y').value)
-        sx, sy = (self.get_parameter('ego_start_x').value,
-                  self.get_parameter('ego_start_y').value)
-        # initial reference speed, will be updated by subscriber
+        # Read parameters
+        ego_start = (self.get_parameter('ego_start_x').value,
+                     self.get_parameter('ego_start_y').value)
+        ego_end = (self.get_parameter('ego_end_x').value,
+                   self.get_parameter('ego_end_y').value)
+        adv_start = (self.get_parameter('adv_start_x').value,
+                     self.get_parameter('adv_start_y').value)
+        adv_end = (self.get_parameter('adv_end_x').value,
+                   self.get_parameter('adv_end_y').value)
         self.ego_ref_speed = self.get_parameter('ego_ref_speed').value
-        self.ego_motion = Motion(self.get_parameter('ego_max_acc').value)
-        self.ego_dir = ((ex - sx), (ey - sy))
-        ego_dist = math.hypot(*self.ego_dir)
-        self.ego_dir = (self.ego_dir[0] / ego_dist, self.ego_dir[1] / ego_dist)
-        self.ego_start = (sx, sy)
-        self.ego_yaw = math.atan2(self.ego_dir[1], self.ego_dir[0])
-
-        ax, ay = (self.get_parameter('adv_start_x').value,
-                  self.get_parameter('adv_start_y').value)
-        ex2, ey2 = (self.get_parameter('adv_end_x').value,
-                    self.get_parameter('adv_end_y').value)
+        ego_max_acc = self.get_parameter('ego_max_acc').value
         self.adv_ref_speed = self.get_parameter('adv_ref_speed').value
-        self.adv_motion = Motion(self.get_parameter('adv_max_acc').value)
-        self.adv_dir = ((ex2 - ax), (ey2 - ay))
-        adv_dist = math.hypot(*self.adv_dir)
-        self.adv_dir = (self.adv_dir[0] / adv_dist, self.adv_dir[1] / adv_dist)
-        self.adv_start = (ax, ay)
+        adv_max_acc = self.get_parameter('adv_max_acc').value
+
+        # Motion objects
+        self.ego_motion = Motion(ego_max_acc)
+        self.adv_motion = Motion(adv_max_acc)
+
+        # Direction vectors and total distance
+        def setup_motion(start, end, motion):
+            dx, dy = end[0]-start[0], end[1]-start[1]
+            dist = math.hypot(dx, dy)
+            return (dx/dist, dy/dist), dist
+
+        self.ego_dir, self.ego_path_dist = setup_motion(ego_start, ego_end, self.ego_motion)
+        self.adv_dir, self.adv_path_dist = setup_motion(adv_start, adv_end, self.adv_motion)
+        self.ego_start, self.ego_end = ego_start, ego_end
+        self.adv_start, self.adv_end = adv_start, adv_end
+        self.ego_yaw = math.atan2(self.ego_dir[1], self.ego_dir[0])
         self.adv_yaw = math.atan2(self.adv_dir[1], self.adv_dir[0])
 
-        # publishers and QoS
-        qos = QoSProfile(
-            history=QoSHistoryPolicy.KEEP_LAST, depth=1,
-            reliability=QoSReliabilityPolicy.BEST_EFFORT
-        )
+        # QoS and publishers/subscribers
+        qos = QoSProfile(history=QoSHistoryPolicy.KEEP_LAST,
+                         depth=2,
+                         reliability=QoSReliabilityPolicy.RELIABLE)
         self.ego_pub = self.create_publisher(Odometry, '/odometry/map/sim', qos)
         self.adv_pub = self.create_publisher(Odometry, '/adv_emu_odometry', qos)
-
-        # subscriber for reference speed
         self.ref_spd_sub = self.create_subscription(
-            Float32, '/ref_spd', self._ref_spd_callback, qos
-        )
+            Float32, '/ref_spd', self._ref_spd_callback, qos)
 
-        # UDP socket & queue
+        # UDP setup
         self.udp_ip = self.get_parameter('udp_target_ip').value
         self.udp_port = self.get_parameter('udp_target_port').value
-        self.udp_delay = self.get_parameter('udp_delay').value
+        self._udp_delay_ns = int(self.get_parameter('udp_delay').value * 1e9)
         self.adv_queue_size = self.get_parameter('adv_queue_size').value
-        # nanosecond delay for comparison
-        self._udp_delay_ns = int(self.udp_delay * 1e9)
         self.udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        # queue stores dicts with 't_stamp' in ns and message id
         self.adv_queue = deque()
-        self._msg_id = 0  # initialize message ID counter
-        self.udp_payload = {}
+        self._msg_id = 0
 
-        # timers for simulation and UDP
-        self.sim_step = self.get_parameter('sim_step').value
-        self.create_timer(self.sim_step, self._simulate)
-        self.get_logger().info(
-            'Ego-Adv simulation started with UDP delay %.3f s, queue size %d'
-            % (self.udp_delay, self.adv_queue_size)
-        )
+        # Communication failure window
+        self.start_ns = self.get_clock().now().nanoseconds
+        cfs = self.get_parameter('comm_fail_start').value
+        cfd = self.get_parameter('comm_fail_duration').value
+        self._comm_fail_start = self.start_ns + int(cfs*1e9)
+        self._comm_fail_end = self._comm_fail_start + int(cfd*1e9)
+
+        # Path publishers for plotter
+        self.coord_pub = {}
+        for name, coord in [('ego_start', ego_start),
+                            ('ego_end', ego_end),
+                            ('adv_start', adv_start),
+                            ('adv_end', adv_end)]:
+            pub = self.create_publisher(Point, f'/{name}', qos)
+            msg = Point(x=coord[0], y=coord[1], z=0.0)
+            pub.publish(msg)
+
+        # Timers
+        self.sim_timer = self.create_timer(self.get_parameter('sim_step').value,
+                                           self._simulate)
+        self.comm_timer = self.create_timer(self.get_parameter('comm_step').value,
+                                            self._send_udp)
+
+        self.get_logger().info('Simulation started')
 
     def _ref_spd_callback(self, msg: Float32):
-        """
-        Update the ego reference speed based on incoming topic message.
-        """
         self.ego_ref_speed = msg.data
 
     def _simulate(self):
-        # record timestamp for when info is generated
-        now = self.get_clock().now().nanoseconds
-        # ego motion and publish
-        self._publish_ego()
-        # adv motion & enqueue
-        d_a, _ = self.adv_motion.get_displacement(
-            self.adv_ref_speed, self.sim_step
-        )
-        ax = self.adv_start[0] + self.adv_dir[0] * self.adv_motion.d_total
-        ay = self.adv_start[1] + self.adv_dir[1] * self.adv_motion.d_total
-        adv_msg = Odometry()
-        adv_msg.header.stamp = self.get_clock().now().to_msg()
-        adv_msg.header.frame_id = 'map'
-        adv_msg.child_frame_id = 'adv_base_link'
-        adv_msg.pose.pose.position.x = ax
-        adv_msg.pose.pose.position.y = ay
-        adv_msg.pose.pose.orientation = quaternion_from_yaw(self.adv_yaw)
-        adv_msg.twist.twist.linear.x = self.adv_motion.v
-        self.adv_pub.publish(adv_msg)
-        # enqueue with message id, enforce max queue size
-
-        if len(self.adv_queue) < self.adv_queue_size:
-            self.udp_payload = {
-            "id": self._msg_id,
-            "t_stamp": now,
-            "front_x": ax,
-            "front_y": ay,
-            "vel": self._add_vel_noise(self.adv_motion.v)
-            }
-            self.adv_queue.append(self.udp_payload)
-            self._msg_id += 1
-
-        self._send_udp()
-
-    def _send_udp(self):
-        """
-        Send queued adv info after delay, but suppress during comm failure window.
-        """
-        now_ns = self.get_clock().now().nanoseconds
-        # if in failure window, skip sending
-        if self._comm_fail_start_ns <= now_ns < self._comm_fail_end_ns:
-            print(f"HERE {(self._comm_fail_end_ns - self._comm_fail_start_ns)/1e9}, {(self._comm_fail_start_ns - now_ns)/1e9} {(self._comm_fail_end_ns - now_ns)/1e9}")
+        # Check completion
+        if (self.ego_motion.d_total >= self.ego_path_dist or
+            self.adv_motion.d_total >= self.adv_path_dist):
+            self.get_logger().info('Reached end of paths; stopping simulation')
+            self.sim_timer.cancel()
             return
-        # send as before
-        if self.adv_queue and (now_ns - self.adv_queue[0]['t_stamp'] >= self._udp_delay_ns):
-            print(f"SENT {(now_ns - self.adv_queue[0]['t_stamp'])/1e9}")
-            info = self.adv_queue.popleft()
-            packet = json.dumps(info).encode('utf-8')
-            self.udp_sock.sendto(packet, (self.udp_ip, self.udp_port))
-            
 
-
-    def _publish_ego(self):
-        # advance ego using dynamic ref_spd and publish odometry
-        d_e, _ = self.ego_motion.get_displacement(
-            self.ego_ref_speed, self.sim_step
-        )
+        # Ego
+        d_e, _ = self.ego_motion.get_displacement(self.ego_ref_speed,
+                                                  self.sim_timer.timer_period_ns/1e9)
         ex = self.ego_start[0] + self.ego_dir[0] * self.ego_motion.d_total
         ey = self.ego_start[1] + self.ego_dir[1] * self.ego_motion.d_total
         ego_msg = Odometry()
@@ -221,18 +171,59 @@ class EgoAdvSimNode(Node):
         ego_msg.twist.twist.linear.x = self.ego_motion.v
         self.ego_pub.publish(ego_msg)
 
-    
+        # Adv
+        d_a, _ = self.adv_motion.get_displacement(self.adv_ref_speed,
+                                                  self.sim_timer.timer_period_ns/1e9)
+        ax = self.adv_start[0] + self.adv_dir[0] * self.adv_motion.d_total
+        ay = self.adv_start[1] + self.adv_dir[1] * self.adv_motion.d_total
+        adv_msg = Odometry()
+        adv_msg.header.stamp = self.get_clock().now().to_msg()
+        adv_msg.header.frame_id = 'map'
+        adv_msg.child_frame_id = 'adv_base_link'
+        adv_msg.pose.pose.position.x = ax
+        adv_msg.pose.pose.position.y = ay
+        adv_msg.pose.pose.orientation = quaternion_from_yaw(self.adv_yaw)
+        adv_msg.twist.twist.linear.x = self.adv_motion.v
+        self.adv_pub.publish(adv_msg)
+
+        # Queue UDP payload
+        if len(self.adv_queue) < self.adv_queue_size:
+            now = self.get_clock().now().nanoseconds
+            payload = {
+                'id': self._msg_id,
+                't_stamp': now,
+                'front_x': ax,
+                'front_y': ay,
+                'vel': self._add_vel_noise(self.adv_motion.v)
+            }
+            self.adv_queue.append(payload)
+            self._msg_id += 1
+
+    def _send_udp(self):
+        now_ns = self.get_clock().now().nanoseconds
+        # Stop both timers when both done
+        if (self.ego_motion.d_total >= self.ego_path_dist and
+            self.adv_motion.d_total >= self.adv_path_dist):
+            self.get_logger().info('Paths done; stopping UDP sends')
+            self.comm_timer.cancel()
+            return
+
+        # Suppress during comm failure
+        if self._comm_fail_start <= now_ns < self._comm_fail_end:
+            print(f"{(now_ns- self.start_ns)/1e9} COMM FAILURE")
+            return
+
+        # Send if delay elapsed
+        if self.adv_queue and (now_ns - self.adv_queue[0]['t_stamp'] >= self._udp_delay_ns):
+            info = self.adv_queue.popleft()
+            print(f"{(now_ns - self.start_ns)/1e9} SENDING {(info['t_stamp']- self.start_ns)/1e9} diff {(now_ns -info['t_stamp'])/1e9}")
+            packet = json.dumps(info).encode('utf-8')
+            self.udp_sock.sendto(packet, (self.udp_ip, self.udp_port))
 
     def _add_vel_noise(self, value: float) -> float:
-        # stub: add uncertainty, edit later
         return value - 0.2
-    
-    def _add_noise(self, value: float) -> float:
-        # stub: add uncertainty, edit later
-        return value
 
     def destroy_node(self):
-        # close UDP socket and stop
         self.get_logger().info('Shutting down, closing UDP socket')
         self.udp_sock.close()
         return super().destroy_node()

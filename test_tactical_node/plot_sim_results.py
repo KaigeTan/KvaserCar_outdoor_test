@@ -171,54 +171,57 @@ def get_traces(data: dict, x_axis, skip_index):
     )
     traces.append(trace_ego_v)
 
-    t_rec_list, id_list, t_msg_list = zip(*data["ego"]["all_rec_msg"])
+    try:
 
-    trace_all_msg_time = go.Scatter(
-        x=(np.asarray(t_rec_list) - data["ego"]["call_time"][0])/1000_000_000,
-        y=(np.asarray(t_msg_list) - t_msg_list[0])  /1000_000_000,
-        mode="lines+markers",
-        name="all_msg_time",
-        visible='legendonly',
-        line=dict(color=colors[len(traces)]),
-        marker=dict(color=colors[len(traces)], size=4),
-    )
-    traces.append(trace_all_msg_time)
+        t_rec_list, id_list, t_msg_list = zip(*data["ego"]["all_rec_msg"])
 
-    trace_all_msg_id = go.Scatter(
-        x=(np.asarray(t_rec_list)-data["ego"]["call_time"][0])/1000_000_000,
-        y=id_list,
-        mode="lines+markers",
-        name="all_msg_id",
-        visible='legendonly',
-        line=dict(color=colors[len(traces)]),
-        marker=dict(color=colors[len(traces)], size=4),
-    )
-    traces.append(trace_all_msg_id)
+        trace_all_msg_time = go.Scatter(
+            x=(np.asarray(t_rec_list) - data["ego"]["call_time"][0])/1000_000_000,
+            y=(np.asarray(t_msg_list) - t_msg_list[0])  /1000_000_000,
+            mode="lines+markers",
+            name="all_msg_time",
+            visible='legendonly',
+            line=dict(color=colors[len(traces)]),
+            marker=dict(color=colors[len(traces)], size=4),
+        )
+        traces.append(trace_all_msg_time)
 
-    t_rec_list, id_list, t_msg_list = zip(*data["ego"]["msg_current"])
+        trace_all_msg_id = go.Scatter(
+            x=(np.asarray(t_rec_list)-data["ego"]["call_time"][0])/1000_000_000,
+            y=id_list,
+            mode="lines+markers",
+            name="all_msg_id",
+            visible='legendonly',
+            line=dict(color=colors[len(traces)]),
+            marker=dict(color=colors[len(traces)], size=4),
+        )
+        traces.append(trace_all_msg_id)
 
-    trace_msg_id = go.Scatter(
-        x=(np.asarray(t_rec_list)- data["ego"]["call_time"][0])/1000_000_000,
-        y=id_list ,
-        mode="lines+markers",
-        name="msg_id",
-        visible='legendonly',
-        line=dict(color=colors[len(traces)]),
-        marker=dict(color=colors[len(traces)], size=4),
-    )
-    traces.append(trace_msg_id)
+        t_rec_list, id_list, t_msg_list = zip(*data["ego"]["msg_current"])
 
-    trace_msg_time = go.Scatter(
-        x=(np.asarray(t_rec_list) - data["ego"]["call_time"][0])/1000_000_000,
-        y=(np.asarray(t_msg_list) - t_msg_list[0] )/1000_000_000,
-        mode="lines+markers",
-        name="msg_time",
-        visible='legendonly',
-        line=dict(color=colors[len(traces)]),
-        marker=dict(color=colors[len(traces)], size=4),
-    )
-    traces.append(trace_msg_time)
+        trace_msg_id = go.Scatter(
+            x=(np.asarray(t_rec_list)- data["ego"]["call_time"][0])/1000_000_000,
+            y=id_list ,
+            mode="lines+markers",
+            name="msg_id",
+            visible='legendonly',
+            line=dict(color=colors[len(traces)]),
+            marker=dict(color=colors[len(traces)], size=4),
+        )
+        traces.append(trace_msg_id)
 
+        trace_msg_time = go.Scatter(
+            x=(np.asarray(t_rec_list) - data["ego"]["call_time"][0])/1000_000_000,
+            y=(np.asarray(t_msg_list) - t_msg_list[0] )/1000_000_000,
+            mode="lines+markers",
+            name="msg_time",
+            visible='legendonly',
+            line=dict(color=colors[len(traces)]),
+            marker=dict(color=colors[len(traces)], size=4),
+        )
+        traces.append(trace_msg_time)
+    except ValueError as e:
+        print("No messages received")
 
 
     return traces
