@@ -14,18 +14,17 @@ class UdpListenerNode(Node):
         super().__init__('udp_listener')
 
         # Declare and read parameters
-        self.declare_parameter('port', 9999)
+        self.declare_parameter('obps_port', 9999)
         self.declare_parameter('buffer_size', 2048)
-        self.declare_parameter('topic', 'udp_topic')
 
-        port = self.get_parameter('port').value
+        port = self.get_parameter('obps_port').value
         buf_size = self.get_parameter('buffer_size').value
 
         # Create publisher
         qos = QoSProfile(
             history=QoSHistoryPolicy.KEEP_LAST,            # only keep up to `depth` messages
             depth=1,                                       # queue size = 1
-            reliability=QoSReliabilityPolicy.RELIABLE,  # drop rather than retry old data
+            reliability=QoSReliabilityPolicy.RELIABLE,     # drop rather than retry old data
         )
         self.pub = self.create_publisher(String, TOPIC_NAME, qos)
 

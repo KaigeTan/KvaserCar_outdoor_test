@@ -20,8 +20,6 @@ from tactical_node.shared_object import SharedObj
 from tactical_msgs.msg import LogEntry
 
 
-
-
 # topics name
 ROS_TOPIC_AEB = "/aeb_triggered"
 ROS_TOPIC_ODOM = "/odometry/map/sim"
@@ -47,21 +45,15 @@ class TacticalNode(Node):
             self.aeb_callback,
             1)
 
-        qos = QoSProfile(
-            history=QoSHistoryPolicy.KEEP_LAST, 
-            depth=2,
-            reliability=QoSReliabilityPolicy.RELIABLE
-        )
-
         self.sub_odom = self.create_subscription(
             Odometry,
             ROS_TOPIC_ODOM,
             self.odom_callback,
-            qos)
+            1)
         
         qos_obps = QoSProfile(
-                history=QoSHistoryPolicy.KEEP_LAST,       # only keep the last N messages
-                depth=1,                                   # N = 1 (just the freshest)
+                history=QoSHistoryPolicy.KEEP_LAST,         # only keep the last N messages
+                depth=1,                                    # N = 1 (just the freshest)
                 reliability=QoSReliabilityPolicy.RELIABLE,  # don’t retry old data
             )
         self.sub_obps_msg = self.create_subscription(
@@ -76,21 +68,67 @@ class TacticalNode(Node):
 
         self.pub_vel = self.create_publisher(Float32, ROS_TOPIC_REF_VEL, 2)
 
-        critical_region_poly = cr.create_cr_polygon([parameters.CR_POINT_1,
-                                                                  parameters.CR_POINT_2,
-                                                                  parameters.CR_POINT_3,
-                                                                  parameters.CR_POINT_4])
+        # Declare parematers
+        self.declare_parameter('cr_point_1',      parameters.CR_POINT_1)
+        self.declare_parameter('cr_point_2',      parameters.CR_POINT_2)
+        self.declare_parameter('cr_point_3',      parameters.CR_POINT_3)
+        self.declare_parameter('cr_point_4',      parameters.CR_POINT_4)
+        self.declare_parameter('adv_path_start',  parameters.ADV_PATH_START)
+        self.declare_parameter('adv_path_end',    parameters.ADV_PATH_END)
+        self.declare_parameter('ego_path_start',  parameters.EGO_PATH_START)
+        self.declare_parameter('ego_path_end',    parameters.EGO_PATH_END)
+        self.declare_parameter('ego_ref_speed',   parameters.EGO_REFERENCE_SPEED)
+        self.declare_parameter('adv_ref_speed',   parameters.ADV_REFERENCE_SPEED)
+        self.declare_parameter('ego_max_acc',     parameters.EGO_MAX_ACC)
+        self.declare_parameter('ego_max_dec',     parameters.EGO_MAX_DEC)
+        self.declare_parameter('adv_max_acc',     parameters.ADV_MAX_ACC)
+        self.declare_parameter('ego_length',      parameters.EGO_LENGTH)
+        self.declare_parameter('ego_width',       parameters.EGO_WIDTH)
+        self.declare_parameter('adv_length',      parameters.ADV_LENGTH)
+        self.declare_parameter('adv_width',       parameters.ADV_WIDTH)
 
-        target_path = cr.create_path(parameters.ADV_PATH_START, parameters.ADV_PATH_END)
+        # 2) immediately read them into member variables
+        self.cr_point_1    = self.get_parameter('cr_point_1').value
+        self.cr_point_2    = self.get_parameter('cr_point_2').value
+        self.cr_point_3    = self.get_parameter('cr_point_3').value
+        self.cr_point_4    = self.get_parameter('cr_point_4').value
+        self.adv_path_start= self.get_parameter('adv_path_start').value
+        self.adv_path_end  = self.get_parameter('adv_path_end').value
+        self.ego_path_start= self.get_parameter('ego_path_start').value
+        self.ego_path_end  = self.get_parameter('ego_path_end').value
+        self.ego_ref_speed = self.get_parameter('ego_ref_speed').value
+        self.adv_ref_speed = self.get_parameter('adv_ref_speed').value
+        self.ego_max_acc   = self.get_parameter('ego_max_acc').value
+        self.ego_max_dec   = self.get_parameter('ego_max_dec').value
+        self.adv_max_acc   = self.get_parameter('adv_max_acc').value
+        self.ego_length    = self.get_parameter('ego_length').value
+        self.adv_length    = self.get_parameter('adv_length').value
+        self.ego_width     = self.get_parameter('ego_width').value
+        self.adv_width     = self.get_parameter('adv_width').value
+
+
+
+
+        critical_region_poly = cr.create_cr_polygon([self.cr_point_1,
+                                                     self.cr_point_2,
+                                                     self.cr_point_3,
+                                                     self.cr_point_4])
+
+        target_path = cr.create_path(self.adv_path_start, self.adv_path_end)
         target_cr = cr.CriticalRegion(target_path, critical_region_poly)
         target_cr.compute_critical_points()
 
-        ego_path = cr.create_path(parameters.EGO_PATH_START, parameters.EGO_PATH_END)
+        ego_path = cr.create_path(self.ego_path_start, self.ego_path_end)
         ego_cr = cr.CriticalRegion(ego_path, critical_region_poly)
         ego_cr.compute_critical_points()
 
-        # communication interface
-        self.behaviour = TacticalBehavior(ego_reference_speed=parameters.EGO_REFERENCE_SPEED,
+        # tactical behaviour
+        self.behaviour = TacticalBehavior(
+                                     ego_reference_speed=self.ego_ref_speed,
+                                     ego_max_dec=self.ego_max_dec,
+                                     ego_length=self.ego_length,
+                                     target_max_acc=self.adv_max_acc,
+                                     target_length=self.adv_length,
                                      ego_critical_region=ego_cr,
                                      target_critical_region=target_cr)
 
@@ -102,11 +140,12 @@ class TacticalNode(Node):
         # self.get_logger().info('OBPS message is: "%s"' % msg)
         content = json.loads(msg.data)
 
-        com_msg = ComMsg(id=content["id"], time_stamp=content["t_stamp"],
+        com_msg = ComMsg( id=content["id"], 
+                          time_stamp=content["t_stamp"],
                           arrival_time=time.time_ns(),
                           front=(content["front_x"], content["front_y"]), 
                           vel=content["vel"], 
-                          length=parameters.ADV_LENGTH)
+                          length=self.adv_length)
         self.obps.set_data(com_msg)
 
     def odom_callback(self, msg):
@@ -121,14 +160,14 @@ class TacticalNode(Node):
         # `degrees=True` returns angles in degrees; omit for radians
         _, _, body_yaw = r.as_euler('xyz')
         # Calculate the front and rear point of the vehicle, considering the orientation
-        front_x = center_x + parameters.EGO_LENGTH/2*math.cos(body_yaw)
-        front_y = center_y + parameters.EGO_WIDTH/2*math.sin(body_yaw)
-        rear_x = center_x - parameters.EGO_LENGTH/2*math.cos(body_yaw)
-        rear_y = center_y - parameters.EGO_WIDTH/2*math.sin(body_yaw)
+        front_x = center_x + self.ego_length/2*math.cos(body_yaw)
+        front_y = center_y + self.ego_width/2*math.sin(body_yaw)
+        rear_x = center_x - self.ego_length/2*math.cos(body_yaw)
+        rear_y = center_y - self.ego_width/2*math.sin(body_yaw)
         # Extract vehicle velocity, vy is 0, since no lateral motion
         vel_x = msg.twist.twist.linear.x
         vel_y = 0
-        ego_pose = EgoPose(front_x, front_y, rear_x, rear_y, vel_x, vel_y)
+        ego_pose = EgoPose(front_x, front_y, rear_x, rear_y, vel_x, vel_y, self.ego_max_acc)
         self.pose.set_data(ego_pose)
 
 
@@ -137,16 +176,16 @@ class TacticalNode(Node):
         entry = LogEntry()
         entry.header.stamp = self.get_clock().now().to_msg()
 
-        entry.decision_time      = int(self.behaviour.decision_time)
-        entry.aoi                = int(self.behaviour.aoi)
-        entry.aoi_in_sec         = float(self.behaviour.aoi_in_seconds)
+        entry.decision_time        = int(self.behaviour.decision_time)
+        entry.aoi                  = int(self.behaviour.aoi)
+        entry.aoi_in_sec           = float(self.behaviour.aoi_in_seconds)
 
-        entry.ego_tactical_speed = float(self.behaviour.ego_tactical_speed)
-        entry.ego_front_d        = float(self.behaviour.ego_d_front)
-        entry.ego_pos            = int(self.behaviour.ego_pos)
-        entry.ego_pred_go_pos    = int(self.behaviour.ego_pred_go_pos)
-        entry.ego_d_to_cr        = float(self.behaviour.ego_d_to_cr)
-        entry.ego_ttcr           = float(self.behaviour.ego_ttcr)
+        entry.ego_tactical_speed   = float(self.behaviour.ego_tactical_speed)
+        entry.ego_front_d          = float(self.behaviour.ego_d_front)
+        entry.ego_pos              = int(self.behaviour.ego_pos)
+        entry.ego_pred_go_pos      = int(self.behaviour.ego_pred_go_pos)
+        entry.ego_d_to_cr          = float(self.behaviour.ego_d_to_cr)
+        entry.ego_ttcr             = float(self.behaviour.ego_ttcr)
 
         entry.target_acc           = float(self.behaviour.target_acc)
         entry.kalman_acc_val       = float(self.behaviour.kalman_acc_value)
@@ -154,12 +193,14 @@ class TacticalNode(Node):
         entry.target_d_to_cr       = float(self.behaviour.target_d_to_cr)
         entry.target_pos           = int(self.behaviour.target_pred_pos)
         entry.target_d_front       = float(self.behaviour.target_prediction.d_front)
+
         if self.behaviour.target_front_coord_x is not None and self.behaviour.target_front_coord_y is not None:
             entry.target_front_coord_x = float(self.behaviour.target_front_coord_x)
             entry.target_front_coord_y = float(self.behaviour.target_front_coord_y)
         else:
-            entry.target_front_coord_x = float(-10_0000)
-            entry.target_front_coord_y = float(-10_0000)
+            # just a large negative value
+            entry.target_front_coord_x = float(-1_000)
+            entry.target_front_coord_y = float(-1_000)
 
         self.log_pub.publish(entry)
 

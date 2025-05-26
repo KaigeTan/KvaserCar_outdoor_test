@@ -1,4 +1,5 @@
 import time
+import math
 from enum import IntEnum
 
 import shapely
@@ -8,7 +9,6 @@ from tactical_node.ego_pose import EgoPose
 from tactical_node.ego_prediction import EgoPrediction
 from tactical_node.kalman_filter import KalmanFilter
 from tactical_node.target_prediction import TargetPrediction
-import tactical_node.parameters as parameters
 from  tactical_node.comm_msg import ComMsg
 
 def aoi_to_seconds(aoi) -> float:
@@ -26,15 +26,22 @@ class TacticalAction(IntEnum):
 class TacticalBehavior:
     def __init__(self,
                  ego_reference_speed: float,
+                 ego_max_dec: float,
+                 ego_length: float,
+                 target_max_acc: float,
+                 target_length:float,
                  ego_critical_region: CriticalRegion,
                  target_critical_region: CriticalRegion):
 
         self.target_prediction = TargetPrediction(0, target_critical_region)
+        self.adv_max_acc = target_max_acc
+        self.adv_length = target_length
         self.ego_prediction = EgoPrediction(ego_reference_speed,
-                                            parameters.EGO_MAX_DEC,
-                                            parameters.EGO_LENGTH,
+                                            ego_max_dec,
+                                            ego_length,
                                             ego_critical_region)
         self.aoi = -1
+        self.aoi_abs = -1
         self.aoi_in_seconds = -1
         self.msg = None
         self.ego_ttcr = -1
@@ -58,6 +65,7 @@ class TacticalBehavior:
         self.data_log = {"call_time": list(),
                         "decision_time": list(),
                          "aoi": list(),
+                         "aoi_abs":list(),
                          "aoi_seconds": list(),
                          "ego_tactical_speed": list(),
                          "ego_front_d": list(),
@@ -80,11 +88,11 @@ class TacticalBehavior:
     def _get_target_acc(self, aoi, velocity):
 
         self.kalman_acc_value = self.kalman_f.predict_acc(aoi, velocity)
-        if self.kalman_acc_value > parameters.ADV_MAX_ACC:
-            print("kalman acc is higher: {0}, assumption acc: {1}".format(self.kalman_acc_value, parameters.ADV_MAX_ACC))
+        if self.kalman_acc_value > self.adv_max_acc:
+            print("kalman acc is higher: {0}, assumption acc: {1}".format(self.kalman_acc_value, self.adv_max_acc))
             return self.kalman_acc_value
 
-        return parameters.ADV_MAX_ACC
+        return self.adv_max_acc
     
     def validate_new_msg(self, msg):
         if msg is not None:
@@ -108,7 +116,6 @@ class TacticalBehavior:
     def decision(self, msg: ComMsg, ego_pose: EgoPose) -> TacticalAction:
         """
 
-
         :param msg:
         :param ego_pose:
         :return:
@@ -131,8 +138,9 @@ class TacticalBehavior:
             return self.ego_action
         
         self.aoi = self.decision_time - self.msg.time_stamp
-        self.aoi_in_seconds = aoi_to_seconds(self.aoi) #transform in seconds!
-        target_length = self.msg.length if self.msg.length is not None else parameters.ADV_LENGTH
+        self.aoi_abs = math.abs(self.aoi)
+        self.aoi_in_seconds = aoi_to_seconds(self.aoi_abs) #transform in seconds!
+        target_length = self.msg.length if self.msg.length is not None else self.adv_length
         target_front = shapely.Point(self.msg.front[0], self.msg.front[1])
         shapely.prepare(target_front)
         self.target_acc = self._get_target_acc(self.aoi_in_seconds, self.msg.velocity)
@@ -209,6 +217,7 @@ class TacticalBehavior:
         self.data_log["ego_d_to_cr"].append(self.ego_d_to_cr)
         self.data_log["ego_ttcr"].append(self.ego_ttcr)
         self.data_log["aoi"].append(self.aoi)
+        self.data_log["aoi_abs"].append(self.aoi_abs)
         self.data_log["aoi_seconds"].append(self.aoi_in_seconds)
        
         if self.msg is not None:
