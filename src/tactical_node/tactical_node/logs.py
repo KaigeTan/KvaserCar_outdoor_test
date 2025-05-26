@@ -15,8 +15,7 @@ class ExpLog:
 
     def write_to_file(self):
         now = datetime.now()
-        # microseconds → nanoseconds
-        ns = now.microsecond * 1_000
+        ns = now.microsecond
         
         os.makedirs(parameters.EXP_LOG_PATH, exist_ok=True)
         # Create dated subdirectory name
