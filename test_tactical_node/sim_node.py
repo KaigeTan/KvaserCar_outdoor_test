@@ -106,7 +106,7 @@ class EgoAdvSimNode(Node):
         qos = QoSProfile(history=QoSHistoryPolicy.KEEP_LAST,
                          depth=2,
                          reliability=QoSReliabilityPolicy.RELIABLE)
-        self.ego_pub = self.create_publisher(Odometry, '/odometry/map/sim', qos)
+        self.ego_pub = self.create_publisher(Odometry, '/odometry/map/sim', 1)
         self.adv_pub = self.create_publisher(Odometry, '/adv_emu_odometry', qos)
         self.ref_spd_sub = self.create_subscription(
             Float32, '/ref_spd', self._ref_spd_callback, qos)

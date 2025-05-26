@@ -1,7 +1,6 @@
 import json
 import os
-import time
-import datetime
+from datetime import datetime
 
 import tactical_node.parameters as parameters
 
@@ -15,7 +14,6 @@ class ExpLog:
 
     def write_to_file(self):
         now = datetime.now()
-        ns = now.microsecond
         
         os.makedirs(parameters.EXP_LOG_PATH, exist_ok=True)
         # Create dated subdirectory name
@@ -25,10 +23,17 @@ class ExpLog:
         # Create the dated subdirectory
         os.makedirs(dated_dir, exist_ok=True)
 
-        file_name = "{0}.json".format(ns)
-        file_name = os.path.join(os.path.expanduser(parameters.EXP_LOG_PATH), file_name)
+        name = (
+            f"{now.day:02d}"
+            f"{now.hour:02d}"
+            f"{now.minute:02d}"
+            f"{now.second:02d}"
+            f"{now.microsecond:06d}"
+        )
 
-        data = {"exp_name":ns,
+        file_name = os.path.join(dated_dir, name + ".json")
+
+        data = {"exp_name":name,
                 "term_cause":self.term_cause,
                 "ego": self.vehicle_log}
 
