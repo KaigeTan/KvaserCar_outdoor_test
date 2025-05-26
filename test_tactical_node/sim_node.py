@@ -64,10 +64,11 @@ class EgoAdvSimNode(Node):
         # UDP & sim parameters
         self.declare_parameter('udp_target_ip', '127.0.0.1')
         self.declare_parameter('udp_target_port', 9999)
-        self.declare_parameter('udp_delay', 0.03)
+        self.declare_parameter('udp_delay', 0.05)
+        self.declare_parameter('add_aoi', 0)
         self.declare_parameter('adv_queue_size', 1)
         self.declare_parameter('comm_fail_start', 0.02)
-        self.declare_parameter('comm_fail_duration', 1.3)
+        self.declare_parameter('comm_fail_duration', 1.5)
         self.declare_parameter('sim_step', 0.03)
         self.declare_parameter('comm_step', 0.001)
 
@@ -126,6 +127,7 @@ class EgoAdvSimNode(Node):
         cfd = self.get_parameter('comm_fail_duration').value
         self._comm_fail_start = self.start_ns + int(cfs*1e9)
         self._comm_fail_end = self._comm_fail_start + int(cfd*1e9)
+        self.add_aoi = self.get_parameter('add_aoi').value * 1e6
 
         # Path publishers for plotter
         self.coord_pub = {}
@@ -216,6 +218,7 @@ class EgoAdvSimNode(Node):
         # Send if delay elapsed
         if self.adv_queue and (now_ns - self.adv_queue[0]['t_stamp'] >= self._udp_delay_ns):
             info = self.adv_queue.popleft()
+            info["t_stamp"] -= self.add_aoi 
             print(f"{(now_ns - self.start_ns)/1e9} SENDING {(info['t_stamp']- self.start_ns)/1e9} diff {(now_ns -info['t_stamp'])/1e9}")
             packet = json.dumps(info).encode('utf-8')
             self.udp_sock.sendto(packet, (self.udp_ip, self.udp_port))

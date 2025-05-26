@@ -138,7 +138,7 @@ class TacticalBehavior:
             return self.ego_action
         
         self.aoi = self.decision_time - self.msg.time_stamp
-        self.aoi_abs = math.abs(self.aoi)
+        self.aoi_abs = math.fabs(self.aoi)
         self.aoi_in_seconds = aoi_to_seconds(self.aoi_abs) #transform in seconds!
         target_length = self.msg.length if self.msg.length is not None else self.adv_length
         target_front = shapely.Point(self.msg.front[0], self.msg.front[1])
