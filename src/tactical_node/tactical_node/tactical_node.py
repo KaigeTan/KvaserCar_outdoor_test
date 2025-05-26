@@ -8,6 +8,8 @@ from scipy.spatial.transform import Rotation as R
 import math
 import json
 import time
+import threading
+import socket
 
 import tactical_node.critical_region as cr
 from tactical_node.comm_msg import ComMsg
@@ -86,8 +88,12 @@ class TacticalNode(Node):
         self.declare_parameter('ego_width',       parameters.EGO_WIDTH)
         self.declare_parameter('adv_length',      parameters.ADV_LENGTH)
         self.declare_parameter('adv_width',       parameters.ADV_WIDTH)
+        # Socket-start parameters
+        self.declare_parameter('use_start_socket', False)
+        self.declare_parameter('start_socket_host', '0.0.0.0')
+        self.declare_parameter('start_socket_port', 12345)
 
-        # 2) immediately read them into member variables
+        # read params them into member variables
         self.cr_point_1    = self.get_parameter('cr_point_1').value
         self.cr_point_2    = self.get_parameter('cr_point_2').value
         self.cr_point_3    = self.get_parameter('cr_point_3').value
@@ -104,10 +110,9 @@ class TacticalNode(Node):
         self.ego_length    = self.get_parameter('ego_length').value
         self.adv_length    = self.get_parameter('adv_length').value
         self.ego_width     = self.get_parameter('ego_width').value
-        self.adv_width     = self.get_parameter('adv_width').value
-
-
-
+        self.adv_width     = self.get_parameter('adv_width').value  
+        self.start_socket  = self.get_parameter('use_start_socket').value  
+        self.start_port    = self.get_parameter('start_socket_port').value  
 
         critical_region_poly = cr.create_cr_polygon([self.cr_point_1,
                                                      self.cr_point_2,
@@ -131,6 +136,11 @@ class TacticalNode(Node):
                                      target_length=self.adv_length,
                                      ego_critical_region=ego_cr,
                                      target_critical_region=target_cr)
+        
+        # If acting as server, start listening thread
+        if self.use_start_socket:
+            self.run = False
+            threading.Thread(target=self._start_server, daemon=True).start()
 
     def aeb_callback(self, msg):
         # self.get_logger().info('AEB message is: "%s"' % msg.data)
@@ -243,6 +253,28 @@ class TacticalNode(Node):
 
     def pub_ref_speed(self, vel):
         self.pub_vel.publish(Float32(data=vel))
+
+    def _start_server(self):
+        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server.bind((self.start_socket_host, self.start_socket_port))
+        server.listen(1)
+        self.get_logger().info(f"Start server listening on {self.start_socket_host}:{self.start_socket_port}")
+        conn, addr = server.accept()
+        self.get_logger().info(f"Connection from {addr}, waiting for 'start'")
+        data = b''
+        try:
+            while True:
+                data = conn.recv(1024).decode('utf-8').strip()
+                self.get_logger().info("Received TCP data: '%s'", data)
+            
+                if data == 'start':
+                    self.get_logger().info("Received 'start', launching logic")
+                    self.run = True
+                    break
+        finally:
+            conn.close()
+            server.close()
 
 
 def main(args=None):
