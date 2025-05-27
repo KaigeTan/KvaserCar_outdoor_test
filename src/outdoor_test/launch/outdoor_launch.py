@@ -27,7 +27,7 @@ def generate_launch_description():
     tf_config_odom = config.get('static_transform_odom', {})
     # Convert values to strings for arguments
     tf_odom_args = [
-        str(tf_config_odom.get('x', 0.0)),
+        str(tf_config_odom.get('x', 0.0)), # change it to use the params_ros.yaml, construct myself
         str(tf_config_odom.get('y', 0.0)),
         str(tf_config_odom.get('z', 0.0)),
         str(tf_config_odom.get('roll', 0.0)),

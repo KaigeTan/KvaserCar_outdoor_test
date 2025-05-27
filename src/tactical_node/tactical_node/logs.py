@@ -14,14 +14,16 @@ class ExpLog:
 
     def write_to_file(self):
         now = datetime.now()
-        
-        os.makedirs(parameters.EXP_LOG_PATH, exist_ok=True)
-        # Create dated subdirectory name
-        date_str = now.strftime('%d_%m_%y')
-        dated_dir = os.path.join(parameters.EXP_LOG_PATH, date_str)
 
-        # Create the dated subdirectory
-        os.makedirs(dated_dir, exist_ok=True)
+        # Base folder to store rosbag files
+        bag_base_dir = os.path.expanduser('~/KvaserCar_outdoor_test/tactical_data')
+
+        # Generate date-based subfolder (e.g., 0513)
+        date_str = datetime.now().strftime('%m%d')
+        bag_subdir = os.path.join(bag_base_dir, date_str)
+
+        # Ensure directory exists
+        os.makedirs(bag_subdir, exist_ok=True)
 
         name = (
             f"{now.day:02d}"
@@ -31,7 +33,7 @@ class ExpLog:
             f"{now.microsecond:06d}"
         )
 
-        file_name = os.path.join(dated_dir, name + ".json")
+        file_name = os.path.join(bag_subdir, name + ".json")
 
         data = {"exp_name":name,
                 "term_cause":self.term_cause,
