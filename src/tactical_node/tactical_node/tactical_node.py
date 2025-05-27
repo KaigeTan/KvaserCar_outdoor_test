@@ -138,7 +138,7 @@ class TacticalNode(Node):
                                      target_critical_region=target_cr)
         
         # If acting as server, start listening thread
-        if self.use_start_socket:
+        if self.start_socket:
             self.run = False
             threading.Thread(target=self._start_server, daemon=True).start()
 

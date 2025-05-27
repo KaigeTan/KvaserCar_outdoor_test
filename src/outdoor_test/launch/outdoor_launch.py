@@ -5,6 +5,9 @@ from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 import yaml
+from launch.actions import ExecuteProcess
+import os
+from datetime import datetime
 
 # TODO: add the parameter module for the tactical_node and bluecar_tf
 def generate_launch_description():
@@ -51,10 +54,6 @@ def generate_launch_description():
     imu_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(imu_launch_path)
     )
-
-    # Get shared start position
-    start_x = tf_config_odom.get('x', 0.0)
-    start_y = tf_config_odom.get('y', 0.0)
     
     # Include the IMU filter node
     imu_filter = Node(
@@ -67,6 +66,7 @@ def generate_launch_description():
     wheel_odom = Node(
         package='wheel_odometry',
         executable='wheel_odometry_node',
+        name='rover_odometry_node',
         output='screen',
         parameters=[params_ros_file]
     )
@@ -79,9 +79,10 @@ def generate_launch_description():
     # Include the tactical_node
     tactical_node = Node(
         package='tactical_node',
-        executable='tactical_node_new',
+        executable='tactical_node', # TODO: do we run tactical node or tactical node new?
+        name='tactical_node',
         output='screen',
-        parameters=[{'ego_path_start': [start_x, start_y]}]
+        parameters=[params_ros_file]
     )
 
     # Include the aeb_rover
@@ -125,10 +126,35 @@ def generate_launch_description():
     )
 
     # Include the OBPS receiver node
-    obps_receiver_tf = Node(
+    obps_receiver = Node(
             package='obps_receiver',
             executable='obps_receiver',
-            output='screen'
+            name='obps_receiver',
+            output='screen',
+            parameters=[params_ros_file]
+    )
+
+    # Base folder to store rosbag files
+    bag_base_dir = os.path.expanduser('~/KvaserCar_outdoor_test/recorded_rosbag')
+
+    # Generate date-based subfolder (e.g., 0513)
+    date_str = datetime.now().strftime('%m%d')
+    bag_subdir = os.path.join(bag_base_dir, date_str)
+
+    # Ensure directory exists
+    os.makedirs(bag_subdir, exist_ok=True)
+
+    # Full path for output rosbag (timestamped inside the date folder)
+    bag_output_path = os.path.join(bag_subdir, 'rosbag_' + datetime.now().strftime('%H%M%S'))
+
+    # Define the bag recording process
+    rosbag_record = ExecuteProcess(
+        cmd=[
+            'ros2', 'bag', 'record',
+            'a',
+            '-o', bag_output_path
+        ],
+        output='screen'
     )
 
     # Add a log message to indicate successful launch
@@ -142,10 +168,11 @@ def generate_launch_description():
         ekf_launch,
         aeb_rover,
         ctrl_rover,
-        obps_receiver_tf,
+        obps_receiver,
         bluecar_tf,
         camera_tf,
         tactical_node,
         map_odom_tf,
+        rosbag_record,
         launch_complete_message
     ])

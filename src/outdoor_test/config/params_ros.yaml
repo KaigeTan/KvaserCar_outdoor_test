@@ -16,3 +16,33 @@ low_level_control_easy_play:
     is_steering_correction: 1
     is_throttle_correction: 0
     distance_travel: 5.0
+
+# OBPS recevier parameters, port need to be adjusted
+obps_receiver:
+  ros__parameters:
+    obps_port: 9999
+    buffer_size: 2048
+
+# tactical node parameters definition
+tactical_node:
+  ros__parameters:
+    cr_point_1: [1, 1]
+    cr_point_2: [1, -1]
+    cr_point_3: [-1, -1]
+    cr_point_4: [-1, 1]
+    adv_path_start: [0, -10]
+    adv_path_end: [0, 10]
+    ego_path_start: [5, 0]
+    ego_path_end: [-3, 0]
+    ego_ref_speed: 3.0
+    adv_ref_speed: 3.0
+    ego_max_acc: 2.5
+    ego_max_dec: 2.5
+    adv_max_acc: 2.5
+    ego_length: 0.720
+    ego_width: 0.515
+    adv_length: 0.720
+    adv_width: 0.515
+    use_start_socket: false
+    start_socket_host: '0.0.0.0'
+    start_socket_port: 12345
