@@ -1,6 +1,6 @@
 # static transform from map to odom (rover initialization position)
 static_transform_odom:
-  x: 5.0
+  x: 2.788
   y: 0.0
   z: 0.0
   roll: 3.14159
