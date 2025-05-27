@@ -9,7 +9,7 @@ from launch.actions import ExecuteProcess
 import os
 from datetime import datetime
 
-# TODO: add the parameter module for the tactical_node and bluecar_tf
+
 def generate_launch_description():
     # Get the paths to the individual launch files
     imu_launch_path = get_package_share_directory('outdoor_test') + '/launch/imu_launch.py'
@@ -17,39 +17,26 @@ def generate_launch_description():
 
     # Get the paths to the individual launch files
     params_ros_file = get_package_share_directory('outdoor_test') + '/config/params_ros.yaml'
-    params_static_file = get_package_share_directory('outdoor_test') + '/config/params_static.yaml'
     imu_launch_path = get_package_share_directory('outdoor_test') + '/launch/imu_launch.py'
     ekf_launch_path = get_package_share_directory('outdoor_test') + '/launch/ekf_launch.py'
     
-    # Load tranformation parameter from yaml file
-    with open(params_static_file, 'r') as f:
+    # Load initial position parameter from yaml file
+    with open(params_ros_file, 'r') as f:
         config = yaml.safe_load(f)
-    tf_config_odom = config.get('static_transform_odom', {})
+    ego_path_start = config.get('tactical_node', {}).get('ros__parameters', {}).get('ego_path_start', None)
     # Convert values to strings for arguments
+    ego_start_x = float(ego_path_start[0])
+    ego_start_y = float(ego_path_start[1])
     tf_odom_args = [
-        str(tf_config_odom.get('x', 0.0)), # change it to use the params_ros.yaml, construct myself
-        str(tf_config_odom.get('y', 0.0)),
-        str(tf_config_odom.get('z', 0.0)),
-        str(tf_config_odom.get('roll', 0.0)),
-        str(tf_config_odom.get('pitch', 0.0)),
-        str(tf_config_odom.get('yaw', 0.0)),
-        tf_config_odom.get('parent_frame', 'map'),
-        tf_config_odom.get('child_frame', 'odom')
-    ]
-    
-    tf_config_camera = config.get('static_transform_camera', {})
-    # Convert values to strings for arguments
-    tf_camera_args = [
-        str(tf_config_camera.get('x', 0.0)),
-        str(tf_config_camera.get('y', 0.0)),
-        str(tf_config_camera.get('z', 0.0)),
-        str(tf_config_camera.get('roll', 0.0)),
-        str(tf_config_camera.get('pitch', 0.0)),
-        str(tf_config_camera.get('yaw', 0.0)),
-        tf_config_camera.get('parent_frame', 'map'),
-        tf_config_camera.get('child_frame', 'odom')
-    ]
-    
+        str(ego_start_x), # change it to use the params_ros.yaml, construct myself
+        str(ego_start_y),
+        str(0.0),
+        str(3.14159),
+        str(0.0),
+        str(0.0),
+        'map',
+        'odom']
+
     # Include the IMU launch file
     imu_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(imu_launch_path)
@@ -79,7 +66,7 @@ def generate_launch_description():
     # Include the tactical_node
     tactical_node = Node(
         package='tactical_node',
-        executable='tactical_node', # TODO: do we run tactical node or tactical node new?
+        executable='tactical_node',
         name='tactical_node',
         output='screen',
         parameters=[params_ros_file]
@@ -107,21 +94,19 @@ def generate_launch_description():
         output='screen'
     )
 
+    # Time synchronization
+    chrony_sync = Node(
+            package='chrony_tracker',
+            executable='chrony_tracker',
+            output='screen'
+    )
+
     # Include the map to odom transformation node
     bluecar_tf = Node(
             package='tf2_ros',
             executable='static_transform_publisher',
             name='tf_map_to_baselink',
             arguments=tf_odom_args,  # TODO: check the RPY frame, now 3.14 is set to the first entry to get the correct value
-            output='screen'
-    )
-
-    # Include the map to external camera transformation node
-    camera_tf = Node(
-            package='tf2_ros',
-            executable='static_transform_publisher',
-            name='tf_map_to_camera',
-            arguments=tf_camera_args,
             output='screen'
     )
 
@@ -170,7 +155,7 @@ def generate_launch_description():
         ctrl_rover,
         obps_receiver,
         bluecar_tf,
-        camera_tf,
+        chrony_sync,
         tactical_node,
         map_odom_tf,
         rosbag_record,
