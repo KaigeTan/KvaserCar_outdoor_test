@@ -240,7 +240,6 @@ class TacticalNode(Node):
             self.pub_ref_speed(speed)
             self.behaviour.log()
             self.publish_log()
-
     
 
     def is_exp_ended(self):
