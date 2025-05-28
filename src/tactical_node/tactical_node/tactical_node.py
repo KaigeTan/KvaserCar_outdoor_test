@@ -10,26 +10,26 @@ import json
 import time
 import threading
 import socket
+import os
 
-import tactical_node.critical_region as cr
-from tactical_node.comm_msg import ComMsg
-from tactical_node.logs import ExpLog
-from tactical_node.tactical_behaviour import TacticalBehavior
-import tactical_node.parameters as parameters
-from tactical_node.ego_pose import EgoPose
-from tactical_node.shared_object import SharedObj
+import critical_region as cr
+from comm_msg import ComMsg
+from logs import ExpLog
+from tactical_behaviour import TacticalBehavior
+import parameters as parameters
+from ego_pose import EgoPose
+from shared_object import SharedObj
 
 from tactical_msgs.msg import LogEntry
 
 
 # topics name
 ROS_TOPIC_AEB = "/aeb_triggered"
-ROS_TOPIC_ODOM = "/odometry/map/sim"
+ROS_TOPIC_ODOM = "/odometry/map/"
 ROS_TOPIC_REF_VEL = "/ref_spd"
 ROS_TOPIC_TACTICAL_LOG = "/tactical_log"
 ROS_TOPIC_OBPS = "/obps"
 
-# TODO set proper time for main timer
 ROS_TACTICAL_LOGIC_TIMER = 1/10
 
 class TacticalNode(Node):
@@ -70,6 +70,9 @@ class TacticalNode(Node):
 
         self.pub_vel = self.create_publisher(Float32, ROS_TOPIC_REF_VEL, 2)
 
+        # experiment id
+        self.start_id = -1
+
         # Declare parematers
         self.declare_parameter('cr_point_1',      parameters.CR_POINT_1)
         self.declare_parameter('cr_point_2',      parameters.CR_POINT_2)
@@ -92,6 +95,7 @@ class TacticalNode(Node):
         self.declare_parameter('use_start_socket', False)
         self.declare_parameter('start_socket_host', '0.0.0.0')
         self.declare_parameter('start_socket_port', 12345)
+        self.declare_parameter('bag_output_path', "")
 
         # read params them into member variables
         self.cr_point_1    = self.get_parameter('cr_point_1').value
@@ -113,7 +117,12 @@ class TacticalNode(Node):
         self.adv_width     = self.get_parameter('adv_width').value  
         self.start_socket  = self.get_parameter('use_start_socket').value  
         self.start_port    = self.get_parameter('start_socket_port').value  
+        ros_bag_path  = self.get_parameter('bag_output_path').value
 
+        # persistent logging
+        self.exp_log = ExpLog(ros_bag_path)
+
+        # critical region
         critical_region_poly = cr.create_cr_polygon([self.cr_point_1,
                                                      self.cr_point_2,
                                                      self.cr_point_3,
@@ -221,8 +230,7 @@ class TacticalNode(Node):
             self.get_logger().info("stopping the car, exp terminated with cause={0}".format(cause))
             self.pub_ref_speed(0.0)
             if self.run:
-                exp_log = ExpLog(self.behaviour.data_log, cause)
-                exp_log.write_to_file()
+                self.exp_log.write_to_file(self.start_id, self.behaviour.data_log, cause)
             self.run = False
 
         if self.run:
@@ -260,18 +268,38 @@ class TacticalNode(Node):
         server.bind((self.start_socket_host, self.start_socket_port))
         server.listen(1)
         self.get_logger().info(f"Start server listening on {self.start_socket_host}:{self.start_socket_port}")
+        
         conn, addr = server.accept()
-        self.get_logger().info(f"Connection from {addr}, waiting for 'start'")
-        data = b''
+        self.get_logger().info(f"Connection from {addr}, waiting for start signal")
+
         try:
-            while True:
-                data = conn.recv(1024).decode('utf-8').strip()
-                self.get_logger().info("Received TCP data: '%s'", data)
-            
-                if data == 'start':
-                    self.get_logger().info("Received 'start', launching logic")
-                    self.run = True
-                    break
+            raw = conn.recv(1024)
+            if not raw:
+                self.get_logger().error("Connection closed before any data received")
+                return
+
+            try:
+                payload = json.loads(raw.decode('utf-8').strip())
+            except json.JSONDecodeError as e:
+                self.get_logger().error(f"Failed to parse message: {e}")
+                return
+
+            cmd = payload.get("cmd")
+            start_id = payload.get("id")
+            if cmd != "start":
+                self.get_logger().warning(f"Ignored cmd: {cmd!r}")
+                return
+
+            if not isinstance(start_id, str):
+                self.get_logger().error(f"Invalid or missing 'id' field: {start_id!r}")
+                return
+
+            self.get_logger().info(f"Received start command with id='{start_id}'")
+
+            # Now kick off the run
+            self.start_id = start_id
+            self.run = True
+
         finally:
             conn.close()
             server.close()
@@ -285,8 +313,7 @@ def main(args=None):
     try:
         rclpy.spin(tactical_node)
     except KeyboardInterrupt:
-        exp_log = ExpLog(tactical_node.behaviour.data_log, "Force-exit")
-        exp_log.write_to_file()
+        tactical_node.exp_log.write_to_file(tactical_node.behaviour.data_log, "Force-exit")
     finally:
         tactical_node.destroy_node()
         rclpy.shutdown()

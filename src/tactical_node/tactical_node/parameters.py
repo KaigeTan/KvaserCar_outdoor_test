@@ -1,6 +1,6 @@
 # FILE LOGGING
 # TODO FILL WITH AN ABSOLUTE PATH
-EXP_LOG_PATH = '~/KvaserCar_outdoor_test/tactical_data'
+EXP_LOG_PATH = '~/KvaserCar_outdoor_test/tactical_log'
 
 
 # CRITICAL REGION POINTS
