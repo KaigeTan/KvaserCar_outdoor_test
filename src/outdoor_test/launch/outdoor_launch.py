@@ -63,15 +63,6 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(ekf_launch_path)
     )
 
-    # Include the tactical_node
-    tactical_node = Node(
-        package='tactical_node',
-        executable='tactical_node',
-        name='tactical_node',
-        output='screen',
-        parameters=[params_ros_file]
-    )
-
     # Include the aeb_rover
     aeb_rover = Node(
         package='aeb_rover',
@@ -142,6 +133,17 @@ def generate_launch_description():
         output='screen'
     )
 
+    # Include the tactical_node
+    tactical_node = Node(
+        package='tactical_node',
+        executable='tactical_node',
+        name='tactical_node',
+        output='screen',
+        parameters=[params_ros_file, # static YAML config parameter
+                    {'bag_output_path': bag_output_path} # Dynamic param in launch file for bag path
+                   ]
+    )
+    
     # Add a log message to indicate successful launch
     launch_complete_message = LogInfo(msg="All nodes and launch files have been successfully started!")
 
