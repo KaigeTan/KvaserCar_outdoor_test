@@ -261,16 +261,16 @@ class TacticalNode(Node):
         self.pub_vel.publish(Float32(data=vel))
 
     def _start_server(self):
-        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        server.bind((self.start_socket_host, self.start_socket_port))
-        server.listen(1)
-        self.get_logger().info(f"Start server listening on {self.start_socket_host}:{self.start_socket_port}")
-        
-        conn, addr = server.accept()
-        self.get_logger().info(f"Connection from {addr}, waiting for start signal")
-
         try:
+            server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            server.bind((self.start_socket_host, self.start_socket_port))
+            server.listen(1)
+            self.get_logger().info(f"Start server listening on {self.start_socket_host}:{self.start_socket_port}")
+            
+            conn, addr = server.accept()
+            self.get_logger().info(f"Connection from {addr}, waiting for start signal")
+
             raw = conn.recv(1024)
             if not raw:
                 self.get_logger().error("Connection closed before any data received")
