@@ -10,22 +10,21 @@ import json
 import time
 import threading
 import socket
-import os
 
-import critical_region as cr
-from comm_msg import ComMsg
-from logs import ExpLog
-from tactical_behaviour import TacticalBehavior
-import parameters as parameters
-from ego_pose import EgoPose
-from shared_object import SharedObj
+import tactical_node.critical_region as cr
+from tactical_node.comm_msg import ComMsg
+from tactical_node.logs import ExpLog
+from tactical_node.tactical_behaviour import TacticalBehavior
+import tactical_node.parameters as parameters
+from tactical_node.ego_pose import EgoPose
+from tactical_node.shared_object import SharedObj
 
 from tactical_msgs.msg import LogEntry
 
 
 # topics name
 ROS_TOPIC_AEB = "/aeb_triggered"
-ROS_TOPIC_ODOM = "/odometry/map/"
+ROS_TOPIC_ODOM = "/odometry/map/sim"
 ROS_TOPIC_REF_VEL = "/ref_spd"
 ROS_TOPIC_TACTICAL_LOG = "/tactical_log"
 ROS_TOPIC_OBPS = "/obps"
@@ -313,7 +312,7 @@ def main(args=None):
     try:
         rclpy.spin(tactical_node)
     except KeyboardInterrupt:
-        tactical_node.exp_log.write_to_file(tactical_node.behaviour.data_log, "Force-exit")
+        tactical_node.exp_log.write_to_file(tactical_node.start_id, tactical_node.behaviour.data_log, "Force-exit")
     finally:
         tactical_node.destroy_node()
         rclpy.shutdown()

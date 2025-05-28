@@ -2,7 +2,7 @@ import json
 import os
 from datetime import datetime
 
-import parameters as parameters
+import tactical_node.parameters as parameters
 
 
 
@@ -52,5 +52,7 @@ class ExpLog:
             with open(self.register_file, 'a') as f:
                 line = f"[start_id:{start_id}, ros_bag:{self.path_ros_bag}, tactical_log:{self.log_file_name}]\n"
                 f.write(line)
+
+            print(f"Saved, {start_id} {self.path_ros_bag} {self.log_file_name}")
 
         self.done = True
