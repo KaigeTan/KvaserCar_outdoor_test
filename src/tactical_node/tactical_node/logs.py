@@ -10,7 +10,7 @@ class ExpLog:
     def __init__(self, path_ros_bag):
         self.log_dir = self.create_log_dir()
         self.log_file_name = self.create_log_file_name()
-        self.register_file = os.path.join(self.log_dir, "records")
+        self.register_file = os.path.join(self.log_dir, "blue_car_records")
         self.path_ros_bag = path_ros_bag
         self.done = False
 
