@@ -155,7 +155,7 @@ class TacticalNode(Node):
         self.aeb.set_data(msg.data)
 
     def obps_callback(self, msg):
-        # self.get_logger().info('OBPS message is: "%s"' % msg)
+        #self.get_logger().info('OBPS message is: "%s"' % msg)
         content = json.loads(msg.data)
 
         com_msg = ComMsg( id=content["id"], 
