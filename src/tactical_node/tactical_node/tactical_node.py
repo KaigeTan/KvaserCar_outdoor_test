@@ -24,7 +24,7 @@ from tactical_msgs.msg import LogEntry
 
 # topics name
 ROS_TOPIC_AEB = "/aeb_triggered"
-ROS_TOPIC_ODOM = "/odometry/map/"
+ROS_TOPIC_ODOM = "/odometry/map"
 ROS_TOPIC_REF_VEL = "/ref_spd"
 ROS_TOPIC_TACTICAL_LOG = "/tactical_log"
 ROS_TOPIC_OBPS = "/obps"
@@ -114,8 +114,9 @@ class TacticalNode(Node):
         self.adv_length    = self.get_parameter('adv_length').value
         self.ego_width     = self.get_parameter('ego_width').value
         self.adv_width     = self.get_parameter('adv_width').value  
-        self.start_socket  = self.get_parameter('use_start_socket').value  
-        self.start_port    = self.get_parameter('start_socket_port').value  
+        self.use_start_socket  = self.get_parameter('use_start_socket').value  
+        self.start_socket_host = self.get_parameter('start_socket_host').value
+        self.start_socket_port = self.get_parameter('start_socket_port').value  
         ros_bag_path  = self.get_parameter('bag_output_path').value
 
         # persistent logging
@@ -146,7 +147,7 @@ class TacticalNode(Node):
                                      target_critical_region=target_cr)
         
         # If acting as server, start listening thread
-        if self.start_socket:
+        if self.use_start_socket:
             self.run = False
             threading.Thread(target=self._start_server, daemon=True).start()
 
@@ -283,16 +284,17 @@ class TacticalNode(Node):
                 return
 
             cmd = payload.get("cmd")
-            start_id = payload.get("id")
+            start_id = payload.get("start_id")
             if cmd != "start":
                 self.get_logger().warning(f"Ignored cmd: {cmd!r}")
                 return
 
             if not isinstance(start_id, str):
-                self.get_logger().error(f"Invalid or missing 'id' field: {start_id!r}")
+                self.get_logger().error(f"Invalid or missing 'start_id' field: {start_id!r}")
+                self.get_logger().error(f"Received payload: {payload!r}")
                 return
 
-            self.get_logger().info(f"Received start command with id='{start_id}'")
+            self.get_logger().info(f"Received start command with start_id='{start_id}'")
 
             # Now kick off the run
             self.start_id = start_id
