@@ -49,14 +49,17 @@ class SimBlueInTheLoop(Node):
         # --- startup prompt & TCP handshake ---
         ans = input("start in the loop sim (y) ")
         if ans.strip().lower() == 'y':
-            blue_ip = self.declare_parameter('BLUE_IP', '127.0.0.1').value
+            blue_ip = self.declare_parameter('BLUE_IP', '192.168.1.202').value
             blue_port = self.declare_parameter('BLUE_PORT', 9999).value
             try:
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                sock.connect((blue_ip, blue_port))
-                sock.sendall(b'start')
+                sock.connect((blue_ip, 9000))
+                start_id = "test_id"
+                message = {"cmd": "start", "start_id": start_id}
+                message_str = json.dumps(message)
+                sock.sendall(message_str.encode('utf-8'))
                 sock.close()
-                self.get_logger().info(f"Sent 'start' to {blue_ip}:{blue_port}")
+                self.get_logger().info(f"Sent 'start' to {blue_ip}:{9000}")
             except Exception as e:
                 self.get_logger().error(f"Failed to send start: {e}")
 
@@ -69,7 +72,7 @@ class SimBlueInTheLoop(Node):
         adv_max_acc = self.declare_parameter('adv_max_acc', 2.5).value
 
         # --- UDP parameters ---
-        self.udp_ip = self.declare_parameter('udp_target_ip', '127.0.0.1').value
+        self.udp_ip = self.declare_parameter('udp_target_ip', '192.168.1.202').value
         self.udp_port = self.declare_parameter('udp_target_port', 9999).value
         udp_delay = self.declare_parameter('udp_delay', 0.05).value
         self._udp_delay_ns = int(udp_delay * 1e9)
