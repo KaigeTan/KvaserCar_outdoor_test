@@ -119,6 +119,8 @@ class TacticalNode(Node):
         self.start_socket_port = self.get_parameter('start_socket_port').value  
         ros_bag_path  = self.get_parameter('bag_output_path').value
 
+        self.get_logger().info(f"REF SPEAD FROM PARAMS= {self.ego_ref_speed}")
+
         # persistent logging
         self.exp_log = ExpLog(ros_bag_path)
 
@@ -241,6 +243,9 @@ class TacticalNode(Node):
             self.pub_ref_speed(speed)
             self.behaviour.log()
             self.publish_log()
+        
+        if self.run is False:
+            self.pub_ref_speed(0.0)
     
 
     def is_exp_ended(self):
@@ -259,6 +264,7 @@ class TacticalNode(Node):
         return None, False
 
     def pub_ref_speed(self, vel):
+        self.get_logger().info(f"SENDING REF SPEED= {vel}")
         self.pub_vel.publish(Float32(data=vel))
 
     def _start_server(self):

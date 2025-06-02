@@ -113,6 +113,9 @@ class LowLevelCtrl(Node):
 
     def spd_to_throttle(self, ref_spd):
         """Convert the reference speed to the throttle control value, use a open test mapping, this is NOT a closed-loop control."""
+        if ref_spd == 0.0:
+            self.get_logger().info("The reference speed is 0.", throttle_duration_sec=1.0)
+            return 0.0
         if ref_spd < 1 or ref_spd > 3:
             self.get_logger().warn("The reference speed must be from the range of [1, 3].", throttle_duration_sec=1.0)
             return 0.0
