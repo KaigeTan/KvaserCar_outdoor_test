@@ -40,9 +40,10 @@ class ExpLog:
         return file_name
 
 
-    def write_to_file(self, start_id, vehicle_log, termination_cause):
+    def write_to_file(self, start_id, start_time, vehicle_log, termination_cause):
         if not self.done:
             data = {"start_id":start_id,
+                    "start_time":start_time,
                     "term_cause":termination_cause,
                     "ego": vehicle_log}
 

@@ -71,6 +71,7 @@ class TacticalNode(Node):
 
         # experiment id
         self.start_id = -1
+        self.start_time = -1
 
         # Declare parematers
         self.declare_parameter('cr_point_1',      parameters.CR_POINT_1)
@@ -232,7 +233,7 @@ class TacticalNode(Node):
             self.get_logger().info("stopping the car, exp terminated with cause={0}".format(cause))
             self.pub_ref_speed(0.0)
             if self.run:
-                self.exp_log.write_to_file(self.start_id, self.behaviour.data_log, cause)
+                self.exp_log.write_to_file(self.start_id, self.start_time, self.behaviour.data_log, cause)
             self.run = False
 
         if self.run:
@@ -304,6 +305,7 @@ class TacticalNode(Node):
 
             # Now kick off the run
             self.start_id = start_id
+            self.start_time = time.time_ns()
             self.run = True
 
         finally:
@@ -319,7 +321,7 @@ def main(args=None):
     try:
         rclpy.spin(tactical_node)
     except KeyboardInterrupt:
-        tactical_node.exp_log.write_to_file(tactical_node.start_id, tactical_node.behaviour.data_log, "Force-exit")
+        tactical_node.exp_log.write_to_file(tactical_node.start_id, tactical_node.start_time, tactical_node.behaviour.data_log, "Force-exit")
     finally:
         tactical_node.destroy_node()
         rclpy.shutdown()

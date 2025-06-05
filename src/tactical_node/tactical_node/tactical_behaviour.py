@@ -82,7 +82,7 @@ class TacticalBehavior:
                          "target_vel" : list(),
                          "kalman_acc": list(),
                          "msg_current": list(),
-                         "all_rec_msg": list(),                  
+                         "all_rec_msg": list(),              
                          }
 
     def _get_target_acc(self, aoi, velocity):
@@ -100,9 +100,9 @@ class TacticalBehavior:
                 _, temp_id, _ = self.data_log["all_rec_msg"][-1]
                 if temp_id != msg.id:
                     # log it only if it is new
-                    self.data_log["all_rec_msg"].append((self.call_time, msg.id, msg.time_stamp))
+                    self.data_log["all_rec_msg"].append((self.call_time, msg.id, msg.time_stamp, msg.arrival_time))
             else:
-                self.data_log["all_rec_msg"].append((self.call_time, msg.id, msg.time_stamp))
+                self.data_log["all_rec_msg"].append((self.call_time, msg.id, msg.time_stamp, msg.arrival_time))
             
             if self.msg is None:
                 return msg
@@ -186,9 +186,9 @@ class TacticalBehavior:
             else:
                 t_to_leave_cr = self.target_prediction.get_time_to_leave_cr(self.msg.velocity, self.target_acc)
                 pred_go_leave_cr, _ = self.ego_prediction.get_predicted_positions(ego_vel,
-                                                                                    ego_acc,
-                                                                                    t_to_leave_cr,
-                                                                                    ego_front_p)
+                                                                                  ego_acc,
+                                                                                  t_to_leave_cr,
+                                                                                  ego_front_p)
                 if pred_go_leave_cr != CriticalRegion.Position.BEFORE_CR:
                     self.ego_pos = pred_go_leave_cr
                     self.ego_action = TacticalAction.BREAKING
@@ -221,7 +221,7 @@ class TacticalBehavior:
         self.data_log["aoi_seconds"].append(self.aoi_in_seconds)
        
         if self.msg is not None:
-            self.data_log["msg_current"].append((self.call_time, self.msg.id, self.msg.time_stamp))
+            self.data_log["msg_current"].append((self.call_time, self.msg.id, self.msg.time_stamp, msg.arrival_time))
             self.data_log["target_vel"].append(self.msg.velocity)
 
         self.data_log["target_acc"].append(self.target_acc)
