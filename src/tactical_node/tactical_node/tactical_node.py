@@ -98,29 +98,50 @@ class TacticalNode(Node):
         self.declare_parameter('bag_output_path', "")
 
         # read params them into member variables
-        self.cr_point_1    = self.get_parameter('cr_point_1').value
-        self.cr_point_2    = self.get_parameter('cr_point_2').value
-        self.cr_point_3    = self.get_parameter('cr_point_3').value
-        self.cr_point_4    = self.get_parameter('cr_point_4').value
-        self.adv_path_start= self.get_parameter('adv_path_start').value
-        self.adv_path_end  = self.get_parameter('adv_path_end').value
-        self.ego_path_start= self.get_parameter('ego_path_start').value
-        self.ego_path_end  = self.get_parameter('ego_path_end').value
-        self.ego_ref_speed = self.get_parameter('ego_ref_speed').value
-        self.adv_ref_speed = self.get_parameter('adv_ref_speed').value
-        self.ego_max_acc   = self.get_parameter('ego_max_acc').value
-        self.ego_max_dec   = self.get_parameter('ego_max_dec').value
-        self.adv_max_acc   = self.get_parameter('adv_max_acc').value
-        self.ego_length    = self.get_parameter('ego_length').value
-        self.adv_length    = self.get_parameter('adv_length').value
-        self.ego_width     = self.get_parameter('ego_width').value
-        self.adv_width     = self.get_parameter('adv_width').value  
+        self.cr_point_1        = self.get_parameter('cr_point_1').value
+        self.cr_point_2        = self.get_parameter('cr_point_2').value
+        self.cr_point_3        = self.get_parameter('cr_point_3').value
+        self.cr_point_4        = self.get_parameter('cr_point_4').value
+        self.adv_path_start    = self.get_parameter('adv_path_start').value
+        self.adv_path_end      = self.get_parameter('adv_path_end').value
+        self.ego_path_start    = self.get_parameter('ego_path_start').value
+        self.ego_path_end      = self.get_parameter('ego_path_end').value
+        self.ego_ref_speed     = self.get_parameter('ego_ref_speed').value
+        self.adv_ref_speed     = self.get_parameter('adv_ref_speed').value
+        self.ego_max_acc       = self.get_parameter('ego_max_acc').value
+        self.ego_max_dec       = self.get_parameter('ego_max_dec').value
+        self.adv_max_acc       = self.get_parameter('adv_max_acc').value
+        self.ego_length        = self.get_parameter('ego_length').value
+        self.adv_length        = self.get_parameter('adv_length').value
+        self.ego_width         = self.get_parameter('ego_width').value
+        self.adv_width         = self.get_parameter('adv_width').value  
         self.use_start_socket  = self.get_parameter('use_start_socket').value  
         self.start_socket_host = self.get_parameter('start_socket_host').value
         self.start_socket_port = self.get_parameter('start_socket_port').value  
-        ros_bag_path  = self.get_parameter('bag_output_path').value
+        ros_bag_path           = self.get_parameter('bag_output_path').value
 
-        self.get_logger().info(f"REF SPEAD FROM PARAMS= {self.ego_ref_speed}")
+        self.get_logger().info(f"REF SPEED FROM PARAMS= {self.ego_ref_speed}")
+
+        self.ini_params = {
+            "cr_point_1": self.cr_point_1,
+            "cr_point_2": self.cr_point_2,
+            "cr_point_3": self.cr_point_3,
+            "cr_point_4": self.cr_point_4,
+            "adv_path_start": self.adv_path_start,
+            "adv_path_end": self.adv_path_end,
+            "ego_path_start": self.ego_path_start,
+            "ego_path_end": self.ego_path_end,
+            "ego_ref_speed": self.ego_ref_speed,
+            "adv_ref_speed": self.adv_ref_speed,
+            "ego_max_acc": self.ego_max_acc,
+            "ego_max_dec": self.ego_max_dec,
+            "adv_max_acc": self.adv_max_acc,
+            "ego_length": self.ego_length,
+            "adv_length": self.adv_length,
+            "ego_width": self.ego_width,
+            "adv_width": self.adv_width,
+            "use_start_socket": self.use_start_socket
+        }
 
         # persistent logging
         self.exp_log = ExpLog(ros_bag_path)
@@ -233,7 +254,7 @@ class TacticalNode(Node):
             self.get_logger().info("stopping the car, exp terminated with cause={0}".format(cause))
             self.pub_ref_speed(0.0)
             if self.run:
-                self.exp_log.write_to_file(self.start_id, self.start_time, self.behaviour.data_log, cause)
+                self.exp_log.write_to_file(self.start_id, self.start_time, self.ini_params, self.behaviour.data_log, cause)
             self.run = False
 
         if self.run:
@@ -321,7 +342,11 @@ def main(args=None):
     try:
         rclpy.spin(tactical_node)
     except KeyboardInterrupt:
-        tactical_node.exp_log.write_to_file(tactical_node.start_id, tactical_node.start_time, tactical_node.behaviour.data_log, "Force-exit")
+        tactical_node.exp_log.write_to_file(tactical_node.start_id, 
+                                            tactical_node.start_time, 
+                                            tactical_node.ini_params,
+                                            tactical_node.behaviour.data_log, 
+                                            "Force-exit")
     finally:
         tactical_node.destroy_node()
         rclpy.shutdown()
