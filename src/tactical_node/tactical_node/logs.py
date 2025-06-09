@@ -52,7 +52,7 @@ class ExpLog:
                 json.dump(data, f)
 
             with open(self.register_file, 'a') as f:
-                line = f"[start_id:{start_id}, ros_bag:{self.path_ros_bag}, tactical_log:{self.log_file_name}]\n"
+                line = f"[start_id:{start_id}, start_time:{start_time}, ros_bag:{self.path_ros_bag}, tactical_log:{self.log_file_name}]\n"
                 f.write(line)
             
             print(f"Saved, {start_id} {self.path_ros_bag} {self.log_file_name}")

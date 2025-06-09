@@ -29,11 +29,12 @@ class TacticalBehavior:
                  ego_max_dec: float,
                  ego_length: float,
                  target_max_acc: float,
+                 target_max_speed: float,
                  target_length:float,
                  ego_critical_region: CriticalRegion,
                  target_critical_region: CriticalRegion):
 
-        self.target_prediction = TargetPrediction(0, target_critical_region)
+        self.target_prediction = TargetPrediction(0, target_critical_region, target_max_speed)
         self.adv_max_acc = target_max_acc
         self.adv_length = target_length
         self.ego_prediction = EgoPrediction(ego_reference_speed,
@@ -97,7 +98,7 @@ class TacticalBehavior:
     def validate_new_msg(self, msg):
         if msg is not None:
             if len(self.data_log["all_rec_msg"]) > 0:
-                _, temp_id, _ = self.data_log["all_rec_msg"][-1]
+                _, temp_id, _, _ = self.data_log["all_rec_msg"][-1]
                 if temp_id != msg.id:
                     # log it only if it is new
                     self.data_log["all_rec_msg"].append((self.call_time, msg.id, msg.time_stamp, msg.arrival_time))
@@ -164,17 +165,21 @@ class TacticalBehavior:
                 self.ego_action = TacticalAction.CONTINUE
 
             else:
-                t_to_leave_cr = self.target_prediction.get_time_to_leave_cr(self.msg.velocity, self.target_acc)
-                pred_go_leave_cr, _ = self.ego_prediction.get_predicted_positions(ego_vel,
-                                                                                    ego_acc,
-                                                                                    t_to_leave_cr,
-                                                                                    ego_front_p)
-                self.ego_pos = pred_go_leave_cr
+                t_to_leave_cr = self.target_prediction.get_time_to_leave_cr(self.target_pred_pos, self.msg.velocity, self.target_acc)
 
-                if pred_go_leave_cr == CriticalRegion.Position.INSIDE_CR:
-                    self.ego_action = TacticalAction.BREAKING
-                elif pred_go_leave_cr == CriticalRegion.Position.BEFORE_CR:
+                if t_to_leave_cr == TargetPrediction.NO_TIME_TO_CR:
                     self.ego_action = TacticalAction.CONTINUE
+                else:
+                    pred_go_leave_cr, _ = self.ego_prediction.get_predicted_positions(ego_vel,
+                                                                                        ego_acc,
+                                                                                        t_to_leave_cr,
+                                                                                        ego_front_p)
+                    self.ego_pos = pred_go_leave_cr
+
+                    if pred_go_leave_cr == CriticalRegion.Position.INSIDE_CR:
+                        self.ego_action = TacticalAction.BREAKING
+                    elif pred_go_leave_cr == CriticalRegion.Position.BEFORE_CR:
+                        self.ego_action = TacticalAction.CONTINUE
 
         elif self.target_pred_pos == CriticalRegion.Position.AFTER_CR:
             self.ego_action = TacticalAction.CONTINUE
@@ -184,14 +189,18 @@ class TacticalBehavior:
             if self.ego_pos == CriticalRegion.Position.AFTER_CR:
                 self.ego_action = TacticalAction.CONTINUE
             else:
-                t_to_leave_cr = self.target_prediction.get_time_to_leave_cr(self.msg.velocity, self.target_acc)
-                pred_go_leave_cr, _ = self.ego_prediction.get_predicted_positions(ego_vel,
-                                                                                  ego_acc,
-                                                                                  t_to_leave_cr,
-                                                                                  ego_front_p)
-                if pred_go_leave_cr != CriticalRegion.Position.BEFORE_CR:
-                    self.ego_pos = pred_go_leave_cr
-                    self.ego_action = TacticalAction.BREAKING
+                t_to_leave_cr = self.target_prediction.get_time_to_leave_cr(self.target_pred_pos, self.msg.velocity, self.target_acc)
+                if t_to_leave_cr == TargetPrediction.NO_TIME_TO_CR:
+                    self.ego_action = TacticalAction.CONTINUE
+                else:
+
+                    pred_go_leave_cr, _ = self.ego_prediction.get_predicted_positions(ego_vel,
+                                                                                      ego_acc,
+                                                                                      t_to_leave_cr,
+                                                                                      ego_front_p)
+                    if pred_go_leave_cr != CriticalRegion.Position.BEFORE_CR:
+                        self.ego_pos = pred_go_leave_cr
+                        self.ego_action = TacticalAction.BREAKING
 
         self.ego_d_front, self.ego_d_to_cr, self.ego_ttcr = self.ego_prediction.get_dist_and_time_to_cr(ego_vel, ego_front_p)
 
@@ -221,7 +230,7 @@ class TacticalBehavior:
         self.data_log["aoi_seconds"].append(self.aoi_in_seconds)
        
         if self.msg is not None:
-            self.data_log["msg_current"].append((self.call_time, self.msg.id, self.msg.time_stamp, msg.arrival_time))
+            self.data_log["msg_current"].append((self.call_time, self.msg.id, self.msg.time_stamp, self.msg.arrival_time))
             self.data_log["target_vel"].append(self.msg.velocity)
 
         self.data_log["target_acc"].append(self.target_acc)

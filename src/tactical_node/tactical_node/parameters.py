@@ -10,10 +10,10 @@ EXP_LOG_PATH = '~/KvaserCar_outdoor_test/tactical_log'
 #     |         |
 #    (P3)-----(P2)
 #
-CR_POINT_1 = [0.5, 0.5]
-CR_POINT_2 = [0.5, -0.5]
-CR_POINT_3 = [-0.5, -0.5]
-CR_POINT_4 = [-0.5, 0.5]
+CR_POINT_1 = [2.0, 2.0]
+CR_POINT_2 = [2.0, -2.0]
+CR_POINT_3 = [-2.0, -2.0]
+CR_POINT_4 = [-2.0, 2.0]
 
 # ADVERSARY VEHICLE PATH POINTS
 ADV_PATH_START = [0.0, -4.0]
@@ -24,7 +24,7 @@ EGO_PATH_START = [4.0, 0.0]
 EGO_PATH_END = [-2.0, 0.0]
 
 # ADVERSARY PARAMETERS
-ADV_REFERENCE_SPEED = 1.0 #[m/s]
+ADV_MAX_SPEED = 1.0 #[m/s]
 ADV_MAX_ACC = 0.77 #[m/s]
 ADV_LENGTH = 0.720 #[m]
 ADV_WIDTH = 0.515 #[m]

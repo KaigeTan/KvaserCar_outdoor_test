@@ -26,19 +26,19 @@ obps_receiver:
 # tactical node parameters definition
 tactical_node:
   ros__parameters:
-    cr_point_1: [0.5, 0.5]
-    cr_point_2: [0.5, -0.5]
-    cr_point_3: [-0.5, -0.5]
-    cr_point_4: [-0.5, 0.5]
+    cr_point_1: [2.0, 2.0]
+    cr_point_2: [2.0, -2.0]
+    cr_point_3: [-2.0, -2.0]
+    cr_point_4: [-2.0, 2.0]
     adv_path_start: [0.0, -4.0]
     adv_path_end: [0.0, 2.0]
     ego_path_start: [4.0, 0.0]
     ego_path_end: [-2.0, 0.0]
     ego_ref_speed: 1.5
-    adv_ref_speed: 1.0
+    adv_max_speed: 1.25
     ego_max_acc: 1.35
     ego_max_dec: 1.25
-    adv_max_acc: 0.77
+    adv_max_acc: 1.05
     ego_length: 0.720
     ego_width: 0.515
     adv_length: 0.720

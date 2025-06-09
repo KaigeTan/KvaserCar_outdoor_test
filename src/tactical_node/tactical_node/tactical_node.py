@@ -83,7 +83,7 @@ class TacticalNode(Node):
         self.declare_parameter('ego_path_start',  parameters.EGO_PATH_START)
         self.declare_parameter('ego_path_end',    parameters.EGO_PATH_END)
         self.declare_parameter('ego_ref_speed',   parameters.EGO_REFERENCE_SPEED)
-        self.declare_parameter('adv_ref_speed',   parameters.ADV_REFERENCE_SPEED)
+        self.declare_parameter('adv_max_speed',   parameters.ADV_MAX_SPEED)
         self.declare_parameter('ego_max_acc',     parameters.EGO_MAX_ACC)
         self.declare_parameter('ego_max_dec',     parameters.EGO_MAX_DEC)
         self.declare_parameter('adv_max_acc',     parameters.ADV_MAX_ACC)
@@ -107,10 +107,10 @@ class TacticalNode(Node):
         self.ego_path_start    = self.get_parameter('ego_path_start').value
         self.ego_path_end      = self.get_parameter('ego_path_end').value
         self.ego_ref_speed     = self.get_parameter('ego_ref_speed').value
-        self.adv_ref_speed     = self.get_parameter('adv_ref_speed').value
         self.ego_max_acc       = self.get_parameter('ego_max_acc').value
         self.ego_max_dec       = self.get_parameter('ego_max_dec').value
         self.adv_max_acc       = self.get_parameter('adv_max_acc').value
+        self.adv_max_speed     = self.get_parameter('adv_max_speed').value
         self.ego_length        = self.get_parameter('ego_length').value
         self.adv_length        = self.get_parameter('adv_length').value
         self.ego_width         = self.get_parameter('ego_width').value
@@ -132,7 +132,7 @@ class TacticalNode(Node):
             "ego_path_start": self.ego_path_start,
             "ego_path_end": self.ego_path_end,
             "ego_ref_speed": self.ego_ref_speed,
-            "adv_ref_speed": self.adv_ref_speed,
+            "adv_max_speed": self.adv_max_speed,
             "ego_max_acc": self.ego_max_acc,
             "ego_max_dec": self.ego_max_dec,
             "adv_max_acc": self.adv_max_acc,
@@ -166,6 +166,7 @@ class TacticalNode(Node):
                                      ego_max_dec=self.ego_max_dec,
                                      ego_length=self.ego_length,
                                      target_max_acc=self.adv_max_acc,
+                                     target_max_speed=self.adv_max_speed,
                                      target_length=self.adv_length,
                                      ego_critical_region=ego_cr,
                                      target_critical_region=target_cr)
