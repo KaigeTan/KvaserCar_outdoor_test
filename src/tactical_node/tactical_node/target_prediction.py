@@ -37,7 +37,7 @@ class TargetPrediction:
     
 
     def get_predicted_aoi_displacement(self, delta_time: float, current_vel:float, target_acc:float):
-        if self.at_max_speed():
+        if self.at_max_speed(current_vel):
             return self.max_speed * delta_time
         else:
             t_x = (self.max_speed - current_vel) / target_acc
@@ -110,10 +110,10 @@ class TargetPrediction:
             # discriminant V*v - 4*0.5*a*(-distance)
             # we are before the CN!
             distance = math.fabs(self.cr.cn_orig_d - self.d_front)
-            if self.at_max_speed():
+            if self.at_max_speed(target_vel):
                 target_time = distance / target_vel
             else:            
-                discriminant = target_vel ** 2 + 2 * target_acc * (-distance)
+                discriminant = target_vel ** 2 - 2 * target_acc * (-distance)
                 target_time = (-target_vel + math.sqrt(discriminant)) / target_acc
             if target_time < 0:
                 print("ERROR get_target_time_to_cr for target with id: {0}!!!".format(self.id))
@@ -128,18 +128,18 @@ class TargetPrediction:
 
         if target_pos == CriticalRegion.Position.BEFORE_CR:
             distance = math.fabs(self.d_front - self.cr.cn_orig_d)
-            if self.at_max_speed():
+            if self.at_max_speed(target_vel):
                 target_time = distance / target_vel
             else:
-                discriminant = target_vel ** 2 + 2 * target_acc * (-distance)
+                discriminant = target_vel ** 2 - 2 * target_acc * (-distance)
                 target_time = (-target_vel + math.sqrt(discriminant)) / target_acc
 
         elif target_pos == CriticalRegion.Position.INSIDE_CR:
             distance = math.fabs(self.cr.cf_orig_d - self.d_rear)
-            if self.at_max_speed():
+            if self.at_max_speed(target_vel):
                 target_time = distance / target_vel
             else:
-                discriminant = target_vel ** 2 + 2 * target_acc * (-distance)
+                discriminant = target_vel ** 2 - 2 * target_acc * (-distance)
                 target_time = (-target_vel + math.sqrt(discriminant)) / target_acc
 
         return target_time
