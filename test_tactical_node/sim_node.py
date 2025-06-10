@@ -8,7 +8,7 @@ import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, QoSHistoryPolicy, QoSReliabilityPolicy
 from nav_msgs.msg import Odometry
-from geometry_msgs.msg import Quaternion, Point
+from geometry_msgs.msg import Quaternion, Point, PolygonStamped, Point32
 from std_msgs.msg import Float32  # for reference speed subscription
 
 class Motion:
@@ -47,29 +47,34 @@ class EgoAdvSimNode(Node):
     def __init__(self):
         super().__init__('ego_adv_sim')
         # Declare parameters
-        self.declare_parameter('ego_start_x', 5.0)
+        self.declare_parameter('ego_start_x', 4.0)
         self.declare_parameter('ego_start_y', 0.0)
-        self.declare_parameter('ego_end_x', -5.0)
+        self.declare_parameter('ego_end_x', -4.0)
         self.declare_parameter('ego_end_y', 0.0)
-        self.declare_parameter('ego_ref_speed', 2.5)
-        self.declare_parameter('ego_max_acc', 2.5)
+        self.declare_parameter('ego_ref_speed', 1.5)
+        self.declare_parameter('ego_max_acc', 1.2)
 
         self.declare_parameter('adv_start_x', 0.0)
-        self.declare_parameter('adv_start_y', -5.0)
+        self.declare_parameter('adv_start_y', -4.0)
         self.declare_parameter('adv_end_x', 0.0)
-        self.declare_parameter('adv_end_y', 5.0)
-        self.declare_parameter('adv_ref_speed', 2.5)
-        self.declare_parameter('adv_max_acc', 2.5)
+        self.declare_parameter('adv_end_y', 6.0)
+        self.declare_parameter('adv_ref_speed', 1.1)
+        self.declare_parameter('adv_max_acc', 1.1)
+
+        self.declare_parameter('cr_point_1', [0.5, 0.5])
+        self.declare_parameter('cr_point_2', [0.5, -0.5])
+        self.declare_parameter('cr_point_3', [-0.5, -0.5])
+        self.declare_parameter('cr_point_4', [-0.5, 0.5])
 
         # UDP & sim parameters
         self.declare_parameter('udp_target_ip', '127.0.0.1')
         self.declare_parameter('udp_target_port', 9999)
-        self.declare_parameter('udp_delay', 0.05)
-        self.declare_parameter('add_aoi', 0)
+        self.declare_parameter('udp_delay', 0.0) # in seconds
+        self.declare_parameter('add_aoi', 0)     # in milli
         self.declare_parameter('adv_queue_size', 1)
-        self.declare_parameter('comm_fail_start', 0.02)
-        self.declare_parameter('comm_fail_duration', 1.5)
-        self.declare_parameter('sim_step', 0.03)
+        self.declare_parameter('comm_fail_start', 0)
+        self.declare_parameter('comm_fail_duration', 0)
+        self.declare_parameter('sim_step', 0.05)
         self.declare_parameter('comm_step', 0.001)
 
         # Read parameters
@@ -138,6 +143,31 @@ class EgoAdvSimNode(Node):
             pub = self.create_publisher(Point, f'/{name}', qos)
             msg = Point(x=coord[0], y=coord[1], z=0.0)
             pub.publish(msg)
+
+        self.crit_pub = self.create_publisher(
+            PolygonStamped,
+            '/critical_region',
+            qos
+        )
+
+        # define your critical‐region polygon here (in map frame)
+        region = PolygonStamped()
+        region.header.frame_id = 'map'
+        cr_point_1 = self.get_parameter('cr_point_1').value
+        cr_point_2 = self.get_parameter('cr_point_2').value
+        cr_point_3 = self.get_parameter('cr_point_3').value
+        cr_point_4 = self.get_parameter('cr_point_4').value
+        region.polygon.points = [
+            Point32(x=cr_point_1[0], y=cr_point_1[1], z=0.0),
+            Point32(x=cr_point_2[0], y=cr_point_2[1], z=0.0),
+            Point32(x=cr_point_3[0], y=cr_point_3[1], z=0.0),
+            Point32(x=cr_point_4[0], y=cr_point_4[1], z=0.0)
+        ]
+
+        # publish once (latched)
+        self.crit_pub.publish(region)
+        self.get_logger().info('Published critical region polygon')
+        
 
         # Timers
         self.sim_timer = self.create_timer(self.get_parameter('sim_step').value,
@@ -224,7 +254,7 @@ class EgoAdvSimNode(Node):
             self.udp_sock.sendto(packet, (self.udp_ip, self.udp_port))
 
     def _add_vel_noise(self, value: float) -> float:
-        return value - 0.2
+        return value - 0.0
 
     def destroy_node(self):
         self.get_logger().info('Shutting down, closing UDP socket')

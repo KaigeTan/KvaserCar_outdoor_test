@@ -3,14 +3,15 @@ import threading
 import math
 from collections import deque
 
+import numpy as np
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, QoSHistoryPolicy, QoSReliabilityPolicy
 from nav_msgs.msg import Odometry
-from geometry_msgs.msg import Point
+from geometry_msgs.msg import Point, PolygonStamped
 from tactical_msgs.msg import LogEntry  # replace with actual package name
 import matplotlib.pyplot as plt
-from matplotlib.patches import Rectangle
+from matplotlib.patches import Rectangle, Polygon
 from matplotlib.animation import FuncAnimation
 
 
@@ -31,6 +32,9 @@ class PlotNode(Node):
         self.adv_path_start = None
         self.adv_path_end = None
 
+        # critical region polygon vertices
+        self.crit_region = None  # list of (x, y)
+
         # common QoS
         qos = QoSProfile(
             history=QoSHistoryPolicy.KEEP_LAST,
@@ -46,33 +50,35 @@ class PlotNode(Node):
         self.create_subscription(Point, '/adv_start', self.adv_start_cb, qos)
         self.create_subscription(Point, '/adv_end', self.adv_end_cb, qos)
         self.create_subscription(LogEntry, '/tactical_log', self.tac_cb, qos)
+        # subscribe once to critical region polygon
+        self.create_subscription(PolygonStamped, '/critical_region', self.crit_region_cb, qos)
 
         # matplotlib setup
         self.fig, self.ax = plt.subplots(figsize=(8, 8))
         self.ax.set_xlabel('X position [m]')
         self.ax.set_ylabel('Y position [m]')
-        self.ax.set_title('Live Trajectories')
+        self.ax.set_title('Live Trajectories with Critical Region')
         self.ax.grid(True)
         self.ax.set_aspect('equal')
         self.ax.set_xlim(-10, 10)
         self.ax.set_ylim(-10, 10)
 
-        # trajectory lines
+        # trajectory and planned path lines
         self.ego_traj_line, = self.ax.plot([], [], 'b-', label='Ego trajectory')
         self.adv_traj_line, = self.ax.plot([], [], 'r-', label='Adv trajectory')
-        # planned path lines
         self.ego_path_line, = self.ax.plot([], [], 'b--', label='Ego path')
         self.adv_path_line, = self.ax.plot([], [], 'r--', label='Adv path')
 
-        # vehicle shape dimensions
+        # patches for vehicles and region
         self.length = 0.720
         self.width = 0.515
-
-        # patches for ego and adv vehicles
+        # initialize crit_patch with 0x2 array to avoid shape errors
+        self.crit_patch = Polygon(np.empty((0, 2)), closed=True, label='Critical Region', fc='black', alpha=0.3)
         self.ego_patch = Rectangle(
             (-self.length / 2, -self.width / 2),
             self.length,
             self.width,
+            label='Ego',
             fc='blue',
             alpha=0.6
         )
@@ -80,14 +86,15 @@ class PlotNode(Node):
             (-self.length / 2, -self.width / 2),
             self.length,
             self.width,
+            label='Adv',
             fc='red',
             alpha=0.6
         )
-        # tactical adversary patch: transparent fill, dotted border
         self.tac_patch = Rectangle(
             (-self.length, -self.width / 2),
             self.length,
             self.width,
+            label='Tac Front',
             fc='none',
             ec='green',
             ls=':',
@@ -95,12 +102,15 @@ class PlotNode(Node):
             alpha=0.8
         )
 
-        for patch in (self.ego_patch, self.adv_patch, self.tac_patch):
-            self.ax.add_patch(patch)
-
+        # add patches and lines to axes
+        self.ax.add_patch(self.crit_patch)
+        self.ax.add_patch(self.ego_patch)
+        self.ax.add_patch(self.adv_patch)
+        self.ax.add_patch(self.tac_patch)
+        # show legend automatically
         self.ax.legend()
 
-        # start ROS spinning
+        # start ROS spinning in background
         threading.Thread(target=rclpy.spin, args=(self,), daemon=True).start()
 
         # start animation
@@ -115,15 +125,15 @@ class PlotNode(Node):
         plt.show()
 
     def _init_anim(self):
-        # clear all lines
+        # clear all lines and patches
         self.ego_traj_line.set_data([], [])
         self.adv_traj_line.set_data([], [])
         self.ego_path_line.set_data([], [])
         self.adv_path_line.set_data([], [])
-        # reset patches off-screen
-        for patch in (self.ego_patch, self.adv_patch, self.tac_patch):
-            patch.set_transform(self.ax.transData)
+        # reset critical region patch to empty (0x2) array
+        self.crit_patch.set_xy(np.empty((0, 2)))
         return (
+            self.crit_patch,
             self.ego_path_line,
             self.adv_path_line,
             self.ego_traj_line,
@@ -149,7 +159,6 @@ class PlotNode(Node):
         self.adv_buf.append((x, y, yaw))
 
     def tac_cb(self, msg: LogEntry):
-        # target_front_coord fields
         self.tac_front = (
             msg.target_front_coord_x,
             msg.target_front_coord_y
@@ -168,8 +177,15 @@ class PlotNode(Node):
     def adv_end_cb(self, msg: Point):
         self.adv_path_end = (msg.x, msg.y)
 
+    def crit_region_cb(self, msg: PolygonStamped):
+        # store and plot critical region polygon
+        verts = [(p.x, p.y) for p in msg.polygon.points]
+        self.crit_region = verts
+        self.crit_patch.set_xy(verts)
+
     def update(self, frame):
-        artists = []
+        artists = [self.crit_patch]
+
         # plot planned paths
         if self.ego_path_start and self.ego_path_end:
             xs = [self.ego_path_start[0], self.ego_path_end[0]]
@@ -210,10 +226,9 @@ class PlotNode(Node):
             self.adv_patch.set_transform(trans2)
             artists += [self.adv_traj_line, self.adv_patch]
 
-                # update tactical patch at front coord
+        # update tactical patch at front coord
         if self.tac_front and self.adv_buf:
             xf, yf = self.tac_front
-            # use adv orientation for alignment
             _, _, adv_yaw = self.adv_buf[-1]
             trans3 = (
                 plt.matplotlib.transforms.Affine2D()
@@ -222,7 +237,6 @@ class PlotNode(Node):
                 + self.ax.transData
             )
             self.tac_patch.set_transform(trans3)
-            # more frequent dots
             self.tac_patch.set_linestyle((0, (1, 1)))
             artists.append(self.tac_patch)
 

@@ -1,7 +1,10 @@
 import shapely
 from tactical_node.critical_region import CriticalRegion
+import math
 
 class EgoPrediction:
+
+    NO_TIME_TO_CR = -1
 
     def __init__(self,
                  reference_speed: float,
@@ -15,13 +18,53 @@ class EgoPrediction:
         :param ego_len: in [m]
         :param critical_region:
         """
-        self.target_speed = reference_speed
+        self.reference_speed = reference_speed
         self.ego_max_break = ego_max_break
         self.ego_len = ego_len
         self.cr = critical_region
         self.gt_dist_to_cr = -1
         self.gt_d_front = -1
         self.gt_d_rear = -1
+        self.v_delta = 0.1
+
+    
+    def at_max_speed(self, target_vel)-> bool:
+        cond1 = math.fabs(target_vel - self.reference_speed) < self.v_delta
+        cond2 = target_vel > self.reference_speed
+        return cond1 or cond2
+    
+    def get_time_accelerated_motion(self, vel, acc, distance):
+        # get target time to critical region
+        # discriminant V*v - 4*0.5*a*(-distance)
+        discriminant = vel ** 2 - 2 * acc * (-distance)
+        t = (-vel + math.sqrt(discriminant)) / acc
+        return t
+
+    
+    def get_time_to_leave_cr(self, relative_pos, current_vel:float , accel: float) -> float:
+        t = self.NO_TIME_TO_CR
+
+        if relative_pos == CriticalRegion.Position.BEFORE_CR or relative_pos == CriticalRegion.Position.INSIDE_CR:
+            distance = math.fabs(self.cr.cf_orig_d - self.gt_d_rear)
+            if self.at_max_speed(current_vel):
+                t = distance / current_vel
+            else:
+                t = self.get_time_accelerated_motion(current_vel, accel, distance)
+
+        return t
+    
+    def get_time_to_cr(self, relative_pos, current_vel:float , accel: float) -> float:
+        t = self.NO_TIME_TO_CR
+        if relative_pos != CriticalRegion.Position.BEFORE_CR:
+            return t
+        
+        distance = math.fabs(self.cr.cn_orig_d - self.gt_d_front)
+        if self.at_max_speed(current_vel):
+            t = distance / current_vel
+        else:
+            t = self.get_time_accelerated_motion(current_vel, accel, distance)
+
+        return t      
 
 
     def _get_relative_position(self, front_d, rear_d):
@@ -35,9 +78,9 @@ class EgoPrediction:
             return CriticalRegion.Position.INSIDE_CR
 
     def get_current_pos(self, front: shapely.Point):
-        d_front, d_rear = self.project_to_path(front, 0)
-        current_pos = self._get_relative_position(d_front, d_rear)
-        return d_front, d_rear, current_pos
+        self.gt_d_front, self.gt_d_rear = self.project_to_path(front, 0)
+        current_pos = self._get_relative_position(self.gt_d_front, self.gt_d_rear)
+        return self.gt_d_front, self.gt_d_rear, current_pos
 
     def project_to_path(self, front: shapely.Point, displacement: float):
         # project the detected front on the critical path and find its distance
@@ -96,11 +139,11 @@ class EgoPrediction:
         :return: location after time t, distance driven in time t
         """
 
-        if velocity < self.target_speed and accel > 0:
-            t_x = (self.target_speed - velocity) / accel
+        if velocity < self.reference_speed and accel > 0:
+            t_x = (self.reference_speed - velocity) / accel
             if t - t_x >= 0:
                 d_1 = velocity * t_x + 0.5 * accel * t_x ** 2
-                d_2 = self.target_speed * (t - t_x)
+                d_2 = self.reference_speed * (t - t_x)
                 d = d_1 + d_2
             else:
                 d = velocity * t + 0.5 * accel * t ** 2

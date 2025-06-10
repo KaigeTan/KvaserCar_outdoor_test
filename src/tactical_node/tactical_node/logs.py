@@ -57,4 +57,6 @@ class ExpLog:
             
             print(f"Saved, {start_id} {self.path_ros_bag} {self.log_file_name}")
 
+            print(f"Saved, {start_id} {self.path_ros_bag} {self.log_file_name}")
+
         self.done = True
