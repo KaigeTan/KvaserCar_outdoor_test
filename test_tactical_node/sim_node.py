@@ -47,19 +47,19 @@ class EgoAdvSimNode(Node):
     def __init__(self):
         super().__init__('ego_adv_sim')
         # Declare parameters
-        self.declare_parameter('ego_start_x', 5.0)
+        self.declare_parameter('ego_start_x', 4.0)
         self.declare_parameter('ego_start_y', 0.0)
-        self.declare_parameter('ego_end_x', -5.0)
+        self.declare_parameter('ego_end_x', -2.0)
         self.declare_parameter('ego_end_y', 0.0)
-        self.declare_parameter('ego_ref_speed', 2.5)
-        self.declare_parameter('ego_max_acc', 2.5)
+        self.declare_parameter('ego_ref_speed', 1.5)
+        self.declare_parameter('ego_max_acc', 1.35)
 
         self.declare_parameter('adv_start_x', 0.0)
-        self.declare_parameter('adv_start_y', -5.0)
+        self.declare_parameter('adv_start_y', -4.0)
         self.declare_parameter('adv_end_x', 0.0)
-        self.declare_parameter('adv_end_y', 5.0)
-        self.declare_parameter('adv_ref_speed', 2.5)
-        self.declare_parameter('adv_max_acc', 2.5)
+        self.declare_parameter('adv_end_y', 2.0)
+        self.declare_parameter('adv_ref_speed', 1.25)
+        self.declare_parameter('adv_max_acc', 1.0)
 
         # UDP & sim parameters
         self.declare_parameter('udp_target_ip', '127.0.0.1')
@@ -69,7 +69,7 @@ class EgoAdvSimNode(Node):
         self.declare_parameter('adv_queue_size', 1)
         self.declare_parameter('comm_fail_start', 0.02)
         self.declare_parameter('comm_fail_duration', 1.5)
-        self.declare_parameter('sim_step', 0.03)
+        self.declare_parameter('sim_step', 0.1)
         self.declare_parameter('comm_step', 0.001)
 
         # Read parameters
