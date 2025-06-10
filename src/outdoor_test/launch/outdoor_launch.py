@@ -127,7 +127,7 @@ def generate_launch_description():
     rosbag_record = ExecuteProcess(
         cmd=[
             'ros2', 'bag', 'record',
-            'a',
+            '-a',
             '-o', bag_output_path
         ],
         output='screen'

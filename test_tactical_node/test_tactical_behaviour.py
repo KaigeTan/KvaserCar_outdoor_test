@@ -4,12 +4,12 @@ from enum import IntEnum
 
 import shapely
 
-from tactical_node.critical_region import CriticalRegion
-from tactical_node.ego_pose import EgoPose
-from tactical_node.ego_prediction import EgoPrediction
-from tactical_node.kalman_filter import KalmanFilter
-from tactical_node.target_prediction import TargetPrediction
-from  tactical_node.comm_msg import ComMsg
+from tactical_node.tactical_node.critical_region import CriticalRegion
+from tactical_node.tactical_node.ego_pose import EgoPose
+from tactical_node.tactical_node.ego_prediction import EgoPrediction
+from tactical_node.tactical_node.kalman_filter import KalmanFilter
+from tactical_node.tactical_node.target_prediction_old import TargetPrediction
+from tactical_node.tactical_node.comm_msg import ComMsg
 
 def aoi_to_seconds(aoi) -> float:
     return aoi / 1_000_000_000
@@ -29,12 +29,11 @@ class TacticalBehavior:
                  ego_max_dec: float,
                  ego_length: float,
                  target_max_acc: float,
-                 target_max_speed: float,
                  target_length:float,
                  ego_critical_region: CriticalRegion,
                  target_critical_region: CriticalRegion):
 
-        self.target_prediction = TargetPrediction(0, target_critical_region, target_max_speed)
+        self.target_prediction = TargetPrediction(0, target_critical_region)
         self.adv_max_acc = target_max_acc
         self.adv_length = target_length
         self.ego_prediction = EgoPrediction(ego_reference_speed,
@@ -51,7 +50,7 @@ class TacticalBehavior:
         self.ego_d_front = -1
         self.target_front_coord_x, self.target_front_coord_y = None, None
         self.target_d_to_cr = -1
-        self.ego_current_pos = CriticalRegion.Position.UNKNOWN
+        self.ego_pos = CriticalRegion.Position.UNKNOWN
         self.ego_pred_go_pos = CriticalRegion.Position.UNKNOWN
         self.ego_pred_break_pos = CriticalRegion.Position.UNKNOWN
         self.target_pred_pos = CriticalRegion.Position.UNKNOWN
@@ -63,15 +62,14 @@ class TacticalBehavior:
         self.kalman_f = KalmanFilter(1)
         self.decision_time = -1
         self.call_time = -1
-        self.data_log = {"version": 2,
-                         "call_time": list(),
-                         "decision_time": list(),
+        self.data_log = {"call_time": list(),
+                        "decision_time": list(),
                          "aoi": list(),
                          "aoi_abs":list(),
                          "aoi_seconds": list(),
                          "ego_tactical_speed": list(),
                          "ego_front_d": list(),
-                         "ego_current_pos": list(),
+                         "ego_pos": list(),
                          "ego_pred_go_pos": list(),
                          "ego_d_to_cr": list(),
                          "ego_ttcr": list(),
@@ -84,7 +82,7 @@ class TacticalBehavior:
                          "target_vel" : list(),
                          "kalman_acc": list(),
                          "msg_current": list(),
-                         "all_rec_msg": list(),              
+                         "all_rec_msg": list(),                  
                          }
 
     def _get_target_acc(self, aoi, velocity):
@@ -99,12 +97,12 @@ class TacticalBehavior:
     def validate_new_msg(self, msg):
         if msg is not None:
             if len(self.data_log["all_rec_msg"]) > 0:
-                _, temp_id, _, _ = self.data_log["all_rec_msg"][-1]
+                _, temp_id, _ = self.data_log["all_rec_msg"][-1]
                 if temp_id != msg.id:
                     # log it only if it is new
-                    self.data_log["all_rec_msg"].append((self.call_time, msg.id, msg.time_stamp, msg.arrival_time))
+                    self.data_log["all_rec_msg"].append((self.call_time, msg.id, msg.time_stamp))
             else:
-                self.data_log["all_rec_msg"].append((self.call_time, msg.id, msg.time_stamp, msg.arrival_time))
+                self.data_log["all_rec_msg"].append((self.call_time, msg.id, msg.time_stamp))
             
             if self.msg is None:
                 return msg
@@ -115,19 +113,19 @@ class TacticalBehavior:
         return self.msg
 
 
-    def decision(self, msg: ComMsg, ego_pose: EgoPose) -> TacticalAction:
+    def decision(self, msg: ComMsg, call_time, decision_time, ego_pose: EgoPose) -> TacticalAction:
         """
 
         :param msg:
         :param ego_pose:
         :return:
         """
-        self.call_time = get_time()
+        self.call_time = call_time
         self.ego_action = TacticalAction.BREAKING
         if ego_pose is None:
             return self.ego_action
 
-        self.decision_time = get_time()
+        self.decision_time = decision_time
         self.ego_action = TacticalAction.CONTINUE
         ego_front_p = shapely.Point((ego_pose.front_x, ego_pose.front_y))
         shapely.prepare(ego_front_p)
@@ -139,13 +137,9 @@ class TacticalBehavior:
         if self.msg is None:
             return self.ego_action
         
-        #---- AGE of INFORMATION
         self.aoi = self.decision_time - self.msg.time_stamp
         self.aoi_abs = math.fabs(self.aoi)
-        # transform AoI in seconds!
-        self.aoi_in_seconds = aoi_to_seconds(self.aoi_abs) 
-
-        #---- COMPUTE TARGET POSITION AND TIME TO CR
+        self.aoi_in_seconds = aoi_to_seconds(self.aoi_abs) #transform in seconds!
         target_length = self.msg.length if self.msg.length is not None else self.adv_length
         target_front = shapely.Point(self.msg.front[0], self.msg.front[1])
         shapely.prepare(target_front)
@@ -157,59 +151,47 @@ class TacticalBehavior:
             self.msg.velocity,
             self.target_acc)
 
-        #---- COMPUTE CASES
-        # get ego current position
-        _, _, self.ego_current_pos = self.ego_prediction.get_current_pos(ego_front_p)
         self.ego_action = TacticalAction.CONTINUE
 
-        #--- CASE target after the CR
-        if self.target_pred_pos == CriticalRegion.Position.AFTER_CR:
+        if self.target_pred_pos == CriticalRegion.Position.BEFORE_CR:
+
+            pred_go_pos, pred_break_ttcr = self.ego_prediction.get_predicted_positions(ego_vel,
+                                                                                        ego_acc,
+                                                                                        self.target_ttcr,
+                                                                                        ego_front_p)
+            if pred_go_pos == CriticalRegion.Position.AFTER_CR:
+                self.ego_pos = pred_go_pos
+                self.ego_action = TacticalAction.CONTINUE
+
+            else:
+                t_to_leave_cr = self.target_prediction.get_time_to_leave_cr(self.msg.velocity, self.target_acc)
+                pred_go_leave_cr, _ = self.ego_prediction.get_predicted_positions(ego_vel,
+                                                                                    ego_acc,
+                                                                                    t_to_leave_cr,
+                                                                                    ego_front_p)
+                self.ego_pos = pred_go_leave_cr
+
+                if pred_go_leave_cr == CriticalRegion.Position.INSIDE_CR:
+                    self.ego_action = TacticalAction.BREAKING
+                elif pred_go_leave_cr == CriticalRegion.Position.BEFORE_CR:
+                    self.ego_action = TacticalAction.CONTINUE
+
+        elif self.target_pred_pos == CriticalRegion.Position.AFTER_CR:
             self.ego_action = TacticalAction.CONTINUE
 
-        #--- CASE target before the CR
-        elif self.target_pred_pos == CriticalRegion.Position.BEFORE_CR:
-
-            self.ego_pred_go_pos, _ = self.ego_prediction.get_predicted_positions(ego_vel,
-                                                                                  ego_acc,
-                                                                                  self.target_ttcr,
-                                                                                  ego_front_p)
-            # check where ego is
-            if self.ego_current_pos == CriticalRegion.Position.BEFORE_CR:
-                if self.ego_pred_go_pos == CriticalRegion.Position.INSIDE_CR:
-                    self.ego_action = TacticalAction.BREAKING
-            else:
-                # in case ego is inside or after the CR
-                if self.ego_pred_go_pos == CriticalRegion.Position.AFTER_CR:
-                    self.ego_action = TacticalAction.CONTINUE            
-
-        #--- CASE target inside the CR
         elif self.target_pred_pos == CriticalRegion.Position.INSIDE_CR:
-            
-            # get the time the target needs to move out from the CR
-            target_time_to_leave_cr = self.target_prediction.get_time_to_leave_cr(self.target_pred_pos, self.msg.velocity, self.target_acc)
-
-            if target_time_to_leave_cr == TargetPrediction.NO_TIME_TO_CR:
-                # this should not be possible because target is INSIDE_CR
-                print("[ERROR] (1) should not be possible!")
+            _, _, self.ego_pos = self.ego_prediction.get_current_pos(ego_front_p)
+            if self.ego_pos == CriticalRegion.Position.AFTER_CR:
                 self.ego_action = TacticalAction.CONTINUE
-            else: 
-                # get the predicted ego position using the target time to leave the CR
-                self.ego_pred_go_pos, _ = self.ego_prediction.get_predicted_positions(ego_vel,
-                                                                                      ego_acc,
-                                                                                      target_time_to_leave_cr,
-                                                                                      ego_front_p)
-                
-                if self.ego_current_pos == CriticalRegion.Position.AFTER_CR:
-                    self.ego_action = TacticalAction.CONTINUE
-                
-                elif self.ego_current_pos == CriticalRegion.Position.INSIDE_CR:
-                    # could result in anavoidable crash (depending on dynamics and CR dimension)
+            else:
+                t_to_leave_cr = self.target_prediction.get_time_to_leave_cr(self.msg.velocity, self.target_acc)
+                pred_go_leave_cr, _ = self.ego_prediction.get_predicted_positions(ego_vel,
+                                                                                    ego_acc,
+                                                                                    t_to_leave_cr,
+                                                                                    ego_front_p)
+                if pred_go_leave_cr != CriticalRegion.Position.BEFORE_CR:
+                    self.ego_pos = pred_go_leave_cr
                     self.ego_action = TacticalAction.BREAKING
-
-                else:
-                    # ego current pose is before the CR                                    
-                    if self.ego_pred_go_pos != CriticalRegion.Position.BEFORE_CR:
-                        self.ego_action = TacticalAction.BREAKING
 
         self.ego_d_front, self.ego_d_to_cr, self.ego_ttcr = self.ego_prediction.get_dist_and_time_to_cr(ego_vel, ego_front_p)
 
@@ -230,7 +212,7 @@ class TacticalBehavior:
         self.data_log["decision_time"].append(self.decision_time)
         self.data_log["ego_tactical_speed"].append(self.ego_tactical_speed)
         self.data_log["ego_front_d"].append(self.ego_d_front)
-        self.data_log["ego_current_pos"].append(self.ego_current_pos)
+        self.data_log["ego_pos"].append(self.ego_pos)
         self.data_log["ego_pred_go_pos"].append(self.ego_pred_go_pos)
         self.data_log["ego_d_to_cr"].append(self.ego_d_to_cr)
         self.data_log["ego_ttcr"].append(self.ego_ttcr)
@@ -239,7 +221,7 @@ class TacticalBehavior:
         self.data_log["aoi_seconds"].append(self.aoi_in_seconds)
        
         if self.msg is not None:
-            self.data_log["msg_current"].append((self.call_time, self.msg.id, self.msg.time_stamp, self.msg.arrival_time))
+            self.data_log["msg_current"].append((self.call_time, self.msg.id, self.msg.time_stamp))
             self.data_log["target_vel"].append(self.msg.velocity)
 
         self.data_log["target_acc"].append(self.target_acc)

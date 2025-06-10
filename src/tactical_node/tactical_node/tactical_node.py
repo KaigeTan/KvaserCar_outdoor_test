@@ -24,7 +24,7 @@ from tactical_msgs.msg import LogEntry
 
 # topics name
 ROS_TOPIC_AEB = "/aeb_triggered"
-ROS_TOPIC_ODOM = "/odometry/map/sim"
+ROS_TOPIC_ODOM = "/odometry/map"
 ROS_TOPIC_REF_VEL = "/ref_spd"
 ROS_TOPIC_TACTICAL_LOG = "/tactical_log"
 ROS_TOPIC_OBPS = "/obps"
@@ -71,6 +71,7 @@ class TacticalNode(Node):
 
         # experiment id
         self.start_id = -1
+        self.start_time = -1
 
         # Declare parematers
         self.declare_parameter('cr_point_1',      parameters.CR_POINT_1)
@@ -82,7 +83,7 @@ class TacticalNode(Node):
         self.declare_parameter('ego_path_start',  parameters.EGO_PATH_START)
         self.declare_parameter('ego_path_end',    parameters.EGO_PATH_END)
         self.declare_parameter('ego_ref_speed',   parameters.EGO_REFERENCE_SPEED)
-        self.declare_parameter('adv_ref_speed',   parameters.ADV_REFERENCE_SPEED)
+        self.declare_parameter('adv_max_speed',   parameters.ADV_MAX_SPEED)
         self.declare_parameter('ego_max_acc',     parameters.EGO_MAX_ACC)
         self.declare_parameter('ego_max_dec',     parameters.EGO_MAX_DEC)
         self.declare_parameter('adv_max_acc',     parameters.ADV_MAX_ACC)
@@ -97,26 +98,50 @@ class TacticalNode(Node):
         self.declare_parameter('bag_output_path', "")
 
         # read params them into member variables
-        self.cr_point_1    = self.get_parameter('cr_point_1').value
-        self.cr_point_2    = self.get_parameter('cr_point_2').value
-        self.cr_point_3    = self.get_parameter('cr_point_3').value
-        self.cr_point_4    = self.get_parameter('cr_point_4').value
-        self.adv_path_start= self.get_parameter('adv_path_start').value
-        self.adv_path_end  = self.get_parameter('adv_path_end').value
-        self.ego_path_start= self.get_parameter('ego_path_start').value
-        self.ego_path_end  = self.get_parameter('ego_path_end').value
-        self.ego_ref_speed = self.get_parameter('ego_ref_speed').value
-        self.adv_ref_speed = self.get_parameter('adv_ref_speed').value
-        self.ego_max_acc   = self.get_parameter('ego_max_acc').value
-        self.ego_max_dec   = self.get_parameter('ego_max_dec').value
-        self.adv_max_acc   = self.get_parameter('adv_max_acc').value
-        self.ego_length    = self.get_parameter('ego_length').value
-        self.adv_length    = self.get_parameter('adv_length').value
-        self.ego_width     = self.get_parameter('ego_width').value
-        self.adv_width     = self.get_parameter('adv_width').value  
-        self.start_socket  = self.get_parameter('use_start_socket').value  
-        self.start_port    = self.get_parameter('start_socket_port').value  
-        ros_bag_path  = self.get_parameter('bag_output_path').value
+        self.cr_point_1        = self.get_parameter('cr_point_1').value
+        self.cr_point_2        = self.get_parameter('cr_point_2').value
+        self.cr_point_3        = self.get_parameter('cr_point_3').value
+        self.cr_point_4        = self.get_parameter('cr_point_4').value
+        self.adv_path_start    = self.get_parameter('adv_path_start').value
+        self.adv_path_end      = self.get_parameter('adv_path_end').value
+        self.ego_path_start    = self.get_parameter('ego_path_start').value
+        self.ego_path_end      = self.get_parameter('ego_path_end').value
+        self.ego_ref_speed     = self.get_parameter('ego_ref_speed').value
+        self.ego_max_acc       = self.get_parameter('ego_max_acc').value
+        self.ego_max_dec       = self.get_parameter('ego_max_dec').value
+        self.adv_max_acc       = self.get_parameter('adv_max_acc').value
+        self.adv_max_speed     = self.get_parameter('adv_max_speed').value
+        self.ego_length        = self.get_parameter('ego_length').value
+        self.adv_length        = self.get_parameter('adv_length').value
+        self.ego_width         = self.get_parameter('ego_width').value
+        self.adv_width         = self.get_parameter('adv_width').value  
+        self.use_start_socket  = self.get_parameter('use_start_socket').value  
+        self.start_socket_host = self.get_parameter('start_socket_host').value
+        self.start_socket_port = self.get_parameter('start_socket_port').value  
+        ros_bag_path           = self.get_parameter('bag_output_path').value
+
+        self.get_logger().info(f"REF SPEED FROM PARAMS= {self.ego_ref_speed}")
+
+        self.ini_params = {
+            "cr_point_1": self.cr_point_1,
+            "cr_point_2": self.cr_point_2,
+            "cr_point_3": self.cr_point_3,
+            "cr_point_4": self.cr_point_4,
+            "adv_path_start": self.adv_path_start,
+            "adv_path_end": self.adv_path_end,
+            "ego_path_start": self.ego_path_start,
+            "ego_path_end": self.ego_path_end,
+            "ego_ref_speed": self.ego_ref_speed,
+            "adv_max_speed": self.adv_max_speed,
+            "ego_max_acc": self.ego_max_acc,
+            "ego_max_dec": self.ego_max_dec,
+            "adv_max_acc": self.adv_max_acc,
+            "ego_length": self.ego_length,
+            "adv_length": self.adv_length,
+            "ego_width": self.ego_width,
+            "adv_width": self.adv_width,
+            "use_start_socket": self.use_start_socket
+        }
 
         # persistent logging
         self.exp_log = ExpLog(ros_bag_path)
@@ -141,12 +166,13 @@ class TacticalNode(Node):
                                      ego_max_dec=self.ego_max_dec,
                                      ego_length=self.ego_length,
                                      target_max_acc=self.adv_max_acc,
+                                     target_max_speed=self.adv_max_speed,
                                      target_length=self.adv_length,
                                      ego_critical_region=ego_cr,
                                      target_critical_region=target_cr)
         
         # If acting as server, start listening thread
-        if self.start_socket:
+        if self.use_start_socket:
             self.run = False
             threading.Thread(target=self._start_server, daemon=True).start()
 
@@ -155,7 +181,7 @@ class TacticalNode(Node):
         self.aeb.set_data(msg.data)
 
     def obps_callback(self, msg):
-        # self.get_logger().info('OBPS message is: "%s"' % msg)
+        #self.get_logger().info('OBPS message is: "%s"' % msg)
         content = json.loads(msg.data)
 
         com_msg = ComMsg( id=content["id"], 
@@ -229,7 +255,7 @@ class TacticalNode(Node):
             self.get_logger().info("stopping the car, exp terminated with cause={0}".format(cause))
             self.pub_ref_speed(0.0)
             if self.run:
-                self.exp_log.write_to_file(self.start_id, self.behaviour.data_log, cause)
+                self.exp_log.write_to_file(self.start_id, self.start_time, self.ini_params, self.behaviour.data_log, cause)
             self.run = False
 
         if self.run:
@@ -240,7 +266,9 @@ class TacticalNode(Node):
             self.pub_ref_speed(speed)
             self.behaviour.log()
             self.publish_log()
-
+        
+        if self.run is False:
+            self.pub_ref_speed(0.0)
     
 
     def is_exp_ended(self):
@@ -259,19 +287,20 @@ class TacticalNode(Node):
         return None, False
 
     def pub_ref_speed(self, vel):
+        self.get_logger().info(f"SENDING REF SPEED= {vel}")
         self.pub_vel.publish(Float32(data=vel))
 
     def _start_server(self):
-        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        server.bind((self.start_socket_host, self.start_socket_port))
-        server.listen(1)
-        self.get_logger().info(f"Start server listening on {self.start_socket_host}:{self.start_socket_port}")
-        
-        conn, addr = server.accept()
-        self.get_logger().info(f"Connection from {addr}, waiting for start signal")
-
         try:
+            server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            server.bind((self.start_socket_host, self.start_socket_port))
+            server.listen(1)
+            self.get_logger().info(f"Start server listening on {self.start_socket_host}:{self.start_socket_port}")
+            
+            conn, addr = server.accept()
+            self.get_logger().info(f"Connection from {addr}, waiting for start signal")
+
             raw = conn.recv(1024)
             if not raw:
                 self.get_logger().error("Connection closed before any data received")
@@ -284,19 +313,21 @@ class TacticalNode(Node):
                 return
 
             cmd = payload.get("cmd")
-            start_id = payload.get("id")
+            start_id = payload.get("start_id")
             if cmd != "start":
                 self.get_logger().warning(f"Ignored cmd: {cmd!r}")
                 return
 
             if not isinstance(start_id, str):
-                self.get_logger().error(f"Invalid or missing 'id' field: {start_id!r}")
+                self.get_logger().error(f"Invalid or missing 'start_id' field: {start_id!r}")
+                self.get_logger().error(f"Received payload: {payload!r}")
                 return
 
-            self.get_logger().info(f"Received start command with id='{start_id}'")
+            self.get_logger().info(f"Received start command with start_id='{start_id}'")
 
             # Now kick off the run
             self.start_id = start_id
+            self.start_time = time.time_ns()
             self.run = True
 
         finally:
@@ -312,7 +343,11 @@ def main(args=None):
     try:
         rclpy.spin(tactical_node)
     except KeyboardInterrupt:
-        tactical_node.exp_log.write_to_file(tactical_node.start_id, tactical_node.behaviour.data_log, "Force-exit")
+        tactical_node.exp_log.write_to_file(tactical_node.start_id, 
+                                            tactical_node.start_time, 
+                                            tactical_node.ini_params,
+                                            tactical_node.behaviour.data_log, 
+                                            "Force-exit")
     finally:
         tactical_node.destroy_node()
         rclpy.shutdown()

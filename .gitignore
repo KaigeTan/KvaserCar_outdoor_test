@@ -7,6 +7,9 @@ __pycache__/
 # C extensions
 *.so
 
+/recorded_rosbag
+/tactical_log
+
 #files under data
 /data/
 

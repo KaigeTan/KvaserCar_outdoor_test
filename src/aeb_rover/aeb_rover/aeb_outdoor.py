@@ -17,7 +17,7 @@ class AEBRover(Node):
         self.publisher_aeb_triggered = self.create_publisher(Bool, '/aeb_triggered', 5)
 
         # Safety Threshold
-        self.declare_parameter('distance_threshold', 200.0)
+        self.declare_parameter('distance_threshold', 10.0)
         self.DISTANCE_THRESHOLD = self.get_parameter('distance_threshold').value
 
 
@@ -27,7 +27,7 @@ class AEBRover(Node):
 
     def rear_callback(self, msg):
         """Process rear sensor data."""
-        self.rear_obstacle_detected = self.check_obstacle(msg, "rear")
+        self.rear_obstacle_detected = False # self.check_obstacle(msg, "rear")
         if self.rear_obstacle_detected:
             self.get_logger().warn("Obstacle detected at the rear! Stopping.", throttle_duration_sec=1.0)
         self.publish_control()
