@@ -52,14 +52,14 @@ class EgoAdvSimNode(Node):
         self.declare_parameter('ego_end_x', -4.0)
         self.declare_parameter('ego_end_y', 0.0)
         self.declare_parameter('ego_ref_speed', 1.5)
-        self.declare_parameter('ego_max_acc', 1.35)
+        self.declare_parameter('ego_max_acc', 1.2)
 
         self.declare_parameter('adv_start_x', 0.0)
         self.declare_parameter('adv_start_y', -4.0)
         self.declare_parameter('adv_end_x', 0.0)
         self.declare_parameter('adv_end_y', 6.0)
-        self.declare_parameter('adv_ref_speed', 1.25)
-        self.declare_parameter('adv_max_acc', 1.0)
+        self.declare_parameter('adv_ref_speed', 1.1)
+        self.declare_parameter('adv_max_acc', 1.1)
 
         self.declare_parameter('cr_point_1', [0.5, 0.5])
         self.declare_parameter('cr_point_2', [0.5, -0.5])
@@ -74,7 +74,7 @@ class EgoAdvSimNode(Node):
         self.declare_parameter('adv_queue_size', 1)
         self.declare_parameter('comm_fail_start', 0)
         self.declare_parameter('comm_fail_duration', 0)
-        self.declare_parameter('sim_step', 0.1)
+        self.declare_parameter('sim_step', 0.05)
         self.declare_parameter('comm_step', 0.001)
 
         # Read parameters
