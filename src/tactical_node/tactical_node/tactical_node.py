@@ -226,7 +226,7 @@ class TacticalNode(Node):
 
         entry.ego_tactical_speed   = float(self.behaviour.ego_tactical_speed)
         entry.ego_front_d          = float(self.behaviour.ego_d_front)
-        entry.ego_pos              = int(self.behaviour.ego_pos)
+        entry.ego_pos              = int(self.behaviour.ego_current_pos)
         entry.ego_pred_go_pos      = int(self.behaviour.ego_pred_go_pos)
         entry.ego_d_to_cr          = float(self.behaviour.ego_d_to_cr)
         entry.ego_ttcr             = float(self.behaviour.ego_ttcr)
