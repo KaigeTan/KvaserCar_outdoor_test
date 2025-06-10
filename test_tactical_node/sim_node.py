@@ -61,14 +61,19 @@ class EgoAdvSimNode(Node):
         self.declare_parameter('adv_ref_speed', 1.25)
         self.declare_parameter('adv_max_acc', 1.0)
 
+        self.declare_parameter('cr_point_1', [0.5, 0.5])
+        self.declare_parameter('cr_point_2', [0.5, -0.5])
+        self.declare_parameter('cr_point_3', [-0.5, -0.5])
+        self.declare_parameter('cr_point_4', [-0.5, 0.5])
+
         # UDP & sim parameters
         self.declare_parameter('udp_target_ip', '127.0.0.1')
         self.declare_parameter('udp_target_port', 9999)
         self.declare_parameter('udp_delay', 0.05)
         self.declare_parameter('add_aoi', 0)
         self.declare_parameter('adv_queue_size', 1)
-        self.declare_parameter('comm_fail_start', 0.02)
-        self.declare_parameter('comm_fail_duration', 1.5)
+        self.declare_parameter('comm_fail_start', 0)
+        self.declare_parameter('comm_fail_duration', 0)
         self.declare_parameter('sim_step', 0.1)
         self.declare_parameter('comm_step', 0.001)
 

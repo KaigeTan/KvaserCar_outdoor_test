@@ -27,7 +27,7 @@ class TargetPrediction:
         cond2 = target_vel > self.max_speed
         return cond1 or cond2
     
-    def get_time_accelerated_motion(vel, acc, distance):
+    def get_time_accelerated_motion(self, vel, acc, distance):
         # get target time to critical region
         # discriminant V*v - 4*0.5*a*(-distance)
         discriminant = vel ** 2 - 2 * acc * (-distance)
