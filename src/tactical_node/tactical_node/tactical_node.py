@@ -233,7 +233,7 @@ class TacticalNode(Node):
 
         entry.target_acc           = float(self.behaviour.target_acc)
         entry.kalman_acc_val       = float(self.behaviour.kalman_acc_value)
-        entry.target_ttcr          = float(self.behaviour.target_ttcr)
+        entry.target_ttcr          = float(self.behaviour.target_time_to_cr)
         entry.target_d_to_cr       = float(self.behaviour.target_d_to_cr)
         entry.target_pos           = int(self.behaviour.target_pred_pos)
         entry.target_d_front       = float(self.behaviour.target_prediction.d_front)

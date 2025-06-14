@@ -46,7 +46,8 @@ class TacticalBehavior:
         self.aoi_in_seconds = -1
         self.msg = None
         self.ego_ttcr = -1
-        self.target_ttcr = -1
+        self.target_time_to_cr = -1
+        self.target_time_to_leave_cr = -1
         self.ego_d_to_cr = -1
         self.ego_d_front = -1
         self.ego_time_to_leave_cr = -1
@@ -81,6 +82,7 @@ class TacticalBehavior:
                          "ego_time_to_cr": list(),
                          "target_acc": list(),
                          "target_ttcr": list(),
+                         "self.target_time_to_leave_cr": list(),
                          "target_d_to_cr": list(),
                          "target_pos": list(),
                          "target_d_front": list(),
@@ -162,12 +164,18 @@ class TacticalBehavior:
         # transform AoI in seconds!
         self.aoi_in_seconds = aoi_to_seconds(self.aoi_abs) 
 
+        #--- RESET VARIABLES
+        #reset time to cr variables
+        self.ego_time_to_leave_cr = -1
+        self.ego_time_to_cr = -1
+        self.target_time_to_leave_cr = -1
+
         #---- COMPUTE TARGET POSITION AND TIME TO CR
         target_length = self.msg.length if self.msg.length is not None else self.adv_length
         target_front = shapely.Point(self.msg.front[0], self.msg.front[1])
         shapely.prepare(target_front)
         self.target_acc = self._get_target_acc(self.aoi_in_seconds, self.msg.velocity)
-        self.target_pred_pos, self.target_ttcr = self.target_prediction.estimate_time_to_cr(
+        self.target_pred_pos, self.target_time_to_cr = self.target_prediction.estimate_time_to_cr(
             self.aoi_in_seconds,
             target_front,
             target_length,
@@ -175,9 +183,6 @@ class TacticalBehavior:
             self.target_acc)
 
         #---- COMPUTE CASES
-        #reset time to cr variables
-        self.ego_time_to_leave_cr = -1
-        self.ego_time_to_cr = -1
         # get ego current position
         _, _, self.ego_current_pos = self.ego_prediction.get_current_pos(ego_front_p)
         self.ego_action = TacticalAction.CONTINUE
@@ -193,18 +198,18 @@ class TacticalBehavior:
             # prepdict ego position with time that target takes to arrive to ttCR
             ego_pred_go_pos_ttcr1, _ = self.ego_prediction.get_predicted_positions(ego_vel,
                                                                                   ego_acc,
-                                                                                  self.target_ttcr,
+                                                                                  self.target_time_to_cr,
                                                                                   ego_front_p)
                                                                                   
             
             # get the time the target will take to be AFTER the CR
-            target_time_to_leave_cr = self.target_prediction.get_time_to_leave_cr(self.target_pred_pos, self.msg.velocity, self.target_acc)
+            self.target_time_to_leave_cr = self.target_prediction.get_time_to_leave_cr(self.target_pred_pos, self.msg.velocity, self.target_acc)
 
             
             # predict ego position with time that target takes to pass the CR
             ego_pred_go_pos_ttcr2, _ = self.ego_prediction.get_predicted_positions(ego_vel,
                                                                                   ego_acc,
-                                                                                  target_time_to_leave_cr,
+                                                                                  self.target_time_to_leave_cr,
                                                                                   ego_front_p)
 
             #predict ego time to CR and to leave CR
@@ -219,11 +224,11 @@ class TacticalBehavior:
             # check where ego is
             if self.ego_current_pos == CriticalRegion.Position.BEFORE_CR:
                 #print("***********PPPPPPPPPPPPPPP!!!!!! pred_pos_1: {0} pred_pos_2: {1}".format(self.pose_to_string(ego_pred_go_pos_ttcr1), self.pose_to_string(ego_pred_go_pos_ttcr2)))
-                if self.ego_time_to_leave_cr < self.target_ttcr:
+                if self.ego_time_to_leave_cr < self.target_time_to_cr:
                     self.ego_action = TacticalAction.CONTINUE
                     self.ego_pred_go_pos = CriticalRegion.Position.AFTER_CR
                     #print(f"***********HERE 11  ego_time_to_leave_cr {ego_time_to_leave_cr}!!!!!!")
-                elif self.ego_time_to_cr > target_time_to_leave_cr:
+                elif self.ego_time_to_cr > self.target_time_to_leave_cr:
                     self.ego_action = TacticalAction.CONTINUE
                     self.ego_pred_go_pos = CriticalRegion.Position.BEFORE_CR
                     #print(f"***********HERE 22 ego_time_to_cr {ego_time_to_cr}!!!!!!")
@@ -244,9 +249,9 @@ class TacticalBehavior:
         elif self.target_pred_pos == CriticalRegion.Position.INSIDE_CR:
             
             # get the time the target needs to move out from the CR
-            target_time_to_leave_cr = self.target_prediction.get_time_to_leave_cr(self.target_pred_pos, self.msg.velocity, self.target_acc)
+            self.target_time_to_leave_cr = self.target_prediction.get_time_to_leave_cr(self.target_pred_pos, self.msg.velocity, self.target_acc)
 
-            if target_time_to_leave_cr == TargetPrediction.NO_TIME_TO_CR:
+            if self.target_time_to_leave_cr == TargetPrediction.NO_TIME_TO_CR:
                 # this should not be possible because target is INSIDE_CR
                 print("[ERROR] (1) should not be possible!")
                 self.ego_action = TacticalAction.CONTINUE
@@ -255,7 +260,7 @@ class TacticalBehavior:
                 # get the predicted ego position using the target time to leave the CR
                 self.ego_pred_go_pos, _ = self.ego_prediction.get_predicted_positions(ego_vel,
                                                                                       ego_acc,
-                                                                                      target_time_to_leave_cr,
+                                                                                      self.target_time_to_leave_cr,
                                                                                       ego_front_p)
                 
                 if self.ego_current_pos == CriticalRegion.Position.AFTER_CR:
@@ -308,7 +313,8 @@ class TacticalBehavior:
             self.data_log["target_vel"].append(self.msg.velocity)
 
         self.data_log["target_acc"].append(self.target_acc)
-        self.data_log["target_ttcr"].append(self.target_ttcr)
+        self.data_log["target_ttcr"].append(self.target_time_to_cr)
+        self.data_log["self.target_time_to_leave_cr"].append(self.target_time_to_leave_cr)
         self.data_log["target_d_to_cr"].append(self.target_d_to_cr)
         self.data_log["target_pos"].append(self.target_pred_pos)
         self.data_log["target_d_front"].append(self.target_prediction.d_front)
