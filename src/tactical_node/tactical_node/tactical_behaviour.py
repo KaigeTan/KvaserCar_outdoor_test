@@ -82,7 +82,7 @@ class TacticalBehavior:
                          "ego_time_to_cr": list(),
                          "target_acc": list(),
                          "target_ttcr": list(),
-                         "self.target_time_to_leave_cr": list(),
+                         "target_time_to_leave_cr": list(),
                          "target_d_to_cr": list(),
                          "target_pos": list(),
                          "target_d_front": list(),
@@ -314,7 +314,7 @@ class TacticalBehavior:
 
         self.data_log["target_acc"].append(self.target_acc)
         self.data_log["target_ttcr"].append(self.target_time_to_cr)
-        self.data_log["self.target_time_to_leave_cr"].append(self.target_time_to_leave_cr)
+        self.data_log["target_time_to_leave_cr"].append(self.target_time_to_leave_cr)
         self.data_log["target_d_to_cr"].append(self.target_d_to_cr)
         self.data_log["target_pos"].append(self.target_pred_pos)
         self.data_log["target_d_front"].append(self.target_prediction.d_front)
