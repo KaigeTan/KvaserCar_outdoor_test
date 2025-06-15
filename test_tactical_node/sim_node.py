@@ -3,6 +3,8 @@ import socket
 import json
 import math
 from collections import deque
+import numpy as np
+from typing import List
 
 import rclpy
 from rclpy.node import Node
@@ -12,29 +14,111 @@ from geometry_msgs.msg import Quaternion, Point, PolygonStamped, Point32
 from std_msgs.msg import Float32  # for reference speed subscription
 
 class Motion:
-    def __init__(self, max_acc):
-        """
-        max_acc : float
-            The maximum magnitude of acceleration or deceleration [m/s²].
-        """
+    """
+    Class to simulate motion with bounded acceleration and compute displacement.
+
+    Attributes
+    ----------
+    max_acc : float
+        Maximum magnitude of acceleration / deceleration [m/s^2].
+    delta_speed : float
+        Threshold for considering target speed reached [m/s].
+    v : float
+        Current speed [m/s].
+    t_total : float
+        Total elapsed time [s].
+    total_displacement : float
+        Cumulative displacement [m].
+    positions : List[float]
+        Cumulative positions [m] at each timestep.
+    speeds : List[float]
+        Speeds [m/s] recorded at each step (before update).
+    times : List[float]
+        Time stamps [s].
+    """
+    def __init__(self, max_acc: float, delta_speed: float = 1e-1):
+        self.max_acc = float(max_acc)
+        self.delta_speed = float(delta_speed)
         self.v = 0.0
-        self.d_total = 0.0
-        self.d = 0.0
-        self.acc = max_acc
+        self.t_total = 0.0
+        self.total_displacement = 0.0
+        self.positions: List[float] = [0.0]
+        self.speeds: List[float] = [0.0]
+        self.times: List[float] = [0.0]
 
-    def get_displacement(self, ref_speed, delta_t):
-        v_old = self.v
-        if self.v < ref_speed:
-            v_new = min(v_old + self.acc * delta_t, ref_speed)
-        elif v_old > ref_speed:
-            v_new = max(v_old - self.acc * delta_t, ref_speed)
+    def reset(self) -> None:
+        """Reset motion state to initial conditions."""
+        self.v = 0.0
+        self.t_total = 0.0
+        self.total_displacement = 0.0
+        self.positions = [0.0]
+        self.speeds = [0.0]
+        self.times = [0.0]
+
+    def is_at_target(self, ref_speed: float) -> bool:
+        """Check if current speed is within delta_speed of target."""
+        return abs(self.v - ref_speed) <= self.delta_speed
+
+    def update(self, ref_speed: float, dt: float) -> float:
+        """
+        Advance motion by dt seconds towards ref_speed with limited acceleration.
+
+        Parameters
+        ----------
+        ref_speed : float
+            Desired speed [m/s].
+        dt : float
+            Timestep duration [s].
+
+        Returns
+        -------
+        disp : float
+            Displacement during this timestep [m].
+        """
+        # Determine required acceleration
+        dv = ref_speed - self.v
+        if abs(dv) <= self.max_acc * dt or self.is_at_target(ref_speed):
+            acc = dv / dt if dt > 0 else 0.0
         else:
-            v_new = v_old
+            acc = math.copysign(self.max_acc, dv)
 
-        self.d = 0.5 * (v_old + v_new) * delta_t
-        self.v = v_new
-        self.d_total += self.d
-        return self.d, self.d_total
+        # Update speed
+        new_v = max(0.0, self.v + acc * dt)
+
+        # Trapezoidal integration for displacement
+        disp = 0.5 * (self.v + new_v) * dt
+
+        # Update internal state
+        self.t_total += dt
+        self.total_displacement += disp
+        self.positions.append(self.positions[-1] + disp)
+        self.speeds.append(new_v)
+        self.times.append(self.t_total)
+        self.v = new_v
+
+        return disp
+
+    def get_total_displacement(self) -> float:
+        """
+        Return cumulative displacement since last reset.
+
+        Returns
+        -------
+        total_displacement : float
+            Total displacement [m].
+        """
+        return self.total_displacement
+
+    def get_trajectory(self) -> np.ndarray:
+        """
+        Get arrays of time, speed, and position for the simulated trajectory.
+
+        Returns
+        -------
+        traj : np.ndarray
+            2D array with columns: time [s], speed [m/s], position [m].
+        """
+        return np.column_stack((np.array(self.times), np.array(self.speeds), np.array(self.positions)))
 
 
 def quaternion_from_yaw(yaw: float) -> Quaternion:
@@ -69,13 +153,17 @@ class EgoAdvSimNode(Node):
         # UDP & sim parameters
         self.declare_parameter('udp_target_ip', '127.0.0.1')
         self.declare_parameter('udp_target_port', 9999)
-        self.declare_parameter('udp_delay', 0.0) # in seconds
-        self.declare_parameter('add_aoi', 0)     # in milli
+        self.declare_parameter('udp_delay', 0.1) # in seconds
+        self.declare_parameter('add_aoi', 300)     # in milli
         self.declare_parameter('adv_queue_size', 1)
         self.declare_parameter('comm_fail_start', 0)
-        self.declare_parameter('comm_fail_duration', 0)
+        self.declare_parameter('comm_fail_duration', 0.6) # in seconds
         self.declare_parameter('sim_step', 0.05)
         self.declare_parameter('comm_step', 0.001)
+
+        # vehcile sizes
+        self.length = 0.720
+        self.width = 0.515
 
         # Read parameters
         ego_start = (self.get_parameter('ego_start_x').value,
@@ -182,17 +270,20 @@ class EgoAdvSimNode(Node):
 
     def _simulate(self):
         # Check completion
-        if (self.ego_motion.d_total >= self.ego_path_dist or
-            self.adv_motion.d_total >= self.adv_path_dist):
+        if (self.ego_motion.get_total_displacement() >= self.ego_path_dist or
+            self.adv_motion.get_total_displacement() >= self.adv_path_dist):
             self.get_logger().info('Reached end of paths; stopping simulation')
             self.sim_timer.cancel()
             return
 
         # Ego
-        d_e, _ = self.ego_motion.get_displacement(self.ego_ref_speed,
+        _ = self.ego_motion.update(self.ego_ref_speed,
                                                   self.sim_timer.timer_period_ns/1e9)
-        ex = self.ego_start[0] + self.ego_dir[0] * self.ego_motion.d_total
-        ey = self.ego_start[1] + self.ego_dir[1] * self.ego_motion.d_total
+        
+        ego_total_displacement = self.ego_motion.get_total_displacement()
+        
+        ex = self.ego_start[0] + self.ego_dir[0] * ego_total_displacement
+        ey = self.ego_start[1] + self.ego_dir[1] * ego_total_displacement
         ego_msg = Odometry()
         ego_msg.header.stamp = self.get_clock().now().to_msg()
         ego_msg.header.frame_id = 'map'
@@ -204,10 +295,13 @@ class EgoAdvSimNode(Node):
         self.ego_pub.publish(ego_msg)
 
         # Adv
-        d_a, _ = self.adv_motion.get_displacement(self.adv_ref_speed,
+        _ = self.adv_motion.update(self.adv_ref_speed,
                                                   self.sim_timer.timer_period_ns/1e9)
-        ax = self.adv_start[0] + self.adv_dir[0] * self.adv_motion.d_total
-        ay = self.adv_start[1] + self.adv_dir[1] * self.adv_motion.d_total
+        
+        adv_total_displacement = self.adv_motion.get_total_displacement()
+
+        ax = self.adv_start[0] + self.adv_dir[0] * adv_total_displacement
+        ay = self.adv_start[1] + self.adv_dir[1] * adv_total_displacement
         adv_msg = Odometry()
         adv_msg.header.stamp = self.get_clock().now().to_msg()
         adv_msg.header.frame_id = 'map'
@@ -221,12 +315,15 @@ class EgoAdvSimNode(Node):
         # Queue UDP payload
         if len(self.adv_queue) < self.adv_queue_size:
             now = self.get_clock().now().nanoseconds
+            noise = self._adv_noise()
+            send_v = self._add_vel_noise(self.adv_motion.v, noise)
+            send_x, send_y = self._get_adv_position_to_send(ax, ay, noise)
             payload = {
                 'id': self._msg_id,
                 't_stamp': now,
-                'front_x': ax,
-                'front_y': ay,
-                'vel': self._add_vel_noise(self.adv_motion.v)
+                'front_x': send_x,
+                'front_y': send_y,
+                'vel': send_v
             }
             self.adv_queue.append(payload)
             self._msg_id += 1
@@ -234,8 +331,8 @@ class EgoAdvSimNode(Node):
     def _send_udp(self):
         now_ns = self.get_clock().now().nanoseconds
         # Stop both timers when both done
-        if (self.ego_motion.d_total >= self.ego_path_dist and
-            self.adv_motion.d_total >= self.adv_path_dist):
+        if (self.ego_motion.get_total_displacement() >= self.ego_path_dist and
+            self.adv_motion.get_total_displacement() >= self.adv_path_dist):
             self.get_logger().info('Paths done; stopping UDP sends')
             self.comm_timer.cancel()
             return
@@ -253,8 +350,23 @@ class EgoAdvSimNode(Node):
             packet = json.dumps(info).encode('utf-8')
             self.udp_sock.sendto(packet, (self.udp_ip, self.udp_port))
 
-    def _add_vel_noise(self, value: float) -> float:
-        return value - 0.0
+    
+    def _adv_noise(self) -> float:
+        noise = np.random.normal(loc=0.0, scale=0.2, size=None)
+        return noise
+
+    def _add_vel_noise(self, value: float, noise:float) -> float:
+        return value + noise
+    
+    def _get_adv_position_to_send(self, xc: float, yc:  float, noise: float):
+        x = xc + self.width/2 
+        y = yc + self.length/2
+        
+        x += noise
+        y += noise
+
+        return x, y
+
 
     def destroy_node(self):
         self.get_logger().info('Shutting down, closing UDP socket')
